@@ -1,0 +1,40 @@
+
+\newcommand{\VarRule}{
+    \inferrule
+    {
+        (x \type{m^\prime} A) \in \Gamma
+        \\ m^\prime \subseteq m
+    }
+    {
+        \Gamma \vdash x \type{m} A \synth \text{dec}(\Gamma, x)
+    }
+    \textsc{Var}
+}
+
+\newcommand{\TermLambdaRule}{
+    \inferrule
+    {
+        0\Gamma \vdash (x \type{\sigma} A) \to B \type{} \star
+        \\ \Gamma, x \type{\sigma} A \vdash t \type{m} B \synth \Gamma, x \type{\sigma \downarrow} A
+    }
+    {
+        \Gamma \vdash \absu{\lambda}{x}{t} \type{m} (x \type{\sigma} A) \to B \synth \Gamma
+    }
+    \textsc{TermLambda}
+}
+
+\newcommand{\TypeLambdaRule}{
+    \inferrule
+    {
+        0\Gamma A \type{\omega} k
+        \\ \Gamma, x \type{\omega} A \vdash t : \type{\omega} B
+    }
+    {
+        \Gamma \vdash \absu{\lambda}{x}{t} \type{\omega} (x \type{\omega} A) \synth \Gamma
+    }
+    \textsc{TypeLambda}
+}
+
+
+$\VarRule$
+$\TermLambdaRule$

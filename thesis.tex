@@ -1,13 +1,20 @@
 \documentclass[letterpaper, 11pt]{uiowa-thesis}
 \usepackage{graphicx}
 \usepackage{lipsum}
+\usepackage{mathpartir}
+
+\newcommand{\type}[1]{\stackrel{#1}{:}}
+\newcommand{\synth}{\Rightarrow}
+\newcommand{\text}[1]{\texttt{#1}}
+\newcommand{\abs}[4]{{#1}\, #2\! : \! #3.\, #4}
+\newcommand{\absu}[3]{{#1}\, #2.\, #3}
 
 \addbibresource{biblio.bib}
 \nocite{*}
 
-\title{An Exploration of the Burrito Sandwich Paradox}
-\author{Herky T. Hawk}
-\date{May 2021}
+\title{Cedille 2.0}
+\author{Andrew Marmaduke}
+\date{May 2024}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -19,13 +26,13 @@
   pdfauthor={\theauthor}
 }
 \degree{Doctor of Philosophy}
-\concentration{Applied Mathematical and Computational Sciences}
+\concentration{Computer Science}
 
-\ThesisSupervisor{Steve Professorson}
-\CommitteeMember{Another Professor}
-\CommitteeMember{A Faculty Member}
-\CommitteeMember{The Janitor}
-\CommitteeMember{Lucky No. 5}
+\ThesisSupervisor{Aaron Stump}
+\CommitteeMember{Cesare Tinelli}
+\CommitteeMember{J. Garrett Morris}
+\CommitteeMember{Sriram Pemmaraju}
+\CommitteeMember{William J. Bowman}
 
 \begin{document}
 
@@ -55,6 +62,9 @@
 
 \input{chapters/01.tex}
 \input{chapters/02.tex}
+\input{chapters/03.tex}
+\input{chapters/04.tex}
+\input{chapters/05.tex}
 
 \appendix
 
