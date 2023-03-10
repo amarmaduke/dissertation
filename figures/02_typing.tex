@@ -1,27 +1,29 @@
 
-\newcommand{\VarRule}{
-    \inferrule
-    {
-        (x \type{m^\prime} A) \in \Gamma
-        \\ m^\prime \subseteq m
+\newcommand{\Rule}[4]{
+    \newcommand{#1}[1][a]{
+        \if##1a
+        \renewcommand{\der}[2]{####2}
+        \else
+        \renewcommand{\der}[2]{\stackrel{####1}{####2}}
+        \fi
+        \inferrule{#2}{#3}
+        \textsc{#4}
+        \renewcommand{\der}[2]{####2}
     }
-    {
-        \Gamma \vdash x \type{m} A \synth \text{dec}(\Gamma, x)
-    }
-    \textsc{Var}
 }
 
-\newcommand{\TermLambdaRule}{
-    \inferrule
+\Rule{\VarRule}
+    {\der{\D{1}}{(x : A) \in \Gamma}}
+    {\Gamma \vdash x : A}
+    {Var}
+
+\Rule{\TermLambdaRule}
     {
-        0\Gamma \vdash (x \type{\sigma} A) \to B \type{} \star
-        \\ \Gamma, x \type{\sigma} A \vdash t \type{m} B \synth \Gamma, x \type{\sigma \downarrow} A
+        \der{\D{1}}{0\Gamma \vdash (x \type{\sigma} A) \to B \type{} \star}
+        \\ \der{\D{2}}{\Gamma, x \type{\sigma} A \vdash t \type{m} B \synth \Gamma, x \type{\sigma \downarrow} A}
     }
-    {
-        \Gamma \vdash \absu{\lambda}{x}{t} \type{m} (x \type{\sigma} A) \to B \synth \Gamma
-    }
-    \textsc{TermLambda}
-}
+    {\Gamma \vdash \absu{\lambda}{x}{t} \type{m} (x \type{\sigma} A) \to B \synth \Gamma}
+    {TermLambda}
 
 \newcommand{\TypeLambdaRule}{
     \inferrule
@@ -35,6 +37,14 @@
     \textsc{TypeLambda}
 }
 
+\[
+    \begin{array}{c}
+        \VarRule \\
+        \VarRule[*] \\
+        $\TermLambdaRule[*]$
+    \end{array}
+\]
 
-$\VarRule$
-$\TermLambdaRule$
+
+
+
