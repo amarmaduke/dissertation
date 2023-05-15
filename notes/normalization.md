@@ -69,7 +69,7 @@ note that the kind fragment is unchanged, so V is exactly the same as the standa
     [t =A s]Γ = c(0->A->A->0) [A]Γ [t]Γ [s]Γ
     [refl -A -t]Γ = (λ X:* t:⟦A⟧Γ. λ Y:* x:Y. x) [A]Γ [t]Γ
     [J -A -P -a -b e r]Γ = (λ _ _. [e]Γ ⟦P⟧Γ ([r]Γ [a]Γ)) [A]Γ [b]Γ
-    [I -A -P -a -b e]Γ = (λ _ _ _ _. [e]Γ) [A]Γ [P]Γ [a]Γ [b]Γ
+    [I -A -P -a -b e]Γ = (λ _ _ _. [e]Γ) [b]Γ [(x:A) ∩ P]Γ [a]Γ
     [δ⊤ -A -a e]Γ = (λ _ _. [e]Γ) [A]Γ [a]Γ
     [δ e]Γ = (λ _. ⊥) [e]Γ
 
@@ -146,7 +146,7 @@ Proof sketch (focusing on additions). By induction on judgement
     by app rule of Fω goal is finished
     
     Goal: ⟦Γ⟧ ⊢ [I -A -P -a -b e]Γ : ⟦a =(x:A∩P) b⟧Γ
-        simplifies to ⟦Γ⟧ ⊢ (λ _ _ _ _. [e]Γ) [A]Γ [P]Γ [a]Γ [b]Γ : (X:*) -> X -> X
+        simplifies to ⟦Γ⟧ ⊢ (λ _ _ _. [e]Γ) [b]Γ [(x:A) ∩ P]Γ [a]Γ : (X:*) -> X -> X
         simplifies to ⟦Γ⟧ ⊢ [e]Γ : (X:*) -> X -> X
     immediate by IH
 
@@ -179,9 +179,22 @@ Proof sketch
     Have: Γ ⊢ J -A -P -a -a (refl -A -a) : P a a (refl -A -a)
 
     Goal : [I -A -P -a -a (refl -A -(fst -A -P a))]Γ -β>+ [refl -((x:A) ∩ P) -a]Γ
-        simplifies to (λ _ _ _ _. [refl -A -(fst -A -P a)]Γ) [A]Γ [P]Γ [a]Γ [b]Γ
-            -β>+ (λ X:* t:⟦((x:A) ∩ P)⟧Γ. λ Y:* x:Y. x) [((x:A) ∩ P)]Γ [a]Γ
+        simplifies to (λ _ _ _. [refl -A -(fst -A -P a)]Γ) [b]Γ [(x:A) ∩ P]Γ [a]Γ
+            -β>+ (λ _ _. λ Y:* x:Y. x) [((x:A) ∩ P)]Γ [a]Γ
+    Need to show that [refl -A -(fst -A -P a)]Γ -β>* λ Y x. x
+        simplifies to (λ X t Y x. x) [A]Γ [fst -A -P a]Γ -β>* λ Y x. x
+        reduces to λ Y x. x -β>* λ Y x. x
 
+    Congruence rules will hold as long as every subterm of [t]Γ appears intrepreted in the resultkng expression
+
+    Goal: [I -A -P -a -b e]Γ -β>+ [I -A -P' -a -b e]Γ
+        simplifies to (λ _ _ _. [e]Γ) [b]Γ [(x:A) ∩ P]Γ [a]Γ
+            -β>+ (λ _ _ _. [e]Γ) [b]Γ [(x:A) ∩ P']Γ [a]Γ
+    Need to show that [(x:A) ∩ P]Γ -β>+ [(x:A) ∩ P']Γ
+        simplifies to c(0->0->0) [A]Γ ([P]Γ,x:A [x := ⟦A⟧Γ])
+            -β>+ c(0->0->0) [A]Γ ([P']Γ,x:A [x := ⟦A⟧Γ])
+    Need to show that [P]Γ -β>+ [P']Γ
+    but this is immediate from IH
 
 # Theorem
     If Γ ⊢ a : A then a is strongly normalizing
