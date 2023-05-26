@@ -82,19 +82,27 @@
     ------------------------ δ
     Γ ⊢ δ e : (B:*) -> B
 
+    Γ ⊢ A, B : *  Γ ⊢ a:A  Γ ⊢ b : (x:A) ∩ B
+    Γ ⊢ e : (fst -A -B b) =A a
+    FV(Γ)∩FV(|b|) ⊆ {a}  FV(Γ)∩FV(|e|) ⊆ {a}
+    ---------------------------------------- φ
+    Γ ⊢ [a, b; e] : (x:A) ∩ B
+
 # Reduction and Conversion
 
     (λ x:A. t) s -β> t[x := s]
-    (Λ x:A. t) s -β> t[x := s]
+    (Λ x:A. t) -s -β> t[x := s]
     fst -A -P [t,s] -β> t
     snd -A -P [t,s] -β> s
     J -A -P -a -a (refl -A -a) r -β> r -a
-    I -A -P -a -a (refl -A -(fst -A -P a)) -β> refl -((x:A) ∩ P) -a
+    I -A -P -a -a (refl -A -(fst -A -P a))
+        -β> refl -((x:A) ∩ P) -a
     δ⊤ -A -a (refl -A -a) -β> Λ B:*. λ y:B. y
+    [a, b; e] -β> b  if |b| = |a|
 
     + congruence rules
 
-    t ≡ s if and only if ∃ t',s'. t -β>* t' /\ s -β>* s' /\ |t'| =α= |s'|
+    t ≡ s if and only if ∃ t',s'. t -β>* t' /\ s -β>* s' /\ |t'| = |s'|
 
 # Erasure
 
@@ -117,3 +125,4 @@
     |I -A -P -a -b e| = |e|
     |δ⊤ -A -a e| = |e|
     |δ e| = |e|
+    |[a, b; e]| = |a|

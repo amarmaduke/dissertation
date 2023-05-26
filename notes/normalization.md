@@ -58,20 +58,21 @@ note that the kind fragment is unchanged, so V is exactly the same as the standa
 
 ## Translation of Γ-terms (Cedille2-additions)
     [(x:A) => B]Γ = c(0->0->0) [A]Γ ([B]Γ,x:A [x := ⟦A⟧Γ])
-    [Λ x:A. B]Γ = (λ y:0 x:⟦A⟧Γ. [b]Γ,x:A) [A]Γ
+    [Λ x:A. b]Γ = (λ y:0 x:⟦A⟧Γ. [b]Γ,x:A) [A]Γ
     [A -B]Γ = [A]Γ [B]Γ
 
     [(x:A) ∩ B]Γ = c(0->0->0) [A]Γ ([B]Γ,x:A [x := ⟦A⟧Γ])
     [[t, s]]Γ = Λ X:* f:(⟦A⟧Γ -> ⟦B⟧Γ -> X) -> X. f [t]Γ [s]Γ
     [fst -A -B t]Γ = (λ x:⟦B⟧Γ. [t]Γ [A]Γ (λ x:⟦A⟧Γ y:⟦B⟧Γ. x)) [B]Γ
-    [snd -A -B t]Γ = (λ x:⟦A⟧Γ. [t]Γ [B]Γ (λ x:⟦A⟧Γ y:⟦B⟧Γ. x)) [A]Γ
+    [snd -A -B t]Γ = (λ x:⟦A⟧Γ. [t]Γ [B]Γ (λ x:⟦A⟧Γ y:⟦B⟧Γ. y)) [A]Γ
 
     [t =A s]Γ = c(0->A->A->0) [A]Γ [t]Γ [s]Γ
     [refl -A -t]Γ = (λ X:* t:⟦A⟧Γ. λ Y:* x:Y. x) [A]Γ [t]Γ
-    [J -A -P -a -b e r]Γ = (λ _ _. [e]Γ ⟦P⟧Γ ([r]Γ [a]Γ)) [A]Γ [b]Γ
+    [J -A -P -a -b e r]Γ = (λ _ _ _. [e]Γ ⟦P⟧Γ ([r]Γ [a]Γ)) [A]Γ [P]Γ [b]Γ
     [I -A -P -a -b e]Γ = (λ _ _ _. [e]Γ) [b]Γ [(x:A) ∩ P]Γ [a]Γ
     [δ⊤ -A -a e]Γ = (λ _ _. [e]Γ) [A]Γ [a]Γ
     [δ e]Γ = (λ _. ⊥) [e]Γ
+    [[a, b; e]]Γ = (λ _ _. [b]Γ) [a]Γ [e]Γ
 
 # Lemmas
 
@@ -160,6 +161,11 @@ Proof sketch (focusing on additions). By induction on judgement
         simplifies to ⟦Γ⟧ ⊢ ⊥ : (B:*) -> B
     trivially true
 
+    Goal: ⟦Γ⟧ ⊢ [[a, b; e]] : [(x:A) ∩ B]Γ
+        simplifies to ⟦Γ⟧ ⊢ (λ _ _. [b]Γ) [a]Γ [e]Γ : [(x:A) ∩ B]Γ
+        reduces to ⟦Γ⟧ ⊢ [b]Γ : [(x:A) ∩ B]Γ
+    which holds by IH
+
 ## Substitution for [_] (Lemma 5)
     Suppose Γ ⊢ a : A and (x:B) ∈ Γ then
     1. [a[x := b]]Γ = [a]Γ [w(x) := [b]Γ] [x := ⟦b⟧Γ] if B is a kind and b is a Γ-type
@@ -184,6 +190,11 @@ Proof sketch
     Need to show that [refl -A -(fst -A -P a)]Γ -β>* λ Y x. x
         simplifies to (λ X t Y x. x) [A]Γ [fst -A -P a]Γ -β>* λ Y x. x
         reduces to λ Y x. x -β>* λ Y x. x
+
+    Goal: [[a, b; e]]Γ -β>+ [b]Γ
+        simplifies to (λ _ _. [b]Γ) [a]Γ [e]Γ -β>+ [b]Γ
+        reduces to [b]Γ -β>* [b]Γ
+    holds trivially
 
     Congruence rules will hold as long as every subterm of [t]Γ appears intrepreted in the resultkng expression
 

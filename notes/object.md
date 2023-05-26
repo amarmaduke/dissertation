@@ -1,6 +1,6 @@
 
 # Object-Proof reduction
-    Given Γ ⊢ t : A and t -β> t' then |t| -β>* |t'|
+    Given Γ ⊢ t : A and t -β> t' then |t| -β>{0,1} |t'|
 
 Proof Sketch: by induction on t -β> t'
 
@@ -31,6 +31,10 @@ Proof Sketch: by induction on t -β> t'
     Goal: |δ⊤ -A -a (refl -A -a)| -β>* |Λ B:*. λ y:B. y|
         simplifies to |refl -A -a| -β>* λ x. x
         simplifies to λ x. x -β>* λ x. x
+
+    Goal: |[a, b; e]| -β>* |b|
+        simplifies to |a| -β>* |b|
+    by hypothesis, we know that |b| = |a| (because the reduction is not possible otherwise)
 
 # Proof-Object reduction
     Given Γ ⊢ t, t' : A and |t| -β> |t'| then t -β>+ t'
