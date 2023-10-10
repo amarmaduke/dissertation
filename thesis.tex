@@ -1,20 +1,44 @@
 \documentclass[letterpaper, 11pt]{uiowa-thesis}
 \usepackage{graphicx}
+\usepackage{textcomp}
 \usepackage{lipsum}
 \usepackage{mathpartir}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{changepage}
 
-\newcommand{\type}[1]{\stackrel{#1}{:}}
-\newcommand{\synth}{\Rightarrow}
-\newcommand{\text}[1]{\texttt{#1}}
+\newenvironment{proofcase}{\vspace{0.3cm}\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}\vspace{0.4cm}}
+
+%% Premiliminaries
+\newlength\cinfrheight
+\settoheight{\cinfrheight}{\textless}
+\newcommand\raisedtextbar{\raisebox{0.4ex}{\textbar}}
+\newcommand{\cinfrbar}{\resizebox{!}{\cinfrheight}{\raisedtextbar}}
+\newcommand{\cinfr}{\kern+3.5pt\cinfrbar\kern-3.5pt\vartriangleright}
+
+\newcommand{\infr}{\vartriangleright}
+\newcommand{\chck}{\vartriangleleft}
+
 \newcommand{\abs}[4]{{#1}\, #2\! : \! #3.\, #4}
 \newcommand{\absu}[3]{{#1}\, #2.\, #3}
+\newcommand{\app}[3]{#1 \bullet_{#2} #3}
+\newcommand{\apptwo}[5]{\app{\app{#1}{#2}{#3}}{#4}{#5}}
+\newcommand{\appthr}[7]{\apptwo{\app{#1}{#2}{#3}}{#4}{#5}{#6}{#7}}
+
+\newcommand{\betared}{\rightsquigarrow_\beta}
+\newcommand{\betastar}{\rightsquigarrow_\beta^*}
+
 \newcommand{\D}[1]{\mathcal{D}_{#1}}
 \newcommand{\der}[2]{#2}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
 
 \addbibresource{biblio.bib}
 \nocite{*}
 
-\title{Cedille 2.0}
+\title{The Calculus of Set Constructions}
 \author{Andrew Marmaduke}
 \date{May 2024}
 
@@ -68,13 +92,13 @@
 \input{chapters/04.tex}
 \input{chapters/05.tex}
 
-\appendix
+% \appendix
 
-\chapter{Stuff you should know already}
-\lipsum[100-120]
+% \chapter{Stuff you should know already}
+% \lipsum[100-120]
 
-\chapter{Stuff no one ever thought to tell you}
-\lipsum[121-140]
+% \chapter{Stuff no one ever thought to tell you}
+% \lipsum[121-140]
 
 \backmatter
 
