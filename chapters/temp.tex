@@ -1,0 +1,132 @@
+
+For the below theorem we assume we know that $t$ is strongly normalizing and that the theory is consistent.
+
+\begin{theorem}
+    $\Gamma \vdash t \infr A$ implies $|t|$ is strongly normalizing
+\end{theorem}
+\begin{proof}
+    By induction on the derivation:
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Obvious.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Obvious.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis we know that $|A|$ and $|B|$ are strongly normalizing.
+        Thus, $|(x : A) \to_m B| = (x : |A|) \to_m |B|$ is strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis we know that $|A|$ and $|t|$ are strongly normalizing.
+        Regardless of $m$ the erasure reduces to some combination of these two, thus the erased term is strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis we have that $|f|$ and $|a|$ are strongly normalizing.
+        Proceed by cases on $f$:
+        \begin{itemize}
+            \item {
+                $f = x$, then no reduction can be performed and $x\ |a|$ is normal.
+            }
+            \item {
+                $f = \abs{\lambda_m}{x}{A}{t}$, then we have $[x := a]t$, but this infers a type and thus $|[x := a]t|$ is strongly normalizing.
+            }
+            \item {
+                $f = \app{u}{m_2}{v}$
+            }
+            \item {
+                $f = [t, s; T]$, impossible by inversion on $\D{1}$
+            }
+            \item {
+                $f = t.1$
+            }
+            \item {
+                $f = t.2$
+            }
+            \item {
+                $f = \text{refl}\ x$, impossible by inversion on $\D{1}$
+            }
+            \item {
+                $f = J\ A\ P\ x\ y\ r\ w$
+            }
+            \item {
+                $f = \vartheta\ e$, impossible by inversion on $\D{1}$
+            }
+            \item {
+                $f = \varphi\ a\ b\ e$, impossible by inversion on $\D{1}$
+            }
+            \item {
+                $f = \delta\ e$
+            }
+        \end{itemize}
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Same as function type case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis we know that $|t|$ is strongly normalizing.
+        Thus, $|t, s; T| = |t|$ is strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        Same idea as pair case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Same idea as pair case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Same idea as function type case.
+    \end{proofcase}
+    
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        $|\text{refl}\ x|$ is a value thus strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityInductionRule[*] \end{array}$
+    \begin{proofcase}
+        All of $|A|, |P|, |x|, |y|, |r|, |w|$ are strongly normalizing by the inductive hypothesis.
+        Suppose that $r = \text{refl}\ z$.
+        Then by one reduction we have $|r|\ |w|$, but $|r|$ is the identity function, thus this reduces to just $|w|$ which is strongly normalizing.
+        Otherwise, no reduction is possible and $|r|\ |w|$ is normal.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis $|e|$ is strongly normalizing, thus $|\vartheta\ e| = |e|$ is strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis $|a|$ is strongly normalizing, thus $|\varphi\ a\ b\ e| = |a|$ is strongly normalizing.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        By the inductive hypothesis $|e|$ is strongly normalizing, thus $|\delta\ e| = |e|$ is strongly normalizing.
+    \end{proofcase}
+
+\end{proof}
+
+
+\begin{lemma}
+    For $\Gamma \vdash t : A$, where $t_w$ is the whnf of $t$ then $t \betastar t_w$ iff $|t| \betastar |t_w|$
+\end{lemma}

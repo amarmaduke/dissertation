@@ -1,4 +1,133 @@
-\chapter{Derivable Constructs in System CoSC}
+\chapter{Object Normalization}
 
+A $\varphi_i$-proof is a proof that allows $i$ nested $\varphi$ syntactic constructs.
+For example, a $\varphi_0$-proof allows no $\varphi$ subterms, a $\varphi_1$-proof allows $\varphi$ subterms but no nested $\varphi$ subterms, and a $\varphi_2$-proof allows $\varphi_1$ subterms.
+Defined inductively, a $\varphi_0$-proof is a proof with no $\varphi$ syntactic constructs and a $\varphi_{i+1}$-proof is a proof with $\varphi_i$-proof subterms.
 
+For any $\varphi_i$-proof $p$ there is a strictification $s(p)$ that is a $\varphi_0$-proof in Figure~\ref{fig:strictification}.
 
+\begin{lemma}[Strictification Preserves Inference]
+    Given $\Gamma \vdash t \infr A$ then $\Gamma \vdash s(t) \infr A$
+\end{lemma}
+\begin{proof}
+    By induction on the typing rule, the $\varphi$ rule is the only one of interest:
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Need to show that $\Gamma \vdash s(\varphi(a, f, e)) \infr (x:A) \cap B$ which reduces to:
+        $\Gamma \vdash \app{s(f)}{\omega}{s(a)} \infr (x:A) \cap B$.
+        By the IH we know that $s(f)$ infers the same function type, and that $s(a)$ infers the same argument type, therefore the application rule concludes the proof.
+        
+    \end{proofcase}
+
+\end{proof}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            s(x) &= x \\
+            s(\star) &= \star \\
+            s(\kind) &= \kind \\
+            s(\abs{\lambda_m}{x}{A}{t}) &= \abs{\lambda_m}{x}{s(A)}{s(t)} \\
+            s((x:A) \to_m B) &= (x:s(A)) \to_m s(B) \\
+            s((x:A) \cap B) &= (x:s(A)) \cap s(B) \\
+            s(\app{f}{m}{a}) &= \app{s(f)}{m}{s(a)}
+        \end{align*}%
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            s([s, t, T]) &= [s(s), s(t), s(T)] \\
+            s(t.1) &= s(t).1 \\
+            s(t.2) &= s(t).2 \\
+            s(x =_A y) &= s(x) =_{s(A)} s(y) \\
+            s(\text{refl}(t)) &= \text{refl}(s(t)) \\
+            s(\vartheta(e)) &= \vartheta(s(e)) \\
+            s(\delta(e)) &= \delta(s(e))
+        \end{align*}%
+    \end{minipage}%
+    \begin{align*}
+        s(J(A,P,x,y,r,w)) &= J(s(A),s(P),s(x),s(y),s(r),s(w)) \\
+        s(\varphi(a,f,e)) &= \app{s(f)}{\omega}{s(a)}
+    \end{align*}
+    \caption{Strictification of a proof.}
+    \label{fig:strictification}
+\end{figure}
+
+\begin{lemma}[Strict Proofs are Normalizing]
+    Given $\Gamma \vdash t \infr A$ then $s(t)$ is strongly normalizing
+\end{lemma}
+\begin{proof}
+    Direct consequence of strong normalization of proofs
+\end{proof}
+
+\begin{lemma}[Strict Objects are Normalizing]
+    \label{lemma:strict-objects-normalize}
+    Given $\Gamma \vdash t \infr A$ then $|s(t)|$ is strongly normalizing
+\end{lemma}
+\begin{proof}
+    Proof Idea:
+
+    Proof reduction tracks object reduction in the absence of $\varphi$ constructs.
+    Thus, the normalization of a proof provides an upper-bound on the number of reductions an object can take to reach a normal form.
+\end{proof}
+
+A proof, $\Gamma \vdash t_1 \infr A$, is contextually equivalent to another proof, $\Gamma \vdash t_2 \infr A$, if there is no context with hole of type $A$ whose object reduction diverges for $t_1$ but not $t_2$.
+In other words, if a context can be constructed that distinguishes the terms based on their object reduction.
+
+\begin{lemma}
+    A $\varphi_1$-proof, $p$, is contextually equivalent to its strictification, $s(p)$
+\end{lemma}
+\begin{proof}
+    Proof by induction on the typing rule for $p$, focus on the application rule:
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        In particular, we care about when $f = \varphi(v, b, e).2$ and $m = \omega$.
+        Note that the first projection has a proof-reduction that yields $a$ which makes it unproblematic.
+
+        We know that $s(v) = v$ because $f$ is a $\varphi_1$-proof.
+        Let $v_n$ be the normal form of $v$ and note that $|v_n|$ is also normal.
+        Likewise, we have $e_n$ and $|e_n|$ normal.
+
+        Suppose there is a context $C[\cdot]$ where $|p|$ diverges but $|s(p)|$ normalizes.
+        (Note that the opposite assumption is impossible).
+        If $|v_n|$ is a variable, then reduction in $|p|$ is blocked (contradiction).
+        Otherwise $|v_n| = \absu{\lambda}{x}{x\ t_1\ \cdots\ t_n}$ where $t_i$ are normal.
+
+        Now it must be the case that $|\app{e}{\omega}{v}| = \app{|e_n|}{\omega}{|v_n|}$ is normalizing.
+        Thus, we have a refl proof that $v_n = (\app{f}{\omega}{v_n}).1$.
+        (Note, this proof \textit{must} be refl because FV$(|e|) = \varnothing$).
+        But, this implies convertibility, thus $|v_n| =_\beta \app{|f|}{\omega}{|v_n|}$, but this must mean more concretely that $\app{|f|}{\omega}{|v_n|} \betared |v_n|$.
+        Yet $\apptwo{|f|}{\omega}{|v_n|}{\omega}{a}$ is strongly normalizing because it is $s(p)$.
+        Therefore, $p$ in this case is strongly normalizing which refutes the assumption yielding a contradiction.
+    \end{proofcase}
+    
+\end{proof}
+
+\begin{lemma}
+    If $t_1$ is strongly normalizing and contextually equivalent to $t_2$ then $t_2$ is strongly normalizing
+\end{lemma}
+\begin{proof}
+    Immediate by the definition of contextual equivalence.
+\end{proof}
+
+\begin{theorem}
+    A $\varphi_i$-proof $p$ is strongly normalizing for all $i$
+\end{theorem}
+\begin{proof}
+    By induction on $i$.
+
+    Case: $i = 0$
+    \begin{proofcase}
+        Immediate because $s(p) = p$ and strict proofs are strongly normalizing.
+    \end{proofcase}
+
+    Inductive Case:
+    \begin{proofcase}
+        Suppose that $\varphi_i$-proof is strongly normalizing.
+        Goal: show that $\varphi_{i+1}$-proof is strongly normalizing.
+
+    \end{proofcase}
+
+\end{proof}
