@@ -12,6 +12,19 @@
     $$\CastRule$$
     $$\SeparationRule$$
     \caption{
-        Inference rules for equality types.
+        Inference rules for equality types where
+        $\text{cBool} := (X : \star) \to_0 (x : X) \to_\omega (y : X) \to_\omega X$;
+        $\text{ctt} := \abs{\lambda_0}{X}{\star}{
+            \abs{\lambda_\omega}{x}{X}{
+                \abs{\lambda_\omega}{y}{X}{x}
+            }
+        }$;
+        and
+        $\text{cff} := \abs{\lambda_0}{X}{\star}{
+            \abs{\lambda_\omega}{x}{X}{
+                \abs{\lambda_\omega}{y}{X}{y}
+            }
+        }$.
+        Also, $i, j \in \{ 1, 2 \}$
     }
 \end{figure}

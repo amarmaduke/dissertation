@@ -37,12 +37,46 @@ Proof Sketch: by induction on t -β> t'
     by hypothesis, we know that |b| = |a| (because the reduction is not possible otherwise)
 
 # Proof-Object reduction
-    Given Γ ⊢ t, t' : A and |t| -β> |t'| then t -β>+ t'
+    Given Γ ⊢ t, t' : A and |t| -β> |t'| then
+        ∃ k. t' -β>* k /\ |k| = |t'| /\ t -β>+ k
 
 Proof sketch
-    - Erasure of |t| does not remove any standard redexes, so every standard redex in t is mirrored in |t|
-    - There may be some sequence of non-standard redexes in t required to contract a standard redex in t
-    - Thus, it takes at least one contraction in t to contract the corresponding redex in |t|
+    Let Γ ⊢ t, t' : A and |t| -β> |t'|
+    by induction on t
+    
+    Case: x, * are impossible because there can be no reduction
+
+    Case: t = (x:U) -> V
+        then t' = (x:U') -> V'
+        suppose A = *
+            then Γ ⊢ U, U' : * and Δ ⊢ V, V' : *
+            moreover, |U| -β> |U'| and |V| -β> |V'|
+            thus, ∃ k1, k2 such that U' -β>* k1 and |k1| = |U'| and U -β>+ k1
+            and V' -β>* k2 and |k2| = |V'| and V -β>+ k2
+            pick k = (x:k1) -> k2
+            then (x:U') -> V' -β>* (x:k1) -> k2
+            and |(x:U') -> V'| = |(x:k1) -> |k2|
+            and (x:U') -> V' -β>+ (x:k1) -> k2
+        suppose A = □
+            similar to above
+    
+    Case: t = (x:U) => V
+        similar to above (all non-redex forming cases will be)
+
+    Case: t = λ x:U. s
+        similar to above
+
+    Case: t = Λ x:U. s
+        similar to above
+
+    Case: t = f a
+        congruence cases are easy, let's focus on f = (λ x:U. s)
+        have: Γ ⊢ λ x:U. s : (x:U -> V) and Γ ⊢ a:U
+        because |(λ x:U s) a| -β> |t'| we have two possibilities
+        1. t' = (λ x:U'. s') a'
+        2. t' = s' [x := a']
+        focus on (2), pick k = s' [x := a'], done
+    
 
 # Strong Normalization of Object Reduction
     Given Γ ⊢ t : A then |t| is strongly normalizing
