@@ -1,19 +1,4 @@
 
-\newcommand{\Rule}[4]{
-    \newcommand{#1}[1][a]{
-        \if##1a
-        \renewcommand{\der}[2]{####2}
-        \renewcommand{\inferlabel}[1]{\textsc{####1}}
-        \else
-        \renewcommand{\der}[2]{\stackrel{####1}{####2}}
-        \renewcommand{\inferlabel}[1]{}
-        \fi
-        \inferrule* [right=\inferlabel{#4}] {#2} {#3} 
-        \renewcommand{\der}[2]{####2}
-        \renewcommand{\inferlabel}[1]{\textsc{####1}}
-    }
-}
-
 \Rule{\AxiomRule}
     {\der{\D{1}}{\vdash \Gamma}}
     {\Gamma \vdash \star \infr \kind}
@@ -30,7 +15,7 @@
 \Rule{\PiRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \text{dom}_\Pi(m, K)}
-        \\ \der{\D{2}}{\Gamma, x:A \vdash B \cinfr \text{codom}_\Pi(m)}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B \cinfr \text{codom}_\Pi(m)}
     }
     {\Gamma \vdash (x : A) \to_m B \infr \text{codom}_\Pi(m)}
     {Pi}
@@ -38,7 +23,7 @@
 \Rule{\LambdaRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \text{dom}_\Pi(m, K)}
-        \\ \der{\D{2}}{\Gamma, x:A \vdash t \infr B}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash t \infr B}
         \\ \der{\D{3}}{x \notin \text{FV}(|t|)\text{ if } m = 0}
     }
     {\Gamma \vdash \abs{\lambda_m}{x}{A}{t} : (x : A) \to_m B}
@@ -55,7 +40,7 @@
 \Rule{\IntersectionRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{1}}{\Gamma, x:A \vdash B \cinfr \star}
+        \der{\D{1}}{\Gamma, x : A \vdash B \cinfr \star}
     }
     {\Gamma \vdash (x : A) \cap B \infr \star}
     {Int}
@@ -67,7 +52,7 @@
         \der{\D{3}}{\Gamma \vdash s \chck [x := t]B} \\
         \der{\D{4}}{|t| =_\beta |s|}
     }
-    {\Gamma \vdash [t, s; T] \infr (x : A) \cup B }
+    {\Gamma \vdash [t, s; T] \infr (x : A) \cap B }
     {Pair}
 
 \Rule{\FirstRule}
@@ -102,13 +87,13 @@
         } \\
         \der{\D{3}}{\Gamma \vdash x \chck A} \\
         \der{\D{4}}{\Gamma \vdash y \chck A} \\
-        \der{\D{5}}{\Gamma \vdash r \chck x =_A y} \\
+        \der{\D{5}}{\Gamma \vdash e \chck x =_A y} \\
         \der{\D{6}}{
             \Gamma \vdash w \chck (a : A) \to_0
                 \appthr{P}{\tau}{a}{\tau}{a}{\tau}{\text{refl}(a)}
         }
     }
-    {\Gamma \vdash J(A, P, x, y, r, w) \infr \appthr{P}{\tau}{x}{\tau}{y}{\tau}{r}}
+    {\Gamma \vdash J(A, P, x, y, e, w) \infr \appthr{P}{\tau}{x}{\tau}{y}{\tau}{e}}
     {J}
 
 \Rule{\SubstRule}
@@ -183,5 +168,5 @@
         \der{\D{2}}{\vdash \Gamma} \\
         \der{\D{3}}{\Gamma \vdash A \cinfr K}
     }
-    {\vdash \Gamma, x:A}
+    {\vdash \Gamma, x : A}
     {CtxApp}

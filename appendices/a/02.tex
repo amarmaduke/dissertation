@@ -1,0 +1,194 @@
+
+\begin{theorem}
+    If $\Gamma \vdash A \cinfr K$ then 
+    \begin{enumerate}
+        \item {
+            $A \betared A^\prime$ implies $\Gamma \vdash A^\prime \cinfr K$, and
+        }
+        \item {
+            $\Gamma \betared \Gamma^\prime$ implies $\Gamma^\prime \vdash A \cinfr K$,
+        }
+    \end{enumerate}
+    where $K$ is either $\star$ or $\kind$
+\end{theorem}
+\begin{proof}
+    By induction on the proof derivation of $A$ with motives
+    \begin{itemize}
+        \item {
+            $\Gamma \vdash A \infr K$ motive is
+            $$(\forall A^\prime,\ A \betared A^\prime \to \Gamma \vdash A^\prime \infr K) \wedge (\forall\ \Gamma^\prime,\ \Gamma \betared \Gamma^\prime \to \Gamma^\prime \vdash A \infr K)$$
+        }
+        \item {
+            $\Gamma \vdash A \cinfr K$ motive is
+            $$(\forall A^\prime,\ A \betared A^\prime \to \Gamma \vdash A^\prime \cinfr K) \wedge (\forall\ \Gamma^\prime,\ \Gamma \betared \Gamma^\prime \to \Gamma^\prime \vdash A \cinfr K)$$
+        }
+        \item {
+            $\Gamma \vdash A \chck K$ motive is
+            $$(\forall A^\prime,\ A \betared A^\prime \to \Gamma \vdash A^\prime \chck K) \wedge (\forall\ \Gamma^\prime,\ \Gamma \betared \Gamma^\prime \to \Gamma^\prime \vdash A \chck K)$$
+        }
+        \item {
+            $\vdash \Gamma$ motive is
+            $\forall\ \Gamma^\prime,\ \Gamma \betared \Gamma^\prime \to\ \vdash \Gamma^\prime$
+        }
+    \end{itemize}
+
+$\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+\begin{proofcase}
+    \begin{enumerate}
+        \item Impossible by inversion on reduction.
+        \item {
+            By the IH we know that $\vdash \Gamma^\prime$ which is sufficient to construct the proof $\Gamma^\prime \vdash \star \infr \kind$. Finally, we have $\kind \betastar \kind$ to construct $\Gamma^\prime \vdash \star \cinfr \kind$.
+        }
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+\begin{proofcase}
+    \begin{enumerate}
+        \item Impossible by inversion on reduction.
+        \item {
+            By the IH we know that $\vdash \Gamma^\prime$.
+            Either $(x : A) \in \Gamma$ or $(x : A^\prime) \in \Gamma$ where $A \betared A^\prime$.
+            The first case is trivial.
+            We know that $A$ is either $\star$ or $\kind$, but by inversion on the reduction $A \betared A^\prime$ the second case is impossible.        
+        }
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+\begin{proofcase}
+    \begin{enumerate}
+        \item {
+            If $A \betared A^\prime$ then by IH on $\D{1}$ we know that $\Gamma \vdash A^\prime \cinfr \text{dom}_\Pi(m, K)$.
+            Now, we have $\Gamma,x:A \betared \Gamma,x:A^\prime$ and by IH on $\D{2}$ we have $\Gamma,x:A^\prime \vdash B \cinfr \text{codom}_\Pi(m)$.
+            Reconstructing the function type yields $\Gamma \vdash (x:A^\prime) \to_m B \infr \text{codom}_\Pi(m)$.
+            If $B \betared B^\prime$ then by IH on $\D{2}$ we construct the goal again.
+        }
+        \item {
+            If $\Gamma \betared \Gamma^\prime$ then by the IH on $\D{1}$ we have $\Gamma^\prime \vdash A \cinfr \text{dom}_\Pi(m, K)$.
+            Now we know that $\Gamma,x:A \betared \Gamma^\prime, x:A$ by an inference rule of context reduction.
+            Thus, by IH on $\D{2}$ we have $\Gamma^\prime, x:A \vdash B \cinfr \text{codom}_\Pi(m)$.
+            Reconstructing the function type yields $\Gamma^\prime \vdash (x:A) \to_m \infr \text{codom}_\Pi(m)$.
+        }
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $(x : A) \to_m B$ is not equal to $\star$ or $\kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+\begin{proofcase}
+    First observe that $[x := a]B \neq \kind$ because $\star$ cannot unify with an application syntactic form.
+    Assume $[x := a]B = \star$ which means $B = \star$.
+    \begin{enumerate}
+        \item {
+            If $f \betared f^\prime$ or $a \betared a^\prime$ then in either case the IH for the respective derivation yields the necessary judgments to reconstruct the application inference.
+        }
+        \item {
+            If $\Gamma \betared \Gamma^\prime$ then the result is straightforward by the IH.
+        }
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+\begin{proofcase}
+    \begin{enumerate}
+        \item {
+            If $A \betared A^\prime$ then by IH on $\D{1}$ we know that $\Gamma \vdash A^\prime \cinfr \star$.
+            Now, we have $\Gamma,x:A \betared \Gamma,x:A^\prime$ so by the IH on $\D{2}$ we know that $\Gamma,x:A^\prime \vdash B \cinfr \star$.
+            If $B \betared B^\prime$ then the IH on $\D{2}$ is sufficient to obtain $\Gamma,x:A \vdash B^\prime \cinfr \star$.
+            Reconstructing the intersection type in both cases concludes this case.
+        }
+        \item {
+            Straightforward by applying the IH.
+        }
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $(x : A) \cap B$ is not equal to $\star$ or $\kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+\begin{proofcase}
+    If $A = \kind$ then the judgment is impossible because only $\star$ infers $\kind$.
+    If $A = \star$ then $t.1$ must be either a variable (impossible), a function type (impossible), an application (impossible), an intersection type (impossible), a second projection (impossible), or an equality type (impossible).
+
+    In other words, while it is true that $A$ could theoretically be $\star$, because the proof term is $t.1$ the syntactic form does not match any rule that could infer $\star$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+\begin{proofcase}
+    By similar reasoning to the first projection case, it is not possible for $B = \star$ or $B = \kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+\begin{proofcase}
+    \begin{enumerate}
+        \item {
+            There are three possibilities: $a \betared a^\prime$, or $A \betared A^\prime$ or $b \betared b^\prime$.
+            In any case the IH yields the corresponding derivation for the reduced proof.
+        }
+        \item By the IH and reconstructing the equality type rule.
+    \end{enumerate}
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $t =_A t$ is not equal to $\star$ or $\kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \EqualityInductionRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $\app{U}{m}{V}$ is not equal to $\star$ or $\kind$ (for any $U, V, m$).
+    Note, while this expression may \textit{reduce} to $\star$ the restriction placed is syntactic identity.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $a =_T b$ is not equal to $\star$ or $\kind$ (for any $T$).
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $(x : A) \cap B$ is not equal to $\star$ or $\kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+\begin{proofcase}
+    Immediate because $(X : \star) \to_0 X$ is not equal to $\star$ or $\kind$.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+\begin{proofcase}
+    We know that $B$ is either $\star$ or $\kind$, but by inversion of $\D{2}$ it must be the case that $A = B$.
+    By the IH on $\D{1}$ we obtain the goal.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+\begin{proofcase}
+    We know that $B$ is either $\star$ or $\kind$, but by inversion of $\D{2}$ it cannot be $\kind$.
+    Thus, $B = \star$ and moreover it must be that $A = \star$ to satisfy $\D{3}$.
+    By the IH on $\D{1}$ we have:
+    $(t \betared t^\prime \to \Gamma \vdash t^\prime \infr \star) \wedge (\Gamma \betared \Gamma^\prime \to \Gamma^\prime \vdash t \infr \star)$.
+    Both cases of the goal follow from the IH.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+\begin{proofcase}
+    By inversion on the reduction relation the context cannot be empty.
+\end{proofcase}
+
+$\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+\begin{proofcase}
+    Either $\Gamma \betared \Gamma^\prime$ or $A \betared A^\prime$.
+    In the first case the IH gives us $\vdash \Gamma^\prime$ (from $\D{2}$) and $\Gamma^\prime \vdash A \cinfr K$ (from $\D{3}$) and because reduction does not alter free variables we know that $x \notin \text{FV}(\Gamma^\prime)$.
+    Thus, $\vdash \Gamma^\prime, x : A$ is constructed in the first case.
+
+    In the second case the IH gives us $\Gamma \vdash A^\prime \cinfr K$ (from $\D{3}$).
+    Which is sufficient to construct $\vdash \Gamma, x : A^\prime$.
+\end{proofcase}
+\end{proof}

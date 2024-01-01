@@ -1,0 +1,41 @@
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        t &::= x\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
+        \kappa_1 &::= \lambda_m\ |\ \Pi_m\ |\ \cap \\
+        \kappa_2 &::=\star\ |\ \kind\ | \bullet_m |\ \text{pair}\ |\ \text{proj}_1\ |\ \text{proj}_2\ |\ \text{eq}\ |\ \text{refl}\ |\ J\ |\ \vartheta\ |\ \delta\ |\ \phi  \\
+        m &::= \omega\ |\ 0\ |\ \tau \\
+        &\mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
+        &\mathfrak{a}(\text{proj}_1) = \mathfrak{a}(\text{proj}_2) = \mathfrak{a}(\text{refl}) = \mathfrak{a}(\vartheta) = \mathfrak{a}(\delta) = 1 \\
+        &\mathfrak{a}(\bullet_m) = 2 \\
+        &\mathfrak{a}(\text{pair}) = \mathfrak{a}(\text{eq}) = \mathfrak{a}(\varphi) = 3 \\
+        &\mathfrak{a}(J) = 6
+    \end{align*}
+    \vspace{-.4in}
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \star &:= \mathfrak{c}(\star) \\
+            \kind &:= \mathfrak{c}(\kind) \\
+            \abs{\lambda_m}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda_m, x : t_1, t_2) \\
+            (x : t_1) \to_m t_2 &:= \mathfrak{b}(\Pi_m, x : t_1, t_2) \\
+            (x : t_1) \cap t_2 &:= \mathfrak{b}(\cap, x : t_1, t_2) \\
+            t_1 \bullet_m t_2 &:= \mathfrak{c}(\bullet_m, t_1, t_2) \\
+            [t_1, t_2, t_3] &:= \mathfrak{c}(\text{pair}, t_1, t_2, t_3)
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            t.1 &:= \mathfrak{c}(\text{proj}_1, t) \\
+            t.2 &:= \mathfrak{c}(\text{proj}_2, t) \\
+            t_1 =_{t_2} t_3 &:= \mathfrak{c}(\text{eq}, t_1, t_2, t_3) \\
+            \text{refl}(t) &:= \mathfrak{c}(\text{refl}, t) \\
+            \vartheta(t) &:= \mathfrak{c}(\vartheta, t) \\
+            \delta(t) &:= \mathfrak{c}(\delta, t) \\
+            \varphi(t) &:= \mathfrak{c}(\varphi, t)
+        \end{align*}
+    \end{minipage}
+    \vspace{-.05in}
+    $$J(t_1, t_2, t_3, t_4, t_5, t_6) := \mathfrak{c}(J, t_1, t_2, t_3, t_4, t_5, t_6)$$
+    \caption{Generic syntax, there are three constructors, variables, a generic binder, and a generic non-binder. Each are parameterized with a constant tag to specialize to a particular syntactic consruct. The non-binder constructor has a vector of subterms determined by an arity function computed on tags. Standard syntactic constructors are defined in terms of the generic forms.}
+\end{figure}

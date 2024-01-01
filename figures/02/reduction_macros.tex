@@ -1,0 +1,37 @@
+
+\Rule{\BinderReductionOne}
+    {
+        \der{\D{1}}{t_1 \betared t_1^\prime}
+    }
+    {\mathfrak{b}(\kappa, x : t_1, t_2) \betared \mathfrak{b}(\kappa, x : t_1^\prime, t_2) }
+    {}
+
+\Rule{\BinderReductionTwo}
+    {
+        \der{\D{1}}{t_2 \betared t_2^\prime}
+    }
+    {\mathfrak{b}(\kappa, x : t_1, t_2) \betared \mathfrak{b}(\kappa, x : t_1, t_2^\prime) }
+    {}
+
+\Rule{\NonbinderReduction}
+    {
+        \der{\D{1}}{t_i \betared t_i^\prime} \\
+        i \in {1, \ldots, \mathfrak{a}(\kappa)}
+    }
+    {\mathfrak{c}(\kappa, t_1, \ldots t_i, \ldots t_{\mathfrak{a}(\kappa)}) \betared \mathfrak{c}(\kappa, t_1, \ldots t_i^\prime, \ldots t_{\mathfrak{a}(\kappa)}) }
+    {}
+
+
+\Rule{\ContextReductionHeadRule}
+    {
+        \der{\D{1}}{A \betared A^\prime}
+    }
+    {\Gamma, x : A \betared \Gamma, x : A^\prime}
+    {CtxHeadRed}
+
+\Rule{\ContextReductionTailRule}
+    {
+        \der{\D{1}}{\Gamma \betared \Gamma^\prime}
+    }
+    {\Gamma, x : A \betared \Gamma^\prime, x : A}
+    {CtxTailRed}

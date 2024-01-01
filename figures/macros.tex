@@ -1,0 +1,39 @@
+
+%% Premiliminaries
+\newlength\cinfrheight
+\settoheight{\cinfrheight}{\textless}
+\newcommand\raisedtextbar{\raisebox{0.4ex}{\textbar}}
+\newcommand{\cinfrbar}{\resizebox{!}{\cinfrheight}{\raisedtextbar}}
+\newcommand{\cinfr}{\kern+3.5pt\cinfrbar\kern-3.5pt\vartriangleright}
+
+\newcommand{\infr}{\vartriangleright}
+\newcommand{\chck}{\vartriangleleft}
+
+\newcommand{\abs}[4]{{#1}\, #2\! : \! #3.\, #4}
+\newcommand{\absu}[3]{{#1}\, #2.\, #3}
+\newcommand{\app}[3]{#1 \bullet_{#2} #3}
+\newcommand{\apptwo}[5]{\app{\app{#1}{#2}{#3}}{#4}{#5}}
+\newcommand{\appthr}[7]{\apptwo{\app{#1}{#2}{#3}}{#4}{#5}{#6}{#7}}
+
+\newcommand{\betared}{\rightsquigarrow_\beta}
+\newcommand{\betastar}{\rightsquigarrow_\beta^*}
+\newcommand{\kind}{\raisebox{-1pt}{$\square$}}
+
+\newcommand{\D}[1]{\mathcal{D}_{#1}}
+\newcommand{\der}[2]{#2}
+\newcommand{\inferlabel}[1]{\textsc{#1}}
+
+\newcommand{\Rule}[4]{
+    \newcommand{#1}[1][a]{
+        \if##1a
+        \renewcommand{\der}[2]{####2}
+        \renewcommand{\inferlabel}[1]{\textsc{####1}}
+        \else
+        \renewcommand{\der}[2]{\stackrel{####1}{####2}}
+        \renewcommand{\inferlabel}[1]{}
+        \fi
+        \inferrule* [right=\inferlabel{#4}] {#2} {#3} 
+        \renewcommand{\der}[2]{####2}
+        \renewcommand{\inferlabel}[1]{\textsc{####1}}
+    }
+}
