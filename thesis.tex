@@ -7,12 +7,15 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{changepage}
+\usepackage{xcolor}
 
 \newenvironment{proofcase}{\vspace{0.3cm}\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}\vspace{0.4cm}}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
 
+\newcommand{\outline}[1]{{\color{blue} #1}}
+% \renewcommand{\outline}[1]{}
 \input{figures/macros.tex}
 
 \addbibresource{biblio.bib}

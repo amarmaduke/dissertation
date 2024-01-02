@@ -1,8 +1,28 @@
-\chapter{Introduction to \texorpdfstring{System F$^\omega$}{System F Omega}}
+\chapter{Introduction}
 
+\outline{Undergraduate-level description of System F Omega}
 Type Theory as a discipline is a difficult subject to thoroughly introduce because it in essence captures a wide variety of programming languages (if not all programming languages currently defined).
 To trim the fat this thesis will focus on a particular type theory, System F$^\omega$, and the various bits of machinery that are required to describe it.
 However, even with this focus there are different equivalent methods of presenting the theory: Pure Type Systems, Martin-L\"{o}f style presentations, Bidirectional systems, etc.
 An extrinsic bidirectional presentation will be used with only summary remarks, if any, for the other styles.
 This introduction is far from complete and is instead focused on providing the reader with enough background to understand the later chapters.
 
+\outline{Describe the syntax including opening/closing/substitution, note that variable bureaucracy is going to be taken for granted in exposition}
+
+\outline{Describe reduction, multistep reduction (for any predicate), conversion (for any predicate), and how reduction is confluent and transitive, and how reduction is strongly normalizing}
+
+\outline{Describe the typing rules using a bidirectional system, note that type checking is decidable}
+
+\outline{Describe Church encodings of data in System F Omega note that they cannot be inductive}
+
+\outline{Carve out the relevant subsystems, connect them to known notions of logic}
+
+\outline{Detour about what a proof will mean for us}
+
+\outline{Describe extension to CC}
+
+\outline{Add an irrelevant equality and demonstrate how it breaks decidability}
+
+\outline{Describe, briefly, how Cedille enables inductive encodings through a quotient construction}
+
+\outline{List the goals of Cedille2 and the remaining structure of the thesis}
