@@ -2,7 +2,37 @@
 \input{figures/02/typing_macros.tex}
 \input{figures/02/reduction_macros.tex}
 
+The theory described in this chapter is a variation of the core theory of Cedille \cite{stump2021_cedillecore}.
+It is closely related with the significant differences occurring with the equality type.
+This variation has two primary goals.
+First, to have decidable type checking (and thus decidable conversion checking).
+Second, to retain as many constructions as possible from Cedille.
+This chapter focuses on the description of the theory and some basic metatheory.
+By basic, we mean properties that are provable by induction on the various derivations or are otherwise provable using straightforward methods.
+
+Syntax for the theory is described in Figure~\ref{fig:syntax}.
+Unlike other presentations a generic syntax tree is used with a tag to indicate different syntactic forms.
+There are three basic syntactic constructs: variables, binders, and constructors.
+A generic presentation enables occasional economic benefits in presenting other derivations.
+However, a more standard syntax is defined in terms of the generic one.
+The specific syntactic forms and the generic forms are used interchangeably whichever is more convenient.
+
 \input{figures/02/syntax.tex}
+
+Formally, syntax is worked with as a locally nameless set following the axioms of Pitts \cite{2023pitts_lns}.
+For the sake of presentation these details are elided.
+This means that freshness of variables and capture avoiding substitution are largely taken for granted in the exposition of the theory.
+Moreover, identity of syntactic terms is assumed to be alpha equivalence.
+Meaning that, again, bureaucracy around variables is taken for granted.
+Thus, substitution is defined simply:
+\begin{align*}
+    [x := v]y &= v \text{ if }x = y \\
+    [x := v]y &= y \text{ if }x \neq y \\
+    [x := v]\mathfrak{b}(\kappa_1, x : t_1, t_2) &= \mathfrak{b}(\kappa_1, x : [x := v]t_1, [x := v]t_2) \\
+    [x := v]\mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) &= \mathfrak{c}(\kappa_2, [x := v]t_1, \ldots, [x := v]t_{\mathfrak{a}(\kappa_2)})
+\end{align*}
+
+
 \input{figures/02/erasure.tex}
 \input{figures/02/reduction.tex}
 \input{figures/02/domain.tex}
