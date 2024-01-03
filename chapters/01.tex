@@ -1,25 +1,146 @@
 \chapter{Introduction}
 
-\outline{Undergraduate-level description of System F Omega}
+\outline{Initial opener}
 Type Theory as a discipline is a difficult subject to thoroughly introduce because it in essence captures a wide variety of programming languages (if not all programming languages currently defined).
 To trim the fat this thesis will focus on a particular type theory, System F$^\omega$, and the various bits of machinery that are required to describe it.
 However, even with this focus there are different equivalent methods of presenting the theory: Pure Type Systems, Martin-L\"{o}f style presentations, Bidirectional systems, etc.
 An extrinsic bidirectional presentation will be used with only summary remarks, if any, for the other styles.
 This introduction is far from complete and is instead focused on providing the reader with enough background to understand the later chapters.
 
+\outline{Undergraduate-level description of System F Omega}
+System F$^\omega$ is a well study type theory that supports basic function types that are in every typed programming language, unconstrained paramterized types (sometimes referred to as generics in other programming languages), and predicates.
+System F$^\omega$ was first introduced by Girard in TODO:YEAR as an extension to System F which Girard also invented (in TODO:YEAR) [TODO:CITE].
+An extension of System F$^\omega$ is the core calculus of Haskell [TODO:CITE].
+Indeed, System F$^\omega$ has a privileged role in the design space of functional programming languages.
+
 \outline{Describe the syntax including opening/closing/substitution, note that variable bureaucracy is going to be taken for granted in exposition}
+The syntax of System F$^\omega$ is relatively simple, see Figure~TODO:FIG.
+While the syntax is presented in uniformly there are three distinct sorts: kinds, types, and terms.
+A function type can exist on that kind or type level and a function definition (i.e. a lambda abstraction) may bind a kind at the type level or a term at the term level.
+The third constructor is also a function definition, the uppercase lambda abstraction, which binds a type at the term level.
+Function application is represented as jutxaposition (i.e. placing two terms next to eachother with not syntactic marker).
+
+Of course, variables are also present in the syntax but the notion of variable is a surpisingly subtle.
+There are several methods of formally working with variables in syntax TODO:LIST-AND-CITE.
+For the exposition of the theory in this work it is assumed that variable bureaucracy is handled when needed.
+Thus, issues of variable freshness, capture-avoiding substitution, and equivalence of terms up-to renaming are elided.
+
+TODO:Put a tutorial of this stuff in an Appendix?
 
 \outline{Describe reduction, multistep reduction (for any predicate), conversion (for any predicate), and how reduction is confluent and transitive, and how reduction is strongly normalizing}
+The syntax itself has a well understood notion of reduction to normal form, if such a form exists.
+Figure~TODO:FIG presents the reduction rules.
+Most rules are structural, stating that if a reduction occurs in a subterm then the whole term also reduces.
+Where the reduction does meaningful work is in the $\beta$-rule (or the substitution rule).
+This rule models application of function to argument, replacing copies of the bound variable with the argument term.
+Thus, reduction on syntax describes only evaluation of functions.
+As extensions are added, such as pairs or numerals, the reduction rules are augmented to support different evaluations of data.
+
+A syntactic form is said to be a \textit{value} if there is no possible reduction step that can be taken (i.e. all functions are fully evaluated).
+If there exists some sequence of reduction steps that lead to a value for a given syntax form, then that syntax is said to be \textit{normalizing}.
+If \textit{all} sequences of reduction steps lead to a value, then the form is \textit{strongly normalizing}.
+Restricting the set of syntactic forms to a normalizing subset is critical to achieve decidability of the reduction relation, and thus decidability of type checking.
+
+Given any relation, the reflexive-transitive closure may be defined inductively, as shown in Figure~TODO:FIG.
+In particular, if $-R-$ is a relation, then $-R^*-$ is a supserset of that relation such that for any $x, y, z$ we have $x R^* x$ and $x R^* y \to y R^* z \to x R^* z$.
+The reduction rules defined previously is a relation on terms, and therefore omits a reflexive-transitive closure.
+Reduction rules will be referred to as the $\beta$\textit{-step relation} or simply the \textit{step relation} and the reflexive-transition closure as the \textit{multistep-relation} because it models reduction taking zero or more individual steps.
+
+Conversion between syntax is defined as two syntactic forms sharing a common reduction, i.e. $t_1$ is convertible with $t_2$ (written $t_1 \equiv t_2$) if there exists a $z$ such that $t_1 \betastar z$ and $t_2 \betastar z$.
+The conversion relation is used in the typing rules to allow syntax forms to have continued valid types as the syntax reduces.
+Indeed, it is possible for the evaluation of a function in some given syntax to require simultaneously reductions in the type to maintain the typing relation.
+It may be tempting to view conversion as the reflexive-symmetric-transitive closure of the step relation, but transitivity is not an obvious property.
+First, confluence must be proven.
+
+\begin{theorem}[Confluence]
+    TODO
+\end{theorem}
+
+The confluence theorem is non-trivial to prove, involving defining a new parallel reduction relation which is sound and complete relative to the step relation.
+Confluence for this parallel reduction relation is shown by induction on the relations definition, but proving confluence directly is difficult.
+Nevertheless, with confluence proven transitivity is a straightforward consequence.
+
+\begin{theorem}[Transitivity of Conversion]
+    TODO
+\end{theorem}
+\begin{proof}
+    TODO
+\end{proof}
 
 \outline{Describe the typing rules using a bidirectional system, note that type checking is decidable}
+The type system restricts syntax to a set of \textit{proofs}.
+A proof has significant philosophical connotations, involving the verficiation of some fact.
+For System F$^\omega$ there are \textit{kinds} of which \textit{types} are the proofs, and \textit{types} of which \textit{terms} are the proofs.
+For this thesis, a proof is some finite syntax tree with enough information to decidably reconstruct the given fact it verifies.
+The typing rules (i.e. the proof rules) are presented in Figure~FIG:TODO.
+These proof rules are \textit{bidirectional} consisting of four forms:
+\begin{enumerate}
+    \item $\Gamma \vdash t \infr T$, to be read as $T$ is the inferred fact of the proof $t$ in the context $\Gamma$ or more simply, $t$ infers $T$ in $\Gamma$;
+    \item $\Gamma \vdash t \cinfr T$, to be read as $T$ is the inferred fact, possibly after some reduction, of the proof $t$ in the context $\Gamma$ or simply $t$ constrained infers $T$ in $\Gamma$;
+    \item $\Gamma \vdash t \chck T$, to be read as $T$ is checked against the inferred fact of the proof $t$ in the context $\Gamma$ or simply, $t$ checks against $T$ in $\Gamma$;
+    \item $\vdash \Gamma$, to be read as the context $\Gamma$ is well-formed, and thus consists only of types that are proofs
+\end{enumerate}
+Each of these relations is called a \textit{judgment}.
+Judgments are only about proofs and their contexts.
+The only exception is the constant \kind, which is called the \textit{super-kind} and is the only syntactic form that appears only in a fact position and never in a proof position.
+These judgments are syntax-directed, meaning that if a given proof is pattern matched it is immediately obvious which rule it must be a part of, there is no ambiguity between constructors of a judgment and a given proof.
+The inference rule is interpretted as the function \texttt{infer(t,G)} with output $T$.
+The constrained inference rule requires a normalization subproducre \texttt{norm(t)} with output the value of $t$, then it is a pattern match on the value of the inferred $T$.
+The checking rule is interpreted as the function \texttt{check(t,G,T)} with output a boolean deciding whether or not $T$ checks against the inferred type of $t$.
+Finally, well-formed context rule is an iterated application of the above rules to the elements of the context.
+Because the rules are syntax directed, the implementation of \texttt{infer} is straightforward by pattern matching.
+Likewise, the \texttt{check} function is easily defined in terms of \texttt{infer} and \texttt{norm}.
+The issue is the \texttt{norm} function which may not be terminating.
+Indeed, \texttt{norm} is terminating exactly when the multistep relation is strongly normalizing.
+With this property type inference and checking are decidable and all syntactic forms are proofs as originally promised.
 
 \outline{Describe Church encodings of data in System F Omega note that they cannot be inductive}
+While it is true that System F Omega only has function types as primitives several other data types are internally derivable using function types.
+For example, the type of natural numbers is defined:
+$$\mathbb{N} : \star = (X : \star) \to X \to (X \to X) \to X$$
+The data type of lists is one easy generalization away from the definition of natural numbers.
+Conceptually, data types can be defined by assuming the existence of some abstract type such that it supports a given interface.
+For example, the natural numbers is conceptually defined using this idea as:
+$$\mathbb{N} : \star = \exists X,\ X \times (X \to X)$$
+where the $\times$ symbol encodes the logical notion of \textit{and}.
+This defintion is saying that there exists an abstract type that supports two constructors: zero and successor.
+However, we can encode existentials with function types:
+$$\exists X,\ X \times (X \to X) = (X : \star) \to (X \times (X \to X)) \to X$$
+Finally, one application of currying yields the original definition of naturals.
+
+Likewise, pairs and sum types are defined:
+$$A \times B = \exists X, A \to B \to X = (X : \star) \to (A \to B \to X) \to X$$
+$$A + B = \exists X, (A \to X) \times (B \to X) = (X : \star) \to ((A \to X) \times (B \to X)) \to X$$
+For the sum type the final translation to function types is of course still possible, but with pairs already defined it can also be left as is.
+The logical constants true and false are defined:
+$$\top = \exists X, X = (X : \star) \to X \to X$$
+$$\bot = (X : \star) \to X$$
+Negation is unique in that there is no constructor, thus it is difficult to give a data type style definition in terms of existentials without already having a false constant defined.
+Finally, negation is defined thus:
+$$\neg A = A \to \bot$$
+
+While data types like $\mathbb{N}$ are definable they lack induction TODO:CITE.
+Therefore, if a user wished to reason about properties of the natural numbers they would be forced to postulate an induction principle as an addiitonal argument.
+This is not only cumbersome but unsatisfactory as the natural numbers are in their essence the least set satisfying their induction principle.
+Ultimately, the issue is that these definitions are too general.
+They omit more possibilities than one would like and those exotic elements break the principle of induction.
+Note that the syntax and theory of System F$^\omega$ is not flexible enough to notice and define these exotic elements, but it is also not strong enough to rule them out.
 
 \outline{Carve out the relevant subsystems, connect them to known notions of logic}
+System F$^\omega$ is a conservative extension of two other systems of note.
+An extension is \textit{conservative} if it agrees with the subsystem on all facts expressible in both systems.
+One subsystem is obvious: System F, but the simply typed lambda calculus (STLC) is also a subsystem of System F$^\omega$.
+All three of these systems have suprising connections to standard logics.
+Named the Curry-Howard correspondence TODO:CITE, each system is in fact a reification of a particular logic of note.
 
-\outline{Detour about what a proof will mean for us}
+For STLC, it is propositional logic.
+Each type in STLC encodes a proposition and the proofs encode the derivation tree of a given proposition.
+For System F, it is second order logic, with propositions being quantifiable, expressed via the function type $(X : \star) \to P$.
+System F$^\omega$ is no exception as it corresponds to higher order logic with a copy of propositional logic at the level of types and kinds.
+These connections make it clear that type theory is more than just the study of programming languages, but also contains deep connections to logic.
 
 \outline{Describe extension to CC}
+
 
 \outline{Add an irrelevant equality and demonstrate how it breaks decidability}
 
