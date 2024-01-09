@@ -8,6 +8,7 @@
 \usepackage{amsthm}
 \usepackage{changepage}
 \usepackage{xcolor}
+\usepackage{tocloft}
 
 \newenvironment{proofcase}{\vspace{0.3cm}\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}\vspace{0.4cm}}
 \newtheorem{theorem}{Theorem}
@@ -61,8 +62,8 @@
 
 \tableofcontents
 
+\setlength{\cftparskip}{\baselineskip}
 \listoffigures
-
 \listoftables
 
 \input{chapters/preface.tex}

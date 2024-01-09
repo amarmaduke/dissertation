@@ -125,12 +125,12 @@
 
 \Rule{\CastRule}
     {
-        \der{\D{1}}{\Gamma \vdash f \cinfr (a : A) \to_\omega (x:A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash a \chck A} \\
+        \der{\D{1}}{\Gamma \vdash f \cinfr (a : A) \to_\omega (x:A^\prime) \cap B} \\
+        \der{\D{2}}{A \equiv A^\prime} \\
         \der{\D{3}}{\Gamma \vdash e \chck (a : A) \to_\omega a =_A (\app{f}{\omega}{a}).1} \\
         \der{\D{4}}{\text{FV}(|e|) = \varnothing}
     }
-    {\Gamma \vdash \varphi(a, f, e) \infr (x:A) \cap B}
+    {\Gamma \vdash \varphi(f, e) \infr (a : A) \to_\omega (x:A) \cap B}
     {Cast}
 
 \Rule{\SeparationRule}

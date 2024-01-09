@@ -1,11 +1,13 @@
 
 %% Premiliminaries
 \newlength\cinfrheight
-\settoheight{\cinfrheight}{\textless}
-\newcommand\raisedtextbar{\raisebox{0.4ex}{\textbar}}
-\newcommand{\cinfrbar}{\resizebox{!}{\cinfrheight}{\raisedtextbar}}
-\newcommand{\cinfr}{\kern+3.5pt\cinfrbar\kern-3.5pt\vartriangleright}
+\settoheight{\cinfrheight}{1.25in}
+\newcommand\raisedtextbar{\raisebox{0.075ex}{$\shortmid$}}
+\newcommand{\cinfrbar}{\resizebox{!}{\cinfrheight}{$\raisedtextbar$}}
+%\newcommand{\cinfrbar}{\raisebox{0.075ex}{$\shortmid$}}
+%\newcommand{\cinfr}{\mkern+5mu\cinfrbar\mkern-6mu\vartriangleright}
 
+\newcommand{\cinfr}{\blacktriangleright}
 \newcommand{\infr}{\vartriangleright}
 \newcommand{\chck}{\vartriangleleft}
 
@@ -15,8 +17,8 @@
 \newcommand{\apptwo}[5]{\app{\app{#1}{#2}{#3}}{#4}{#5}}
 \newcommand{\appthr}[7]{\apptwo{\app{#1}{#2}{#3}}{#4}{#5}{#6}{#7}}
 
-\newcommand{\betared}{\rightsquigarrow_\beta}
-\newcommand{\betastar}{\rightsquigarrow_\beta^*}
+\newcommand{\betared}{\rightsquigarrow}
+\newcommand{\betastar}{\rightsquigarrow^*}
 \newcommand{\kind}{\raisebox{-1pt}{$\square$}}
 
 \newcommand{\D}[1]{\mathcal{D}_{#1}}
