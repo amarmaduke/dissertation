@@ -1,0 +1,17 @@
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        FV(x) &= \{x\} \\
+        FV(\mathfrak{b}(\kappa_1, x : t_1, t_2)) &= FV(t_1) \cup (FV(t_2) - \{x\}) \\
+        FV(\mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)})) &= FV(t_1) \cup \cdots \cup FV(t_{\mathfrak{a}(\kappa_2)})
+    \end{align*}
+    \begin{align*}
+        [y := t]x &= x \\
+        [y := t]y &= t \\
+        [y := t]\mathfrak{b}(\kappa_1, x : t_1, t_2) &= (\mathfrak{b}(\kappa_1, x : [y := t]t_1, [y := t]t_2))  \\
+        [y := t]\mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) &= \mathfrak{c}(\kappa_2, [y := t]t_1, \ldots, [y := t]t_{\mathfrak{a}(\kappa_2)})
+    \end{align*}
+    \caption{Operations on syntax for System F$^\omega$, including computing free variables and susbtitution.}
+    \label{fig:ops_f}
+\end{figure}

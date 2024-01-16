@@ -21,7 +21,6 @@
     {\mathfrak{c}(\kappa, t_1, \ldots t_i, \ldots t_{\mathfrak{a}(\kappa)}) \betared \mathfrak{c}(\kappa, t_1, \ldots t_i^\prime, \ldots t_{\mathfrak{a}(\kappa)}) }
     {}
 
-
 \Rule{\ContextReductionHeadRule}
     {
         \der{\D{1}}{A \betared A^\prime}
@@ -35,3 +34,25 @@
     }
     {\Gamma, x : A \betared \Gamma^\prime, x : A}
     {CtxTailRed}
+
+\Rule{\ExampleRule}
+    {
+        \der{\D{1}}{P_1}
+        \\ \ldots
+        \\ \der{\D{n}}{P_n}
+    }
+    {C}
+    {Example}
+
+\Rule{\MultiRefl}
+    {\color{white}{\_}}
+    {t\ R^*\ t}
+    {Reflexive}
+
+\Rule{\MultiStep}
+    {
+        \der{\D{1}}{t\ R\ t^\prime} \\
+        \der{\D{2}}{t^\prime\ R^*\ t^{\prime\prime}}
+    }
+    {t\ R^*\ t^{\prime\prime}}
+    {Transitive}

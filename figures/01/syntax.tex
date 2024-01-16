@@ -1,0 +1,31 @@
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        t &::= x\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
+        \kappa_1 &::= \lambda\ |\ \Pi \\
+        \kappa_2 &::=\star\ |\ \kind\ |\ \text{app} \\
+    \end{align*}
+    \vspace{-.6in}
+    \begin{minipage}{0.32\textwidth}
+        \begin{align*}
+            \mathfrak{a}(\star) = \mathfrak{a}(\kind) &= 0 \\
+            \mathfrak{a}(\text{app}) &= 2
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.32\textwidth}
+        \begin{align*}
+            \abs{\lambda}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda, x : t_1, t_2) \\
+            (x : t_1) \to t_2 &:= \mathfrak{b}(\Pi, x : t_1, t_2) \\
+            t_1\ t_2 &:= \mathfrak{c}(\text{app}, t_1, t_2)
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.32\textwidth}
+        \begin{align*}
+            \star &:= \mathfrak{c}(\star) \\
+            \kind &:= \mathfrak{c}(\kind)
+        \end{align*}
+    \end{minipage}
+    \caption{Syntax for System F$^\omega$.}
+    \label{fig:syntax_f}
+\end{figure}

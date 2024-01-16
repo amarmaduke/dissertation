@@ -1,0 +1,81 @@
+
+%%% System F Omega specific:
+
+\Rule{\PiRuleFOne}
+    {
+        \der{\D{1}}{\Gamma \vdash A \cinfr \kind}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B \cinfr \kind}
+    }
+    {\Gamma \vdash (x : A) \to B \infr \kind}
+    {Pi1}
+
+\Rule{\PiRuleFTwo}
+    {
+        \der{\D{1}}{\Gamma \vdash A \cinfr K}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B \cinfr \star}
+    }
+    {\Gamma \vdash (x : A) \to B \infr \star}
+    {Pi2}
+
+\Rule{\LambdaRuleF}
+    {
+        \der{\D{1}}{\Gamma \vdash (x:A) \to B \cinfr K}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash t \infr B}
+    }
+    {\Gamma \vdash \abs{\lambda}{x}{A}{t} \infr (x : A) \to B}
+    {Lam}
+
+\Rule{\AppRuleF}
+    {
+        \der{\D{1}}{\Gamma \vdash f \cinfr (x : A) \to B} \\
+        \der{\D{2}}{\Gamma \vdash a \chck A}
+    }
+    {\Gamma \vdash f\ a \infr [x := a]B}
+    {App}
+
+%%% Non-specific Macros:
+
+\Rule{\AxiomRule}
+    {\der{\D{1}}{\vdash \Gamma}}
+    {\Gamma \vdash \star \infr \kind}
+    {Axiom}
+
+\Rule{\VarRule}
+    {
+        \der{\D{1}}{\vdash \Gamma}
+        \\ \der{\D{2}}{(x : A) \in \Gamma}
+    }
+    {\Gamma \vdash x \infr A}
+    {Var}
+
+
+    \Rule{\HeadInferenceRule}
+    {
+        \der{\D{1}}{\Gamma \vdash t \infr A} \\
+        \der{\D{2}}{A \betastar B}
+    }
+    {\Gamma \vdash t \cinfr B}
+    {RedInf}
+
+\Rule{\CheckRule}
+    {
+        \der{\D{1}}{\Gamma \vdash t \infr A} \\
+        \der{\D{2}}{\Gamma \vdash B \cinfr K} \\
+        \der{\D{2}}{A \equiv B}
+    }  
+    {\Gamma \vdash t \chck B}
+    {Chk}
+
+\Rule{\ContextEmptyRule}
+    {\color{white}{\_}}
+    {\vdash \varepsilon}
+    {CtxEm}
+
+\Rule{\ContextAppendRule}
+    {
+        \der{\D{1}}{x \notin \text{FV}(\Gamma)} \\
+        \der{\D{2}}{\vdash \Gamma} \\
+        \der{\D{3}}{\Gamma \vdash A \cinfr K}
+    }
+    {\vdash \Gamma, x : A}
+    {CtxApp}
