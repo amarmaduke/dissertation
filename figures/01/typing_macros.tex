@@ -17,6 +17,14 @@
     {\Gamma \vdash (x : A) \to B \infr \star}
     {Pi2}
 
+\Rule{\PiRuleCC}
+    {
+        \der{\D{1}}{\Gamma \vdash A \cinfr K_1}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B \cinfr K_2}
+    }
+    {\Gamma \vdash (x : A) \to B \infr K_2}
+    {Pi}
+
 \Rule{\LambdaRuleF}
     {
         \der{\D{1}}{\Gamma \vdash (x:A) \to B \cinfr K}

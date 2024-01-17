@@ -3,7 +3,7 @@
 \input{figures/01/reduction_macros.tex}
 
 Type theory is a tool for reasoning about assertions of some domain of discourse.
-When applied to programming languages that domain is the expressible programs and their properties.
+When applied to programming languages, that domain is the expressible programs and their properties.
 Of course, a type theory may be rich enough to express detailed properties about a program, such that it halts or returns an even number.
 Therein lies a tension between what properties a type theory can faithfully (i.e. consistently) encode and the complexity of the type theory itself.
 If the theory is too complex then it may be untenable to prove that the type theory is well-behaved.
@@ -168,7 +168,7 @@ Four relations are defined mutually:
 \end{enumerate}
 Note that there are two \textsc{Pi} rules that restrict the domain and codomain pairs of function types to three possibilities: $(\kind, \kind)$, $(\star, \star)$, and $(\kind, \star)$.
 This is exactly what is required by the $\lambda$-cube for this definition to be F$^\omega$.
-For the unfamiliar reading this rules is arcane, thus below is exposition of a selection of the typing rules to better acclimate the reader with the notation:
+For the unfamiliar reading these rules is arcane, thus exposition explaining a small selected set is provided.
 
 $\AxiomRule$ The axiom rule has one premise, requiring that the context is well-formed.
 It concludes that the constant term $\star$ has type $\kind$.
@@ -193,11 +193,18 @@ Finally, the inferred result of the application is the codomain of the function-
 This substitution is necessary because this application could be a type application to a type function.
 For example, let $f = \abs{\lambda}{X}{\star}{\text{id}\ X}$ where id is the identity term.
 The inferred type of $f$ is then $(X : \star) \to X \to X$.
-Let $a = \mathbb{N}$ (any type constant), then $f\ a \infr [X := \mathbb{N}](X \to X)$ or $f\ a \infr \mathbb{N} \to \mathbb{N}$.
+Let $a = \mathbb{N}$ (any type constant), then $f\ \mathbb{N} \infr [X := \mathbb{N}](X \to X)$ or $f\ \mathbb{N} \infr \mathbb{N} \to \mathbb{N}$.
 
 While this presentation of F$^\omega$ is not standard Lennon-Bertrand demonstrated that it is equivalent to the standard formulation \cite{lennon2021}.
 In fact, Lennon-Bertrand showed that a similar formulation is logically equivalent for the stronger CIC.
-Thus, the standard metatheoretical results, such that well-typed terms of F$^\omega$ are strongly normalizing still holds.
+Thus, standard metatheoretical results such as preservation and strong normalization still hold.
+
+\begin{lemma}[Preservation of F$^\omega$]
+    If $\Gamma \vdash s \chck T$ and $s \betastar t$ then $\Gamma \vdash t \chck T$
+\end{lemma}
+\begin{proof}
+    See Appendix~\ref{ap:b} for a proof of preservation of a conservative extension of F$^\omega$, and thus a proof of preservation for F$^\omega$ itself.
+\end{proof}
 
 \begin{theorem}[Strong Normalization of F$^\omega$]
     If $\Gamma \vdash t \infr T$ then $t$ and $T$ are strongly normalizing
@@ -218,7 +225,7 @@ Thus, type inference and type checking is decidable for F$^\omega$.
 
 While it is true that F$^\omega$ only has function types as primitives several other data types are internally derivable using function types.
 For example, the type of natural numbers is defined:
-$$\mathbb{N} : \star = (X : \star) \to X \to (X \to X) \to X$$
+$$\mathbb{N} = (X : \star) \to X \to (X \to X) \to X$$
 Likewise, pairs and sum types are defined:
 $$A \times B = (X : \star) \to (A \to B \to X) \to X$$
 $$A + B = (X : \star) \to ((A \to X) \times (B \to X)) \to X$$
@@ -227,27 +234,116 @@ $$\top = (X : \star) \to X \to X$$
 $$\bot = (X : \star) \to X$$
 Negation is defined as implying false:
 $$\neg A = A \to \bot$$
-These definitions are called \textit{Church encodings} and originate from Church's initial encodings of data in the $\lambda$-calculus.
-However, recall that induction principles cannot be derived internally for these definitions \cite{geuvers2001_noind}.
-This is not only cumbersome but unsatisfactory as the natural numbers are in their essence the least set satisfying their induction principle.
-Ultimately, the issue is that these definitions are too general.
-They omit more possibilities than one would like, and those exotic elements break the principle of induction.
-Note that the syntax and theory of System F$^\omega$ is not flexible enough to notice and define these exotic elements, but it is also not strong enough to rule them out.
+These definitions are called \textit{Church encodings} and originate from Church's initial encodings of data in the $\lambda$-calculus \cite{church1932,church1933}.
+Note that if there existed a term such that $\vdash t \chck \bot$ then trivially for \textit{any} type $T$ we have $\vdash t\ T \chck T$.
+Thus, $\bot$ is both the constant false and the proposition representing the principle of explosion from logic.
+Moreover, this allows a concise statement of the consistency of F$^\omega$.
 
-\section{Calculus of Constructions}
+\begin{theorem}[Consistency of System F$^\omega$]
+    There is no term $t$ such that $\vdash t \chck \bot$
+\end{theorem}
+\begin{proof}
+    Suppose $\vdash t \chck \bot$.
+    Let $n$ be the value of $t$ after it is normalized.
+    By preservation $\vdash n \chck \bot$.
+    Deconstructing the checking judgment we know that $\vdash n \infr T$ and $T \equiv \bot$, but $\bot$ is a value and values like $n$ infer types that are also values.
+    Thus, $T = \bot$ and we know that $\vdash n \infr \bot$.
+    By inversion on the typing rules $n = \abs{\lambda}{X}{\star}{b}$, and we have $X : \star \vdash b \infr X$.
+    The term $b$ can only be $\star$, $\kind$, or $X$, but none of these options infer type $X$.
+    Therefore, there does not exist a term $b$, nor a term $n$, nor a term $t$.
+\end{proof}
 
-\outline{Describe extension to CC}
+Recall that induction principles cannot be derived internally for any encoding of data \cite{geuvers2001_noind}.
+This is not only cumbersome but unsatisfactory as the natural numbers are in their essence the least set satisfying induction.
+Ultimately, the issue is that these encodings are too general.
+They admit theoretical elements that F$^\omega$ is not flexible enough to express nor strong enough to exclude.
 
-\section{Cedille}
+\section{Calculus of Constructions and Cedille}
 
-\outline{Add an irrelevant equality and demonstrate how it breaks decidability}
+As previously mentioned, CC is one extension away from F$^\omega$ on the $\lambda$-cube.
+Indeed, the two rules \textsc{Pi1} and \textsc{Pi2} can be merged to form CC:
+$$\PiRuleCC$$
+where now both $K_1$ and $K_2$ are metavariables representing either $\star$ or $\kind$.
+Note that no other rules, syntax, or reductions need to be changed.
+Replacing \textsc{Pi1} and \textsc{Pi2} with this new \textsc{Pi} rule is enough to obtain a complete and faithful definition of CC.
 
-\outline{Describe, briefly, how Cedille enables inductive encodings through a quotient construction}
+With this merger types are allowed to depend on terms.
+From a logical point of view, this is a quantification over terms in formula.
+Hence, why CC is a predicate logic instead of a propositional one according to the Curry-Howard correspondence.
+Yet, there is a question about what exactly quantification over terms means.
+Surely it does not mean quantification over syntactic forms.
+
+It means, at minimum, quantification over well-typed terms, but from a logical perspective these terms correspond to proofs.
+In first order predicate logic the domain of quantification ranges over a set of \textit{individuals}.
+The set of individuals represents any potential set of interest with specific individuals identified through predicates expressing their properties.
+With proofs the situation is different.
+A proof has meaning relative to its formula, but this meaning may not be relevant as an individual in predicate logic.
+For example, the proof $2$ for a Church encoded natural number is intuitively data, but a proof that $2$ is even is intuitively not.
+In CC, both are merely proofs that can be quantified over.
+
+Cedille alters the domain of quantification from proofs to (untyped) $\lambda$-caluclus terms.
+Thus, for Cedille, the proof $2$ becomes the encoding of $2$ and the proof that $2$ is even can \textit{also} be the encoding of $2$.
+This is achieved through a notion of \textit{erasure} which removes type information and auxiliary syntactic forms from a term.
+Additionally, convertibility is modified to be convertibility of $\lambda$-calculus terms.
+However, erasure as it is defined in Cedille enables diverging terms in inconsistent contexts.
+The result by Abel and Coquand, which applies to a wide range of type theories including Cedille, is one way to construct a diverging term \cite{abel2020}.
+
+If terms are able to diverge, in what sense are they a proof?
+What a proof is or is not is difficult to say.
+As early as Aristotle there are documented forms of argument, Aristotle's syllogisms \cite{aristotle}.
+More than a millennium later Euclid's \textit{Elements} is the most well-known example of a mathematical text containing what a modern audience would call proofs.
+Moreover, visual renditions of \textit{Elements}, initiated by Byrne, challenge the notion of a proof being an algebraic object \cite{byrne}.
+However, the study of proof as a mathematical object dates first to Frege \cite{frege1879} followed soon after by Peano's formalism of arithmetic \cite{peano1889} and Whitehead and Russell's \textit{Principia Mathematica} \cite{whitehead}.
+For the kinds of logics discussed by the Curry-Howard correspondence, structural proof theories, the originator is Gentzen \cite{gentzen1935_i,gentzen1935_ii}.
+Gentzen's natural deduction describes proofs as finite trees labelled by rules.
+Note that this is, of course, a very brief history of mathematical proof.
+
+All of these formulations may be justified as acceptable notions of proof, but the purpose of proof from an epistemological perspective is to provide justification.
+It is unsatisfactory to have a claimed proof and be unable to check that it is constructed only by the rules of the proof theory.
+This is the situation with Cedille, although rare, there are terms where reduction diverges making it impossible to check a type.
+However, it is unfair to levy this criticism against Cedille alone, as well-known type theories also lack decidability of type checking.
+For example, Nuprl with its equality reflection rule \cite{allen2000}, and the proof assistant Lean with its notion of casts \cite{moura2021}.
+Moreover, Lean has been incredibly successful in formalizing research mathematics including the Liquid Tensor Experiment \cite{liquid_tensor_experiment} and Tao's formalization of The Polynomial Freiman-Ruzsa Conjecture \cite{tao2024_pfr}.
+Indeed, not having decidability of type checking does to necessarily prevent a tool from producing convincing arguments.
+
+Ultimately, the definition of proof is a philosophical one with no absolute answer, but this work will follow Gentzen and Kreisel in requiring that a proof is a finite tree, labelled by rules, supporting decidable proof checking.
+The reader need only asks themselves which proof they would prefer if the option was available: one that potentially diverges, or one that definitely does not.
+If it is the latter, then striving for decidable type theories that are capable enough to reproduce the results obtained by proof assistants like Lean is a worthy goal.
 
 \section{Thesis}
 
-\outline{Describe what the \textit{thesis} of your work is}
+Cedille is a powerful type theory capable of deriving inductive data with relatively modest extension and modification to CC.
+However, this capability comes at the cost of decidability of type checking and thus, in the opinion of Kreisel, the cost of a Curry-Howard correspondence to a proof theory.
+A redesign of Cedille that focuses on maintaining a proof-theoretic view recovers decidability of type checking while still solving the original goals of Cedille.
+Although this redesign does prevent some constructions from being possible, the new balance struck between capability and complexity is desirable because of a well-behaved metatheory.
 
 \section{Contributions}
 
-\outline{List the contributions of each chapter}
+\textbf{Chapter 2}\quad defines the Cedille2 Core (CC2) theory, including its syntax, and typing rules.
+Erasure from Cedille is rephrased as a projection from proofs to objects.
+Basic metatheoretical results are proven including: confluence, preservation, and classification.
+
+\textbf{Chapter 3}\quad models CC2 in F$^\omega$ obtaining a strong normalization result for proof normalization.
+This model is a straightforward extension of a similar model for CC.
+Critically, proof normalization is not powerful enough to show consistency nor object normalization.
+Additionally, CC2 is shown to be a conservative extension of F$^\omega$.
+
+\textbf{Chapter 4}\quad models CC2 in CDLE obtaining consistency for CC2.
+Although CDLE is not strongly normalizing it still possess a realizability model which justifies its logical consistency.
+CC2 is closely related to CDLE which makes this models straightforward to accomplish.
+Moreover, a selection of axioms added to CC2 is shown to recover much of CDLEs features.
+
+\textbf{Chapter 5}\quad proves object normalization from proof normalization and consistency.
+The $\varphi$, or cast, rule is the only difficulty after proof normalization and consistency.
+However, any proof can be translated into a new proof that contains no cast rules.
+Applying this observation yields an argument to obtain full object normalization.
+
+\textbf{Chapter 6}\quad with normalization for both proofs and objects a well-founded type checker is defined.
+This implementation leverages normalization-by-evaluation and other basic techniques like pattern-based unification.
+The tool it benchmarked to demonstrate reasonable performance.
+
+\textbf{Chapter 7}\quad contains derivations of generic inductive data, quotient types, large eliminations, constructor subtyping, and inductive-inductive data.
+All of these constructions are possible in Cedille but require modest modifications to derive in Cedille2.
+
+\textbf{Chapter 8}\quad concludes with a collection of open conjectures and questions.
+Cedille2 at the conclusion of this work is still in its infancy.
