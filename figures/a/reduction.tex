@@ -1,0 +1,87 @@
+
+\Rule{\ParBinderReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime}
+    }
+    {\mathfrak{b}(\kappa, x : t_1, t_2) \parred \mathfrak{b}(\kappa, x : t_1^\prime, t_2^\prime) }
+    {ParBind}
+
+\Rule{\ParConstructorReduction}
+    {
+        \der{\D{i}}{t_i \parred t_i^\prime \quad \forall\ i \in \{1, \ldots, \mathfrak{a}(\kappa) \}}
+    }
+    {\mathfrak{c}(\kappa, t_1, \ldots, t_i, \ldots, t_{\mathfrak{a}(\kappa)}) \parred \mathfrak{c}(\kappa, t_1^\prime, \ldots, t_i^\prime, \ldots, t^\prime_{\mathfrak{a}(\kappa)}) }
+    {ParCtor}
+
+\Rule{\ParBetaReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{3}}{t_3 \parred t_3^\prime}
+    }
+    { \app{(\abs{\lambda_m}{x}{t_1}{t_2})}{m}{t_3} \parred [x := t_3^\prime]t_2^\prime }
+    {ParBeta}
+
+\Rule{\ParFstReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{3}}{t_3 \parred t_3^\prime}
+    }
+    { [t_1, t_2; t_3].1 \parred t_1^\prime }
+    {ParFst}
+
+\Rule{\ParSndReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{3}}{t_3 \parred t_3^\prime}
+    }
+    { [t_1, t_2; t_3].2 \parred t_2^\prime }
+    {ParSnd}
+
+\Rule{\ParPrmFstReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{3}}{t_3 \parred t_3^\prime}
+    }
+    { \vartheta_1(\text{refl}(t_1), t_2, t_3) \parred \text{refl}(t_2^\prime) }
+    {ParPrmFst}
+
+\Rule{\ParPrmSndReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{3}}{t_3 \parred t_3^\prime}
+    }
+    { \vartheta_2(\text{refl}(t_1), t_2, t_3) \parred \text{refl}(t_2^\prime) }
+    {ParPrmSnd}
+
+\Rule{\ParSubstReduction}
+    {
+        \der{\D{1}}{t_1 \parred t_1^\prime} \\
+        \der{\D{2}}{t_2 \parred t_2^\prime}
+    }
+    { \psi(\text{refl}(t_1), t_2) \parred \abs{\lambda_\omega}{x}{\app{t_2^\prime}{\tau}{t_1^\prime}}{x}}
+    {ParSubst}
+
+\Rule{\ParVarReduction}
+    {\color{white}{\_}}
+    { x \parred x}
+    {ParVar}
+
+\begin{figure}
+    \centering
+    $$\ParVarReduction$$
+    $$\ParConstructorReduction$$
+    $$\ParBinderReduction$$
+    $$\ParBetaReduction$$
+    $$\ParSubstReduction$$
+    $$\ParFstReduction$$
+    $$\ParSndReduction$$
+    $$\ParPrmFstReduction$$
+    $$\ParPrmSndReduction$$
+    \caption{Parallel reduction rules for arbitrary syntax.}
+\end{figure}

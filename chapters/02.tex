@@ -1,41 +1,1060 @@
 \chapter{Theory Description and Basic Metatheory}
 \input{figures/02/typing_macros.tex}
 
-The theory described in this chapter is a variation of the core theory of Cedille \cite{stump2021_cedillecore}.
-It is closely related with the significant differences occurring with the equality type.
-This variation has two primary goals.
-First, to have decidable type checking (and thus decidable conversion checking).
-Second, to retain as many constructions as possible from Cedille.
-This chapter focuses on the description of the theory and some basic metatheory.
-By basic, we mean properties that are provable by induction on the various derivations or are otherwise provable using straightforward methods.
+% The theory described in this chapter is a variation of the core theory of Cedille \cite{stump2021_cedillecore}.
+% It is closely related with the significant differences occurring with the equality type.
+% This variation has two primary goals.
+% First, to have decidable type checking (and thus decidable conversion checking).
+% Second, to retain as many constructions as possible from Cedille.
+% This chapter focuses on the description of the theory and some basic metatheory.
+% By basic, we mean properties that are provable by induction on the various derivations or are otherwise provable using straightforward methods.
 
-Syntax for the theory is described in Figure~\ref{fig:syntax}.
-Unlike other presentations a generic syntax tree is used with a tag to indicate different syntactic forms.
-There are three basic syntactic constructs: variables, binders, and constructors.
-A generic presentation enables occasional economic benefits in presenting other derivations.
-However, a more standard syntax is defined in terms of the generic one.
-The specific syntactic forms and the generic forms are used interchangeably whichever is more convenient.
+\outline{Talk about the design idea of Cedille2, we keep a tight understanding of a proof, and erasure is more a translation to this object thingy. Types depend on objects, not proofs.}
 
 \input{figures/02/syntax.tex}
 
-Formally, syntax is worked with as a locally nameless set following the axioms of Pitts \cite{2023pitts_lns}.
-For the sake of presentation these details are elided.
-This means that freshness of variables and capture avoiding substitution are largely taken for granted in the exposition of the theory.
-Moreover, identity of syntactic terms is assumed to be alpha equivalence.
-Meaning that, again, bureaucracy around variables is taken for granted.
-Thus, substitution is defined simply:
-\begin{align*}
-    [x := v]y &= v \text{ if }x = y \\
-    [x := v]y &= y \text{ if }x \neq y \\
-    [x := v]\mathfrak{b}(\kappa_1, x : t_1, t_2) &= \mathfrak{b}(\kappa_1, x : [x := v]t_1, [x := v]t_2) \\
-    [x := v]\mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) &= \mathfrak{c}(\kappa_2, [x := v]t_1, \ldots, [x := v]t_{\mathfrak{a}(\kappa_2)})
-\end{align*}
+\outline{Briefly introduce the syntax, recalling it is the same generic setup as with F omega.}
 
+\begin{lemma}
+    $|[x := t]b| = [x := |t|]|b|$
+    \label{lem:2:erase_subst}
+\end{lemma}
+\begin{proof}
+    By induction on the size of $b$.
+
+    $\text{Case: }\mathfrak{b}(\kappa, (x : t_1), t_2)$
+    \begin{proofcase}
+        If $b = \abs{\lambda_0}{y}{A}{b^\prime}$, then $|b| = |b^\prime|$ which is a smaller term.
+        Then, by the IH $|[x := t]b^\prime| = [x := |t|]|b^\prime|$.
+        Thus,
+        \begin{align*}
+            &|[x := t]\abs{\lambda_0}{y}{A}{b^\prime}| = |\abs{\lambda_0}{y}{[x := t]A}{[x := t]b^\prime}| \\
+            &= |[x := t]b^\prime| = [x := |t|]|b^\prime| = [x := |t|]|\abs{\lambda_0}{y}{A}{b^\prime}|
+        \end{align*}
+        For the remaining tags, assume w.l.o.g. $\kappa = \cap$.
+        Then $b = (y : A) \cap B$, and by the IH $|[x := t]A| = [x := |t|]|A|$ and $|[x := t]B| = [x := |t|]|B|$.
+        Thus,
+        \begin{align*}
+            &|[x := t]((y : A) \cap B)| = |(y : [x := t]A) \cap [x := t]B| \\
+            &= (y : |[x := t]A|) \cap |[x := t]B| = (y : [x := |t|]|A|) \cap [x := |t|]|B|
+        \end{align*}
+        And, $[x := |t|]|(y : A) \cap B| = (y : [x := |t|]|A|) \cap [x := |t|]|B|$.
+        Thus, both sides are equal.
+    \end{proofcase}
+
+    $\text{Case: }\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}(\kappa)})$
+    \begin{proofcase}
+        If $\kappa \in \{ \star, \kind \}$ then the equality is trivial.
+
+        If $\kappa \in \{ \bullet_0, \text{pair}, \text{proj}_1, \text{proj}_2, \psi, \vartheta, \delta \}$ then $|\mathfrak{c}(\kappa, t_1, \ldots)| = |t_1|$.
+        Moreover, substitution commutes and both sides of the equality are equal.
+
+        If $\kappa \in \{ \text{refl}, \varphi \}$ then the equality is trivial.
+
+        If $\kappa \in \{ \bullet_\omega, \bullet_\tau, \text{eq} \}$ then w.l.o.g. assume $\kappa = \text{eq}$.
+        Now $|[x := t](a =_A b)| = |[x := t]a| =_{|[x := t]A|} |[x := t]b|$.
+        By the IH this becomes $[x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
+        On the right-hand side, $[x := |t|]|a =_A b| = [x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
+        Thus, both sides are equal.
+
+    \end{proofcase}
+
+    $\text{Case: }b \text{ variable}$
+    \begin{proofcase}
+        Suppose $b = x$, then $|[x := t]x| = |t|$ and $[x := |t|]|x| = |t|$.
+        Suppose $b = y$, then $|[x := t]y| = y$ and $[x := |t|]|y| = y$.
+        Thus, both sides are equal.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $x \neq y$ then $[x := a][y := b]t = [y := [x := a]b][x := a]t$
+    \label{lem:2:subst_commute}
+\end{lemma}
+\begin{proof}
+    By induction on $t$.
+    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes those cases.
+    Suppose $t$ is a variable, $z$.
+    If $z = x$, then $z \neq y$ and $t = a$ on both sides.
+    If $z = y$, then $z \neq x$ and $t = [x := a]b$ on both sides.
+    If $z \neq x$ and $z \neq y$, then $t = z$ on both sides.
+\end{proof}
+
+\begin{lemma}
+    If $a \betared b$ then $[x := t]a \betared [x := t]b$
+    \label{lem:2:betared_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $a \betared b$.
+
+    $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+    \begin{proofcase}
+        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{x}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
+        Note that the final equality holds by Lemma~\ref{lem:2:subst_commute}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+    \begin{proofcase}
+        $[x := t][t_1, t_2, A].1 = [[x := t]t_1, [x := t]t_2, [x := ]A].1 \betared [x := t]t_1$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+    \begin{proofcase}
+        $[x := t][t_1, t_2, A].2 = [[x := t]t_1, [x := t]t_2, [x := ]A].2 \betared [x := t]t_2$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+    \begin{proofcase}
+        $[x := s]\psi(\text{refl(t)}, P) = \psi(\text{refl([x := s]t)}, [x := s]P) \betared \abs{\lambda_\omega}{y}{\app{[x := s]P}{\tau}{[x := s]t}}{y} = [x := s](\abs{\lambda_\omega}{y}{\app{P}{\tau}{t}}{y})$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+    \begin{proofcase}
+        $[x := s]\vartheta_1(\text{refl}(t_1), t_2, t_3) = \vartheta_1(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+    \begin{proofcase}
+        $[x := s]\vartheta_2(\text{refl}(t_1), t_2, t_3) = \vartheta_2(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \NonbinderReduction[*] \end{array}$
+    \begin{proofcase}
+        By the IH, $[x := t]t_i \betared [x := t]t_i^\prime$.
+        Note that $$[x := t]\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}}(\kappa)) = \mathfrak{c}(\kappa, [x := t]t_1, \ldots, [x := t]t_{\mathfrak{a}}(\kappa))$$
+        Applying the constructor reduction rule and reversing the previous equality concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderReductionOne[*] \end{array}$
+    \begin{proofcase}
+        By the IH, $[x := t]t_1 \betared [x := t]t_1^\prime$.
+        Note that $$[x := t]\mathfrak{b}(\kappa, (y : t_1), t_2) = \mathfrak{b}(\kappa, (y : [x := t]t_1), [x := t]t_2)$$
+        Applying the first binder reduction rule and reversing the previous equality concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderReductionTwo[*] \end{array}$
+    \begin{proofcase}
+        Same as previous case but applying the second binder reduction rule.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $a \betastar b$ then $[x := t]a \betastar [x := t]b$
+    \label{lem:2:betastar_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $a \betastar b$.
+    The reflexivity case is trivial.
+
+    $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
+    \begin{proofcase}
+        Let $z = t^\prime$.
+        By the IH applied to $\D{2}$: $[x := t]z \betastar [x := t]b$.
+        By Lemma~\ref{lem:2:betared_subst} applied to $\D{1}$: $[x := t]a \betared [x := t]b$.
+        Applying the transitivity rule yields $[x := t]a \betastar [x := t]b$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $a \betaconv b$ then $[x := t]a \betaconv [x := t]b$
+    \label{lem:2:betaconv_subst}
+\end{lemma}
+\begin{proof}
+    By definition $\exists\ z$ such that $a \betastar z$ and $b \betastar z$.
+    Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := t]a \betastar [x := t]z$ and $[x := t]b \betastar [x := z]$.
+\end{proof}
+
+\begin{lemma}
+    If $|a| \betaconv |b|$ then $|[x := t]a| \betaconv |[x := t]b|$
+    \label{lem:2:betaconv_erased_subst}
+\end{lemma}
+\begin{proof}
+    By definition $\exists\ z$ such that $|a| \betastar z$ and $|b| \betastar z$.
+    By Lemma~\ref{lem:2:betastar_subst} applied twice $[x := |t|]|a| \betastar [x := |t|]z$ and $[x := |t|]|b| \betastar [x := |t|]z$.
+    Finally, by Lemma~\ref{lem:2:erase_subst} $[x := |t|]|a| = |[x := t]a|$ and $[x := |t|]|b| = |[x := t]b|$.
+\end{proof}
 
 \input{figures/02/erasure.tex}
+
+\outline{Introduce the projection from proofs to objects. Note that for type-level stuff the projection is homomorphic. Note that equality evidence is never erased. Mention why this is important.}
+
 \input{figures/02/reduction.tex}
+
+\outline{Describe reduction, note that it has the same non-axiom rules as F omega. Describe the additional axioms}
+
+\outline{Note that conversion is defined differently than just reduction, define both proof conversion and object conversion}
+
+\begin{lemma}
+    If $t_i \betastar t_i^\prime$ for any $i$ then,
+    \begin{enumerate}
+        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betastar \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
+        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betastar \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
+    \end{enumerate}
+    \label{lem:2:beta_par}
+\end{lemma}
+\begin{proof}
+    Pick any $i$ and apply the reductions to the associate subterm.
+    A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
+    Repeat until all $i$ reductions are applied.
+\end{proof}
+
+\begin{lemma}[Confluence]
+    If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
+\end{lemma}
+\begin{proof}
+    See Appendix~\ref{ap:a}.
+\end{proof}
+
+\begin{lemma}
+    For any $s$ and $t$ the relation $s \betaconv t$ is an equivalence.
+    \label{lem:2:beta_conv_equivalence}
+\end{lemma}
+\begin{proof}
+    Reflexivity is immediate because $s \betastar s$.
+    Symmetry is also immediate because if $s \betaconv t$ then $\exists\ z$ such that $s \betastar z$ and $t \betastar z$, but logical conjunction is commutative.
+    Transitivity is a consequence of confluence, see Theorem~\ref{thm:1:trans}.
+\end{proof}
+
+\begin{corollary}
+    If $t_i \betaconv t_i^\prime$ for any $i$ then,
+    \begin{enumerate}
+        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betaconv \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
+        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betaconv \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
+    \end{enumerate}
+    \label{cor:2:conv_congr}
+\end{corollary}
+
+\outline{Note how confluence is \textbf{not} enough to prove transitivity of conversion}
+
+\input{figures/02/pseobj.tex}
+
+\outline{Introduce the notion of pseudo objects}
+
+\begin{lemma}
+    If $s\pseobj$ and $s \betared t$ then $|s| \betaconv |t|$
+    \label{lem:2:erase_pseobj_red}
+\end{lemma}
+\begin{proof}
+    By induction on $s\pseobj$.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+
+        $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+        \begin{proofcase}
+            Note that $\abs{\lambda_m}{x}{A}{b}\pseobj$.
+            If $m = 0$ then $x \notin FV(b)$ and $|[x := t]b| = |b|$.
+            Thus, $|\app{(\abs{\lambda_0}{x}{A}{b})}{0}{t}| = |\abs{\lambda_0}{x}{A}{b}| = |b|$.
+            If $m = \omega$, then $|\app{(\abs{\lambda_\omega}{x}{A}{b})}{\omega}{t}| = \app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|}$.
+            By definition of reduction $\app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|} \betaconv [x := |t|]|b|$.
+            Finally, by Lemma~\ref{lem:2:erase_subst} the goal is obtained.
+            The case of $m = \tau$ is almost exactly the same.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+        \begin{proofcase}
+            $|[t_1, t_2; A].1| = |[t_1, t_2; A]| = |t_1|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+        \begin{proofcase}
+            Observe that $|[t_1, t_2; A].2| = |t_1|$ and $[t_1, t_2; A]\pseobj$. \\
+            Thus, $|s| = |t_1| \betaconv |t_2|$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        \begin{proofcase}
+            $|\psi(\text{refl}(t),P)| = |\text{refl}(t)| = \absu{\lambda_\omega}{x}{x} = |\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            $|\vartheta_1(\text{refl}(t_1), t_2, t_3)| = |\text{refl}(t_1)| = \absu{\lambda_\omega}{x}{x} = |\text{refl}(t_2)|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Same as previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \NonbinderReduction[*] \end{array}$
+        \begin{proofcase}
+            By the IH, $|t_i| \betaconv |t_i^\prime|$. The goal is achieved by Corollary~\ref{cor:2:conv_congr}
+        \end{proofcase}
+
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, $t$ must be a variable.
+        Thus, $|s| = |t|$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betared t$ then $|t| \betaconv |b|$
+    \label{lem:2:pseobj_red_f_step}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{lem:2:erase_pseobj_red} $|s| \betaconv |t|$ and by Lemma~\ref{lem:2:beta_conv_equivalence} $|t| \betaconv |b|$.
+\end{proof}
+
+\begin{lemma}
+    If $b\pseobj$ and $t\pseobj$ then $[x := t]b\pseobj$
+    \label{lem:2:pseobj_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $b\pseobj$. The $\lambda_0$ and pair cases are no different from the respective $\mathfrak{b}$ and $\mathfrak{c}$ cases.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By the IH $[x := t]t_1\pseobj$ and $[x := t]t_2\pseobj$.
+        Thus, $\mathfrak{b}(\kappa, (y : [x := t]t_1), [x := t]t_2)\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By the IH $[x := t]t_i\pseobj$. \\
+        Thus, $\mathfrak{c}(\kappa, [x := t]t_1, \ldots [x := t]t_{\mathfrak{a}(\kappa)})\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        If $s = x$ then $[x := t]x = t$, and $t\pseobj$.
+        Otherwise, $s = y$ with $y$ a variable and $y\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$ and $s \betared t$ then $t\pseobj$
+    \label{lem:2:pseobj_preservation_step}
+\end{lemma}
+\begin{proof}
+    By induction on $s\pseobj$.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$. Suppose w.l.o.g. that $t_2 \betared t_2^\prime$.
+        Observe that $t_2\pseobj$ because it is a subterm of $s$.
+        Then by the IH $t_2^\prime\pseobj$.
+        Thus, $\mathfrak{b}(\kappa, x : t_1, t_2^\prime) \pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$. Suppose w.l.o.g that $t \betared t^\prime$.
+        Note that if $x \notin FV(|t|)$ then $x \notin FV(|t^\prime|)$, reduction only reduces the amount of free variables.
+        Observe that $t \pseobj$.
+        Then by the IH $t^\prime\pseobj$.
+        Thus, $\abs{\lambda_0}{x}{A}{t^\prime}\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+
+        $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+        \begin{proofcase}
+            Observe that $b\pseobj$ and $t\pseobj$ because both are subterms of $s$.
+            By Lemma~\ref{lem:2:pseobj_subst} $[x := t]b\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+        \begin{proofcase}
+            Observe that $t_1\pseobj$ because it is a subterm of $s$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+        \begin{proofcase}
+            Observe that $t_2\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        \begin{proofcase}
+            Observe that $t\pseobj$ and $P\pseobj$.
+            By application of constructor and binder rules $\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Observe that $t_2\pseobj$.
+            By application of constructor rule $\text{refl}(t_2)\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Same as previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \NonbinderReduction[*] \end{array}$
+        \begin{proofcase}
+            By the IH $t_i^\prime\pseobj$.
+            By application of the constructor rule the goal is obtained.
+        \end{proofcase}
+
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+        Suppose w.l.o.g. $t_1 \betared t_1^\prime$.
+        Note that $t_1\pseobj$ because it is a subterm of $s$.
+        By the IH $t_1^\prime\pseobj$.
+        By Lemma~\ref{lem:2:pseobj_red_f_step} $|t_1^\prime| \betaconv |t_2|$.
+        Thus, $[t_1^\prime, t_2; A]\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, $t$ must be a variable.
+        Thus, $t\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betastar t$ then $|t| \betaconv |b|$
+    \label{lem:2:pseobj_red_f}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is trivial.
+    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_red_f_step} and Lemma~\ref{lem:2:pseobj_preservation_step}
+    and applying the IH.
+\end{proof}
+
+\begin{theorem}
+    If $s\pseobj$ and $s \betastar t$ then $t\pseobj$
+    \label{lem:2:pseobj_preservation}
+\end{theorem}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is trivial.
+    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_preservation_step} and applying the IH.
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|t| \betaconv |b|$, and $s \betastar t$ then $|s| \betaconv |b|$
+    \label{lem:2:pseobj_red_b}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    Consequence of Lemma~\ref{lem:2:erase_pseobj_red} and Lemma~\ref{lem:2:pseobj_preservation}.
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $s \equiv b$, and $s \betastar t$ then $t \equiv b$
+    \label{lem:2:conv_red_f}
+\end{lemma}
+\begin{proof}
+    Note that $\exists\ z_1, z_2$ such that $s \betastar z_1$, $b \betastar z_2$, and $|z_1| \betaconv |z_2|$.
+    By confluence $\exists\ z_1^\prime$ such that $z_1 \betastar z_1^\prime$ and $t \betastar z_1^\prime$.
+    Then, by Lemma~\ref{lem:2:pseobj_preservation} $z_1\pseobj$.
+    Finally, by Lemma~\ref{lem:2:pseobj_red_f} $|z_1^\prime| \betaconv |z_2|$.
+    Therefore, $t \equiv b$.
+\end{proof}
+
+\begin{theorem}
+    If $b\pseobj$, $a \equiv b$, and $b \equiv c$ then $a \equiv c$
+    \label{thm:2:conv_trans}
+\end{theorem}
+\begin{proof}
+    Note that $\exists\ u_1, u_2$ such that $a \betastar u_1$, $b \betastar u_2$, and $|u_1| \betaconv |u_2|$.
+    Additionally, $\exists\ v_1, v_2$ such that $b \betastar v_1$, $c \betastar v_2$, and $|v_1| \betaconv |v_2|$.
+    By confluence, $\exists\ z$ such that $u_2 \betastar z$ and $v_1 \betastar z$.
+    Then, by Lemma~\ref{lem:2:pseobj_preservation} $u_2\pseobj$ and $v_1\pseobj$.
+    Next, by Lemma~\ref{lem:2:pseobj_red_f} $|u_1| \betaconv |z|$ and $|z| \betaconv |v_2|$.
+    Thus, $|u_1| \betaconv |v_2|$ by Lemma~\ref{lem:2:beta_conv_equivalence} and $a \equiv c$.
+\end{proof}
+
+\begin{theorem}
+    Suppose $s\pseobj$ and $t\pseobj$, then $|s| \betaconv |t|$ iff $s \equiv t$
+    \label{thm:2:beta_iff_conv}
+\end{theorem}
+\begin{proof}
+    Case $(\Rightarrow)$:
+    Suppose $|s| \betaconv |t|$.
+    By definition $s \betastar s$ and $t \betastar t$.
+    Thus, $s \equiv t$.
+    Case $(\Leftarrow)$:
+    Suppose $s \equiv t$, then $\exists\ z_1, z_2$ such that $s \betastar z_1$, $t \betastar z_2$, and $|z_1| \betaconv |z_2|$.
+    By two applications of Lemma~\ref{lem:2:pseobj_red_b} $|s| \betaconv |t|$.
+\end{proof}
+
+\begin{lemma}
+    If $a\pseobj$, $b\pseobj$, and $a \equiv b$ then $[x := t]a \equiv [x := t]b$
+    \label{lem:2:conv_subst}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{thm:2:beta_iff_conv} $|a| \betaconv |b|$.
+    Then, by Lemma~\ref{lem:2:betaconv_erased_subst} $|[x := t]a| \betaconv |[x := t]b|$.
+    Finally, by Lemma~\ref{thm:2:beta_iff_conv} again, $[x := t]a \equiv [x := t]b$.
+\end{proof}
+
+\outline{Introduce the typing rules, explain a lot of them in detail in the prose}
+
 \input{figures/02/domain.tex}
 \input{figures/02/infer1.tex}
 \input{figures/02/infer2.tex}
 \input{figures/02/infer3.tex}
 
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t \infr A$ then $t\pseobj$
+        \item If $\Gamma \vdash t \cinfr A$ then $t\pseobj$
+        \item If $\Gamma \vdash t \chck A$ then $t\pseobj$
+    \end{enumerate}
+    \label{lem:2:infer_is_pseobj}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    There are only two non-trivial, the rest hold immediately by the IH and applying the associated rule.
+    Well-formed context cases are omitted because they are not used in the induction.
+
+    $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth}$\PairRule[*]$ \end{minipage}\end{array}$
+    \begin{proofcase}
+        By the IH $t\pseobj$, $s\pseobj$, and $T\pseobj$.
+        By Theorem~\ref{thm:2:beta_iff_conv} $|t| \betaconv |s|$.
+        Applying the pair rule yields $[t,s;T]\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth} $\LambdaRule[*]$ \end{minipage}\end{array}$
+    \begin{proofcase}
+        Consider only the case when $m = 0$ as the other cases are trivial.
+        By the IH $A\pseobj$ and $t\pseobj$.
+        Because $m = 0$, $x \notin FV(|t|)$.
+        Thus, applying the lambda rule yields $\abs{\lambda_0}{x}{A}{t}\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\outline{Define the lifting of reduction to contexts}
+
+\begin{lemma}
+    If $\Gamma \vdash t \infr A$ or $\Gamma \vdash t \cinfr A$ or $\Gamma \vdash t \chck A$ then $\vdash \Gamma$
+    \label{lem:2:ctx_wf}
+\end{lemma}
+\begin{proof}
+    Straightforward by induction, all leaves of a derivation have $\vdash \Gamma$ as a premise.
+\end{proof}
+
+\begin{lemma}[Weakening]
+    Suppose $\Gamma \vdash B \cinfr K$ for $K = \kind$ or $K = \star$.
+    \begin{enumerate}
+        \item If $\Gamma, \Delta \vdash t \infr A$ then $\Gamma, x : B, \Delta \vdash t \infr A$
+        \item If $\Gamma, \Delta \vdash t \cinfr A$ then $\Gamma, x : B, \Delta \vdash t \cinfr A$
+        \item If $\Gamma, \Delta \vdash t \chck A$ then $\Gamma, x : B, \Delta \vdash t \chck A$
+        \item if $\vdash \Gamma, \Delta$ then $\vdash \Gamma, x : B, \Delta$
+    \end{enumerate}
+    \label{lem:2:weaken}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Omitted cases follow immediately from application of the IH to all subderivations and applying the associated rule of the case.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH on $\D{1}$: $\vdash \Gamma, x : B, \Delta$.
+        Applying the \textsc{Axiom} rule concludes this case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}        
+        By the IH on $\D{1}$: $\vdash \Gamma, x : B, \Delta$.
+        If $(y : A) \in \Gamma$ then clearly $(y : A) \in \Gamma, x : B, \Delta$.
+        Thus, applying the \textsc{Var} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{2}$ gives $\Gamma, x : B, \Delta, y : A \vdash B \cinfr \pcodom(m)$.
+        Notice that $\Delta$ is generalized in the induction hypothesis, thus allowing for the capture of the additional context assumption introduced in $\D{2}$.
+        Applying the IH to $\D{1}$ and the \textsc{Pi} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        By the \textsc{CtxEm} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH on $\D{2}$: $\vdash \Gamma, x : B, \Delta$.
+        By the IH on $\D{3}$: $\Gamma, x : B, \Delta \vdash A \cinfr K$.
+        Recall that renaming is applied implicitly to preserve meaning.
+        In this case, either $\Gamma$ and $\Delta$ could be renamed so that $x$ is unique, or $x$ itself renamed so that $x \notin FV(\Gamma, \Delta)$.
+        Either way some conclusion of the following form is obtained: Pick $y \notin FV(\Gamma, \Delta)$ and $y \neq x$.
+        Thus, $\vdash \Gamma, x : B, \Delta, y : A$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $\vdash \Gamma$ and $(x : A) \in \Gamma$ then $\exists\ K$ such that $\Gamma \vdash A \cinfr K$, where $K = \kind$ or $K = \star$
+    \label{lem:2:ctx_get}
+\end{lemma}
+\begin{proof}
+    By definition, $\exists\ \Delta_1, \Delta_2$ such that $\Gamma = \Delta_1, x : A, \Delta_2$ and $\Delta_1 \vdash A \cinfr K$.
+    By weakening, $\Delta_1, x : A \vdash A \cinfr K$.
+    Induction on $\Delta_2$ and repeated application of weakening concludes the proof.
+\end{proof}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t \infr A$ then $A\pseobj$
+        \item If $\Gamma \vdash t \cinfr A$ then $A\pseobj$
+        \item If $\Gamma \vdash t \chck A$ then $A\pseobj$
+    \end{enumerate}
+    \label{lem:2:infer_type_is_pseobj}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Cases where $A\pseobj$ trivially by application of a finite number of rules are omitted.
+    The well-formed context cases are omitted because they are not used in the mutual induction.
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:ctx_get} and Lemma~\ref{lem:2:infer_is_pseobj}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the \textsc{Pi} rule with $\D{1}$ and $\D{3}$ gives $\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)$.
+        By Lemma~\ref{lem:2:infer_is_pseobj} the case concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Deconstruction and inversion on $\D{1}$ yields the judgment $\Gamma, x : A \vdash B \cinfr \pcodom(m)$.
+        Thus, by Lemma~\ref{lem:2:infer_is_pseobj}: $B\pseobj$ and $a\pseobj$.
+        Finally, by Lemma~\ref{lem:2:pseobj_subst} $[x := a]B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the \textsc{Int} rule with $\D{2}$ and $\D{3}$ gives $\Gamma \vdash (x : A) \cap B \infr \star$.
+        Now by Lemma~\ref{lem:2:infer_is_pseobj} the case concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $(x : A) \cap B \pseobj$ which means $A\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $(x : A) \cap B \pseobj$ which means $B\pseobj$.
+        The \textsc{Fst} rule applied to $\D{1}$ gives $\Gamma \vdash t.1 \infr A$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $t.1\pseobj$.
+        Finally, by Lemma~\ref{lem:2:pseobj_subst} $[x := t.1]B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_is_pseobj} $t\pseobj$ and $A\pseobj$.
+        Applying the constructor rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a =_A b\pseobj$ which means $a\pseobj$, $b\pseobj$, and $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $P\pseobj$.
+        The constructor rule yields $\app{P}{\tau}{a}\pseobj$ and $\app{P}{\tau}{b}\pseobj$.
+        The binder rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a.1 =_A b.1\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
+        Applying the constructor rule finishes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a.2 =_A b.2\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
+        Applying the constructor rule finishes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the IH applied to $\D{1}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $A\pseobj$.
+        By Lemma~\ref{lem:2:pseobj_preservation}: $B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_is_pseobj} on $\D{2}$: $B\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}[Substitution of Inference]
+    Suppose $\Gamma \vdash b \infr B$.
+    \begin{enumerate}
+        \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \infr [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+        \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
+    \end{enumerate}
+    \label{lem:2:subst_infer}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Omitted cases are obtained by applying the IH to all subderivations and applying the associated rule.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\vdash \Gamma, [x := b]\Delta$.
+        Using the \textsc{Axiom} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Rename the case to $\Gamma \vdash y \infr A$.
+        By the IH applied to $\D{1}$: $\vdash \Gamma, [x := b]\Delta$.
+        Suppose $y \neq x$.
+        Then $(y : A) \in \Gamma, x : B, \Delta$ implies $(y : A) \in \Gamma, [x := b]\Delta$.
+        Applying the \textsc{Var} rule concludes this case.
+        Suppose $y = x$.
+        Then $[x := b]y = b$ and $A = B$.
+        Recall that $\Gamma \vdash b \infr B$.
+        It must be the case that $x \notin FV(\Gamma)$ by $\D{1}$.
+        Thus, $x \notin FV(B)$ and $[x := b]B = B$.
+        Finally, by weakening $\Gamma, [x := b]\Delta \vdash b \infr B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]A \cinfr \pdom(m, K)$.
+        By the IH applied to $\D{2}$: $\Gamma, [x := b]\Delta, y : [x := b]A \vdash [x := b]B \cinfr \pcodom(m)$.
+        Applying the \textsc{Pi} rule gives $\Gamma, [x := b]\Delta \vdash (y : [x := b]A) \to_m [x := b]B \infr \pcodom(m)$.
+        Folding substitution concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        As with the previous case, applying the IH to $\D{1}$, $\D{2}$, and $\D{3}$ yield the necessary subderivations to build the desired term with the \textsc{Lam} rule.
+        Note that the substituted variable, $x$, cannot be equal to the bound variable, $y$, by implicit renaming.
+        Moreover, $y \notin FV([x := b]|t|)$ if $m = 0$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH gives, for $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]f \cinfr (y : [x := b]A) \to_m [x := b]B$, and for $\D{2}$: $\Gamma, [x := b]\Delta \vdash [x := b]a \chck [x := b]A$.
+        Thus, applying the \textsc{App} rule gives $\Gamma, [x := b]\Delta \vdash \app{([x := b]f)}{m}{([x := b]a)} \infr [y := [x := b]a][x := b]B$.
+        By Lemma~\ref{lem:2:subst_commute} $[y := [x := b]a][x := b] = [x := b][y := a]$.
+        Thus, $\Gamma, [x := b]\Delta \vdash [x := b](\app{f}{m}{a}) \infr [x := b][y := a]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{5}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]s \chck [x := b][y := t]B$.
+        Notice that the bound variable is renamed to $y$ implicitly.
+        By Lemma~\ref{lem:2:subst_commute} $[x := b][y := t]B = [y := [x := b]t][x := b]B$.
+        Applying Lemma~\ref{lem:2:infer_is_pseobj} to $\D{4}$ and $\D{5}$ gives $t\pseobj$ and $s\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{6}$: $[x := b]t \equiv [x := b]s$.
+        The IH applied to the remaining subderivations and the application of the \textsc{Pair} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr (y : [x := b]A) \cap [x := b]B$.
+        The \textsc{Snd} rule and some folding of substitution yields $\Gamma, [x := b]\Delta \vdash [x := b]t.2 \infr [y := [x := b]t.1][x := b]B$.
+        Finally, by Lemma~\ref{lem:2:subst_commute} $[y := [x := b]t.1][x := b]B = [x := b][y := t.1]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Deconstructing $\D{1}$ and using inversion yields $\Gamma \vdash A \cinfr \star$ and $\Gamma \vdash A^\prime \cinfr \star$.
+        Applying Lemma~\ref{lem:2:infer_is_pseobj} means that $A\pseobj$ and $A^\prime\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{2}$: $[x := b]A \equiv [x := b]A^\prime$.
+        To see why $FV(|[x := b]e|)$ is empty, consider that if $x$ is in a free position in $e$, then necessarily $x \in FV(|e|)$, which is not true.
+        Thus, $x$ can only be in an erased position in $e$, but then $|[x := b]e| = |e|$, because $x$ is erased, so its substituted term must also be erased.
+        Applying the IH to $\D{1}$ and $\D{3}$ and using the \textsc{Cast} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]e \chck [x := b]\text{ctt} =_{[x := b]\text{cBool}} [x := b]\text{cff}$.
+        However, ctt, cff and cBool are all closed terms, thus $[x := b]\text{ctt} = \text{ctt}$, etc.
+        Moreover, $[x := b]((X : \star) \to_0 X) = (X : \star) \to_0 X$.
+        Thus, applying the \textsc{Sep} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:betastar_subst} $[x := b]A \betastar [x := b]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_type_is_pseobj}: $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $B\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} $[x := b]A \equiv [x := b]B$.
+        Note that $[x := b]K = K$ because $K = \star$ or $K = \kind$.
+        The case concludes by applying the IH to $\D{1}$ and $\D{2}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        Impossible by inversion, context is not empty.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$: $\vdash \Gamma, [x := b]\Delta$.
+        The IH applied to $\D{3}$: $\Gamma, [x := b]\Delta \vdash [x := b]A \cinfr K$.
+        Pick $y \notin FV(\Gamma)$.
+        Applying the \textsc{CtxApp} rule gives $\vdash \Gamma, [x := b]\Delta, y : [x := b]A$.
+    \end{proofcase}
+\end{proof}
+
+% \begin{lemma}[Substitution of Reduction-Inference]
+%     Suppose $\Gamma \vdash b \cinfr B$.
+%     \begin{enumerate}
+%         \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr [x := b]A$
+%         \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr [x := b]A$
+%         \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+%         \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
+%     \end{enumerate}
+%     \label{lem:2:subst_cinfer}
+% \end{lemma}
+
+% \begin{lemma}[Substitution of Checking]
+%     Suppose $\Gamma \vdash b \chck B$.
+%     \begin{enumerate}
+%         \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+%         \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+%         \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+%         \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
+%     \end{enumerate}
+%     \label{lem:2:subst_check}
+% \end{lemma}
+
+% \begin{lemma}
+%     If $\Gamma \vdash f \chck (x : A) \to_m B$ and $\Gamma \vdash a \chck A$ then $\Gamma \vdash \app{f}{m}{a} \chck [x := a]B$
+%     \label{lem:2:check_app}
+% \end{lemma}
+% \begin{proof}
+%     TODO(buggy)
+%     By definition $\exists\ T$ such that $\Gamma \vdash f \infr T$, $\Gamma \vdash (x : A) \to_m B \cinfr K$, and $T \equiv (x : A) \to_m B$.
+%     Now by inversion on the internal inference rule for \textsc{Pi} it is the case that $\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)$.
+%     Thus, $\Gamma \vdash A \infr \pdom(m, K)$ and $\Gamma, x : A \vdash B \infr \pcodom(m)$.
+
+%     By definition of conversion, $\exists\ u_1, u_2$ such that $T \betastar u_1$, $(x : A) \to_m B \betastar u_2$ and $|u_1| \betaconv |u_2|$.
+%     Inversion of reduction means $\exists\ A^\prime, B^\prime$ such that $u_2 = (x : A^\prime) \to_m B^\prime$, but then $|u_2| = |(x : A^\prime) \to_m B^\prime| = (x : |A^\prime|) \to_m |B^\prime|$.
+%     This forces $\exists\ C, D$ such that $|u_1| = (x : |C|) \to_m |D|$ with $|C| \betaconv |A^\prime|$ and $|D| \betaconv |B^\prime|$.
+%     However, this means that $T \betastar (x : C) \to_m D$.
+
+%     Now, $\Gamma \vdash f \cinfr (x : C) \to_m D$ and $\Gamma \vdash a \chck C$ because $A \equiv A^\prime \equiv C$ and $A$ well-typed.
+%     Applying the \textsc{App} rule yields $\Gamma \vdash \app{f}{m}{a} \infr [x := a]D$.
+%     Note that $B \equiv B^\prime \equiv D$ and by Lemma~\ref{lem:2:conv_subst} $[x := a]B \equiv [x := a]D$.
+%     By Lemma~\ref{lem:2:subst_check}, $\Gamma \vdash [x := a]B \chck \pcodom(m)$ and by Lemma~\ref{lem:2:check_k_to_cinfer_k}, $\Gamma \vdash [x := a]B \cinfr \pcodom(m)$.
+%     Therefore, $\Gamma \vdash \app{f}{m}{a} \chck [x := a]B$.
+% \end{proof}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash s \infr A$ and $s \betared t$ then $\exists\ B$ such that $A \betastar B$ and $\Gamma \vdash t \infr B$
+        \item If $\Gamma \vdash s \infr A$ and $\Gamma \betared \Delta$ then $\exists\ B$ such that $A \betastar B$ and $\Delta \vdash s \infr B$
+        \item If $\Gamma \vdash s \cinfr A$ and $s \betared t$ then $\exists\ B$ such that $A \betastar B$ and $\Gamma \vdash t \cinfr B$
+        \item If $\Gamma \vdash s \cinfr A$ and $\Gamma \betared \Delta$ then $\exists\ B$ such that $A \betastar B$ and $\Delta \vdash s \cinfr B$
+        \item If $\Gamma \vdash s \chck A$ and $s \betared t$ then $\Gamma \vdash t \chck A$
+        \item If $\Gamma \vdash s \chck A$ and $\Gamma \betared \Delta$ then $\Delta \vdash s \chck A$
+        \item If $\vdash \Gamma$ and $\Gamma \betared \Delta$ then $\vdash \Delta$
+    \end{enumerate}
+    \label{lem:2:preservation_step}
+\end{lemma}
+
+\begin{theorem}[Preservation]
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash s \infr A$ and $s \betastar t$ then $\exists\ B$ such that $A \betastar B$ and $\Gamma \vdash t \infr B$
+        \item If $\Gamma \vdash s \infr A$ and $\Gamma \betastar \Delta$ then $\exists\ B$ such that $A \betastar B$ and $\Delta \vdash s \infr B$
+        \item If $\Gamma \vdash s \cinfr A$ and $s \betastar t$ then $\exists\ B$ such that $A \betastar B$ and $\Gamma \vdash t \cinfr B$
+        \item If $\Gamma \vdash s \cinfr A$ and $\Gamma \betastar \Delta$ then $\exists\ B$ such that $A \betastar B$ and $\Delta \vdash s \cinfr B$
+        \item If $\Gamma \vdash s \chck A$ and $s \betastar t$ then $\Gamma \vdash t \chck A$
+        \item If $\Gamma \vdash s \chck A$ and $\Gamma \betastar \Delta$ then $\Delta \vdash s \chck A$
+        \item If $\vdash \Gamma$ and $\Gamma \betastar \Delta$ then $\vdash \Delta$
+    \end{enumerate}
+    \label{thm:2:preservation}
+\end{theorem}
+\begin{proof}
+    By induction on either $s \betastar t$ or $\Gamma \betastar \Delta$ using Lemma~\ref{lem:2:preservation_step}.
+\end{proof}
+
+% \begin{lemma}
+%     If $|t| \betastar \star$ then $t \betastar \star$
+% \end{lemma}
+
+% \begin{lemma}
+%     If $\Gamma \vdash t \chck K$ then $\Gamma \vdash t \cinfr K$, where $K = \kind$ or $K = \star$
+%     \label{lem:2:check_k_to_cinfer_k}
+% \end{lemma}
+% \begin{proof}
+%     By definition $\exists\ T$ such that $\Gamma \vdash t \infr T$, $\Gamma \vdash K \infr K^\prime$, and $T \equiv K$.
+%     Notice that, actually, $K \neq \kind$ because there is no rule where $\kind$ appears as a proof, thus $K = \star$ and $K^\prime = \kind$.
+%     By Lemma~\ref{thm:2:beta_iff_conv}: $|T| \betaconv \star$.
+%     Thus, $|T| \betastar \star$.
+% \end{proof}
+
+\begin{theorem}[Classification]
+    If $\Gamma \vdash t \infr A$ then one (and only one) of the following statements holds:
+    \begin{enumerate}
+        \item $A$ is $\kind$ (i.e. $t$ is a kind)
+        \item $\Gamma \vdash A \cinfr \kind$ (i.e. $t$ is a $\Gamma$-constructor)
+        \item $\Gamma \vdash A \cinfr \star$ (i.e. $t$ is a $\Gamma$-term)
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    By induction on the proof derivation of $t$ with motives
+    \begin{itemize}
+        \item {
+            $\Gamma \vdash t \infr A$, $\Gamma \vdash t \cinfr A$, and $\Gamma \vdash t \chck A$ motives is
+            $$(A = \kind) \vee (\Gamma \vdash A \cinfr \kind) \vee (\Gamma \vdash A \cinfr \star)$$
+        }
+        \item {
+            $\vdash \Gamma$ motive is $\top$
+        }
+    \end{itemize}
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        $A = \kind$, trivial.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Obtained from Lemma~\ref{lem:2:ctx_get}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        If $\pcodom(m) = \kind$ then trivial.
+        Otherwise, $\pcodom(m) = \star$ and the \textsc{Axiom} rule with Lemma~\ref{lem:2:ctx_wf} applied to $\D{1}$ conclude the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Apply the \textsc{Pi} rule with $\D{1}$ and $\D{3}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$ it is the case that $\exists\ K$ such that $\Gamma \vdash (x : A) \to_m B \cinfr K$.
+        Note that it cannot be the case that it is equal $\kind$ by inversion on syntax.
+        However, by inversion on the internal inference rule $\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)$.
+        By the \textsc{Pi} rule $\Gamma, x : A \vdash B \cinfr \pcodom(m)$.
+        Applying Lemma~\ref{lem:2:subst_check} yields $\Gamma \vdash [x := a]B \chck \pcodom(m)$.
+        Thus, by Lemma~\ref{lem:2:check_k_to_cinfer_k}: $\Gamma \vdash [x := a]B \cinfr \pcodom(m)$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the \textsc{Axiom} rule and Lemma~\ref{lem:2:ctx_get}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Apply the \textsc{Int} rule with $\D{2}$ and $\D{3}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        Apply the IH to $\D{1}$.
+        Inversion on syntax gives $\exists\ K$ such that $(x : A) \cap B \cinfr K$.
+        Inversion on the internal inference rule yields $(x : A) \cap B \infr \star$.
+        Thus, $K = \star$.
+        Deconstructing the previous rule concludes the proof with $\Gamma \vdash A \cinfr \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Exactly as the previous case $(x : A) \cap B \infr \star$ by the IH and two inversions.
+        Deconstructing the previous rule gives $\Gamma, x : A \vdash B \cinfr \star$.
+        By the \textsc{Fst} rule, $\Gamma \vdash t.1 \infr A$.
+        Then, by Lemma~\ref{lem:2:subst_infer} it is the case that $\Gamma \vdash [x := t.1]B \cinfr \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the \textsc{Axiom} rule and Lemma~\ref{lem:2:ctx_wf}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $\Gamma \vdash t \chck A$, thus by the \textsc{Eq} rule $\Gamma \vdash t =_A t \infr \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        Apply the IH to $\D{1}$.
+        By inversion on syntax $\exists\ K$ such that $\Gamma \vdash a =_A b \cinfr K$.
+        By inversion on the internal inference rule, $\Gamma \vdash a =_A b \infr \star$, thus $K = \star$.
+        Deconstructing the previous rule yields $\Gamma \vdash A \cinfr \star$, $\Gamma \vdash a \chck A$, and $\Gamma \vdash b \chck A$.
+        By Lemma~\ref{lem:2:check_app} $\Gamma \vdash \app{P}{\tau}{a} \chck \star$ and $\Gamma \vdash \app{P}{\tau}{b} \chck \star$.
+        However, this means that $\Gamma \vdash \app{P}{\tau}{a} \cinfr \star$ and $\Gamma \vdash \app{P}{\tau}{b} \cinfr \star$ by Lemma~\ref{lem:2:check_k_to_cinfer_k}.
+        Using weakening, $\Gamma, x : \app{P}{\tau}{a} \vdash \app{P}{\tau}{b} \cinfr \star$.
+        Applying the \textsc{Pi} rule concludes the proof.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    \begin{proofcase}
+        Exactly as the \textsc{Fst} and \textsc{Snd} cases, $\Gamma \vdash (x : A) \cap B \cinfr \star$ by the IH and two inversions.
+        By $\D{2}$, $\Gamma \vdash a \chck (x : A) \cap B$.
+        Applying the \textsc{Eq} rule yields $\Gamma \vdash a =_{(x : A) \cap B} b \infr \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH on $\D{1}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        It is clear that $\Gamma \vdash (X : \star) \to_0 X \infr \star$ by applying a short sequence of inference rules.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        Apply the IH on $\D{1}$.
+        By inversion on $\D{2}$, $A \neq \kind$.
+        Thus, $\exists\ K$ such that $\Gamma \vdash A \cinfr K$.
+        By preservation $\Gamma \vdash B \cinfr K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by $\D{2}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        Trivial.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        Trivial.
+    \end{proofcase}
+\end{proof}

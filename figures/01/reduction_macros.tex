@@ -21,19 +21,26 @@
     {\mathfrak{c}(\kappa, t_1, \ldots t_i, \ldots t_{\mathfrak{a}(\kappa)}) \betared \mathfrak{c}(\kappa, t_1, \ldots t_i^\prime, \ldots t_{\mathfrak{a}(\kappa)}) }
     {}
 
-\Rule{\ContextReductionHeadRule}
+\Rule{\ContextReductionEmpty}
     {
-        \der{\D{1}}{A \betared A^\prime}
     }
-    {\Gamma, x : A \betared \Gamma, x : A^\prime}
-    {CtxHeadRed}
+    {\varepsilon \betared \varepsilon}
+    {CtxRedEm}
 
-\Rule{\ContextReductionTailRule}
+\Rule{\ContextReductionStep}
+    {
+        \der{\D{1}}{\Gamma \betared \Gamma^\prime} \\
+        \der{\D{2}}{A \betared A^\prime}
+    }
+    {\Gamma, x : A \betared \Gamma^\prime, x : A^\prime}
+    {CtxRedStep}
+
+\Rule{\ContextReductionSkip}
     {
         \der{\D{1}}{\Gamma \betared \Gamma^\prime}
     }
     {\Gamma, x : A \betared \Gamma^\prime, x : A}
-    {CtxTailRed}
+    {CtxRedSkip}
 
 \Rule{\ExampleRule}
     {

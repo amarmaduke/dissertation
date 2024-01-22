@@ -1,0 +1,50 @@
+
+\Rule{\BinderPseObj}
+    {
+        \der{\D{1}}{t_1 \pseobj} \\
+        \der{\D{2}}{t_2 \pseobj} \\
+        \der{\D{3}}{\kappa \neq \lambda_0}
+    }
+    {\mathfrak{b}(\kappa, x : t_1, t_2) \pseobj}
+    {}
+
+\Rule{\LambdaPseObj}
+    {
+        \der{\D{1}}{A \pseobj} \\
+        \der{\D{2}}{t \pseobj} \\
+        \der{\D{3}}{x \notin FV(|t|)}
+    }
+    {\abs{\lambda_0}{x}{A}{t} \pseobj}
+    {}
+
+\Rule{\CtorPseObj}
+    {
+        \der{\D{1}}{\forall\ i \in {1, \ldots, \mathfrak{a}(\kappa)}.\ t_i \pseobj} \\
+        \der{\D{2}}{\kappa \neq \text{pair}}
+    }
+    {\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}(\kappa)}) \pseobj}
+    {}
+
+\Rule{\PairPseObj}
+    {
+        \der{\D{1}}{t_1 \pseobj} \\
+        \der{\D{2}}{t_2 \pseobj} \\
+        \der{\D{3}}{A \pseobj} \\
+        \der{\D{4}}{|t_1| \betaconv |t_2|}
+    }
+    {[t_1, t_2; A] \pseobj}
+    {}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        $$\BinderPseObj$$
+        $$\LambdaPseObj$$
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        $$\CtorPseObj$$
+        $$\PairPseObj$$
+    \end{minipage}%
+    $$x \pseobj$$
+    \caption{Definition of Pseudo Objects.}
+\end{figure}

@@ -115,7 +115,7 @@ Additionally, when $s \betastar t$ then $s$ \textit{multisteps} to $t$.
 It is easy to show that any reflexive-transitive closure is itself transitive.
 
 \begin{lemma}
-    Let $R$ be a relation on a set $A$ and let $a, b, c \in A$. If $a\ R^*\ b$ and $b\ R^*\ c$ then $a\ R^*\ c$.
+    Let $R$ be a relation on a set $A$ and let $a, b, c \in A$. If $a\ R^*\ b$ and $b\ R^*\ c$ then $a\ R^*\ c$
 \end{lemma}
 \begin{proof}
     By induction on $a\ R^*\ b$.
@@ -139,7 +139,7 @@ It may be tempting to view conversion as the reflexive-symmetric-transitive clos
 In fact, proving transitivity of conversion is often a significant effort, beginning with the confluence lemma.
 
 \begin{lemma}[Confluence]
-    If $s \betastar t_1$ and $s \betastar t_2$ then there exists a $t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$.
+    If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
 \end{lemma}
 \begin{proof}
     See Appendix~\ref{ap:a} for a proof of confluence involving a larger reduction relation. Note that F$^\omega$'s step relation is a subset of this relation and thus is confluent.
@@ -147,6 +147,7 @@ In fact, proving transitivity of conversion is often a significant effort, begin
 
 \begin{theorem}[Transitivity of Conversion]
     If $a \equiv b$ and $b \equiv c$ then $a \equiv c$
+    \label{thm:1:trans}
 \end{theorem}
 \begin{proof}
     By premises we know $\exists u, v$ such that $a \betastar u$, $b \betastar u$, $b \betastar v$, and $c \betastar v$.

@@ -10,11 +10,12 @@
     $$\NonbinderReduction$$
     \begin{align*}
         \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} &\betared [x := t]b \\
-        [t_1, t_2, A].1 &\betared t_1 \\
-        [t_1, t_2, A].2 &\betared t_2 \\
-        J(A, P, x, y, \text{refl}(z), w) &\betared \app{w}{0}{z} \\
-        \vartheta(\text{refl}(t.1)) &\betared \text{refl}(t) \\
-        \vartheta(\text{refl}(t.2)) &\betared \text{refl}(t) \\
+        [t_1, t_2; A].1 &\betared t_1 \\
+        [t_1, t_2; A].2 &\betared t_2 \\
+        \psi(\text{refl}(t),P) &\betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \\
+        %J(A, P, x, y, \text{refl}(z), w) &\betared \app{w}{0}{z} \\
+        \vartheta_1(\text{refl}(t_1), t_2, t_3) &\betared \text{refl}(t_2) \\
+        \vartheta_2(\text{refl}(t_1), t_2, t_3) &\betared \text{refl}(t_2) \\
     \end{align*}
     \caption{Reduction rules for arbitrary syntax.}
 \end{figure}

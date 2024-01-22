@@ -13,19 +13,21 @@
             |(x:A) \to_m B| &= (x:|A|) \to_m |B| \\
             |(x:A) \cap B| &= (x:|A|) \cap |B| \\
             |\app{f}{0}{a}| &= |f| \\
-            |\app{f}{\omega}{a}| &= \app{|f|}{\omega}{|a|}
+            |\app{f}{\omega}{a}| &= \app{|f|}{\omega}{|a|} \\
+            |\app{f}{\tau}{a}| &= \app{|f|}{\tau}{|a|}
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
-            |\app{f}{\tau}{a}| &= \app{|f|}{\tau}{|a|} \\
-            |[t_1, t_2, T]| &= |t_1| \\
+            |[t_1, t_2; T]| &= |t_1| \\
             |t.1| &= |t| \\
             |t.2| &= |t| \\
             |x =_A y| &= |x| =_{|A|} |y| \\
             |\text{refl}(t)| &= \absu{\lambda_\omega}{x}{x} \\
-            |J(A, P, x, y, e, w)| &= \app{|e|}{\omega}{|w|} \\
-            |\vartheta(e)| &= |e| \\
+            %|J(A, P, x, y, e, w)| &= \app{|e|}{\omega}{|w|} \\
+            |\psi(e, P)| &= |e| \\
+            |\vartheta_1(e, t_1, t_2)| &= |e| \\
+            |\vartheta_2(e, t_1, t_2)| &= |e| \\
             |\delta(e)| &= |e| \\
             |\varphi(f,e)| &= \absu{\lambda_\omega}{x}{x}
         \end{align*}

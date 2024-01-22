@@ -57,7 +57,7 @@
     {Var}
 
 
-    \Rule{\HeadInferenceRule}
+\Rule{\HeadInferenceRule}
     {
         \der{\D{1}}{\Gamma \vdash t \infr A} \\
         \der{\D{2}}{A \betastar B}
@@ -69,7 +69,7 @@
     {
         \der{\D{1}}{\Gamma \vdash t \infr A} \\
         \der{\D{2}}{\Gamma \vdash B \cinfr K} \\
-        \der{\D{2}}{A \equiv B}
+        \der{\D{3}}{A \equiv B}
     }  
     {\Gamma \vdash t \chck B}
     {Chk}
@@ -81,7 +81,7 @@
 
 \Rule{\ContextAppendRule}
     {
-        \der{\D{1}}{x \notin \text{FV}(\Gamma)} \\
+        \der{\D{1}}{x \notin FV(\Gamma)} \\
         \der{\D{2}}{\vdash \Gamma} \\
         \der{\D{3}}{\Gamma \vdash A \cinfr K}
     }

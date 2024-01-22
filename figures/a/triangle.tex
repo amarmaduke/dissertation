@@ -1,0 +1,21 @@
+
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        \parp{\app{(\abs{\lambda_m}{x}{t_1}{t_2})}{m}{t_3}} &= [x := \parp{t_3}]\parp{t_2} \\
+        \parp{\psi(\text{refl}(t_1), t_2)} &= \abs{\lambda_\omega}{x}{\app{\parp{t_2}}{\tau}{\parp{t_1}}}{x} \\
+        \parp{[t_1, t_2; t_3].1} &= \parp{t_1} \\
+        \parp{[t_1, t_2; t_3].2} &= \parp{t_2} \\
+        \parp{\vartheta_1(\text{refl}(t_1), t_2, t_3)} &= \text{refl}(\parp{t_2}) \\
+        \parp{\vartheta_2(\text{refl}(t_1), t_2, t_3)} &= \text{refl}(\parp{t_2}) \\
+        \parp{\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}(\kappa)})} &= \mathfrak{c}(\kappa, \parp{t_1}, \ldots, \parp{t_{\mathfrak{a}(\kappa)}}) \\
+        \parp{\mathfrak{b}(\kappa, (x : t_1), t_2)} &= \mathfrak{b}(\kappa, (x : \parp{t_1}), \parp{t_2}) \\
+        \parp{x} &= x
+    \end{align*}
+    \caption{
+        Definition of a reduction completion function $\parp{-}$ for parallel reduction.
+        Note that this function is defined by pattern matching, applying cases from top to bottom.
+        Thus, the cases at the very bottom are catch-all for when the prior cases are not applicable.
+    }
+\end{figure}
