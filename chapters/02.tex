@@ -529,9 +529,9 @@
 
     $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth}$\PairRule[*]$ \end{minipage}\end{array}$
     \begin{proofcase}
-        By the IH $t\pseobj$, $s\pseobj$, and $T\pseobj$.
+        By the IH $t\pseobj$, $s\pseobj$, and $(x : A) \cap B\pseobj$.
         By Theorem~\ref{thm:2:beta_iff_conv} $|t| \betaconv |s|$.
-        Applying the pair rule yields $[t,s;T]\pseobj$.
+        Applying the pair rule yields $[t,s;(x : A) \cap B]\pseobj$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth} $\LambdaRule[*]$ \end{minipage}\end{array}$
@@ -647,8 +647,7 @@
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Applying the \textsc{Int} rule with $\D{2}$ and $\D{3}$ gives $\Gamma \vdash (x : A) \cap B \infr \star$.
-        Now by Lemma~\ref{lem:2:infer_is_pseobj} the case concludes.
+        By Lemma~\ref{lem:2:infer_is_pseobj} applied to $\D{1}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
@@ -686,7 +685,7 @@
 
     $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
     \begin{proofcase}
-        By the IH $a.2 =_A b.2\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
+        By the IH $a.2 =_{[x := a.1]B} b.2\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
         Applying the constructor rule finishes the case.
     \end{proofcase}
 
@@ -767,12 +766,12 @@
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Applying the IH to $\D{5}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]s \chck [x := b][y := t]B$.
+        Applying the IH to $\D{3}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]s \chck [x := b][y := t]B$.
         Notice that the bound variable is renamed to $y$ implicitly.
         By Lemma~\ref{lem:2:subst_commute} $[x := b][y := t]B = [y := [x := b]t][x := b]B$.
-        Applying Lemma~\ref{lem:2:infer_is_pseobj} to $\D{4}$ and $\D{5}$ gives $t\pseobj$ and $s\pseobj$.
-        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{6}$: $[x := b]t \equiv [x := b]s$.
-        The IH applied to the remaining subderivations and the application of the \textsc{Pair} rule concludes the case.
+        Applying Lemma~\ref{lem:2:infer_is_pseobj} to $\D{2}$ and $\D{3}$ gives $t\pseobj$ and $s\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{4}$: $[x := b]t \equiv [x := b]s$.
+        The IH applied to $\D{1}$ and $\D{2}$ and the application of the \textsc{Pair} rule concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$

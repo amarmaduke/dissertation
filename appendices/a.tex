@@ -222,39 +222,97 @@
     $\text{Case: }\begin{array}{c} \ParVarReduction[*] \end{array}$
     \begin{proofcase}
         Have $\parp{x} = x$.
-        Thus this case is trivial.
+        Thus, this case is trivial.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParConstructorReduction[*] \end{array}$
     \begin{proofcase}
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for all $i$.
+        Proceed by cases of $\parp{\mathfrak{c}(\kappa, t_1, \ldots t_{\mathfrak{a}(\kappa)})}$.
+
+        $\text{Case: }\begin{array}{c} \parp{\app{(\abs{\lambda_m}{x}{t_1}{t_2})}{m}{t_3}} = [x := \parp{t_3}]\parp{t_2} \end{array}$
+        \begin{proofcase}
+            Note that $\mathfrak{c}(\kappa, t_1^\prime, \ldots t^\prime_{\mathfrak{a}(\kappa)}) = \app{(\abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime})}{m}{t_3^\prime}$.
+            Using the \textsc{ParBeta} rule yields $\app{(\abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime})}{m}{t_3^\prime} \parred [x := \parp{t_3}]\parp{t_2}$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{\psi(\text{refl}(t_1), t_2)} = \abs{\lambda_\omega}{x}{\app{\parp{t_2}}{\tau}{\parp{t_1}}}{x} \end{array}$
+        \begin{proofcase}
+            Note that $\mathfrak{c}(\kappa, t_1^\prime, \ldots t^\prime_{\mathfrak{a}(\kappa)}) = \psi(\text{refl}(t_1^\prime), t_2^\prime)$.
+            Using the \textsc{ParSubst} rule yields $\psi(\text{refl}(t_1^\prime), t_2^\prime) \parred \abs{\lambda_\omega}{x}{\app{\parp{t_2}}{\tau}{\parp{t_1}}}{x}$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{[t_1, t_2; t_3].1} = \parp{t_1} \end{array}$
+        \begin{proofcase}
+            Note that $\mathfrak{c}(\kappa, t_1^\prime, \ldots t^\prime_{\mathfrak{a}(\kappa)}) = [t_1^\prime, t_2^\prime; t_3^\prime].1$.
+            Using the \textsc{ParFst} rule yields $[t_1^\prime, t_2^\prime; t_3^\prime].1 \parred \parp{t_1}$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{[t_1, t_2; t_3].2} = \parp{t_2} \end{array}$
+        \begin{proofcase}
+            Similar to previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{\vartheta_1(\text{refl}(t_1), t_2, t_3)} = \parp{t_2} \end{array}$
+        \begin{proofcase}
+            Note that $\mathfrak{c}(\kappa, t_1^\prime, \ldots t^\prime_{\mathfrak{a}(\kappa)}) = \vartheta_1(\text{refl}(t_1^\prime), t_2^\prime, t_3^\prime)$.
+            Using the \textsc{ParPrmFst} rule yields $\vartheta_1(\text{refl}(t_1^\prime), t_2^\prime, t_3^\prime) \parred \parp{t_2}$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{\vartheta_2(\text{refl}(t_1), t_2, t_3)} = \parp{t_2} \end{array}$
+        \begin{proofcase}
+            Similar to previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \parp{\mathfrak{c}(\kappa, t_1, \ldots t_{\mathfrak{a}(\kappa)})} = \mathfrak{c}(\kappa, \parp{t_1}, \ldots \parp{t_{\mathfrak{a}(\kappa)}}) \end{array}$
+        \begin{proofcase}
+            Using the \textsc{ParCtor} rule concludes the case.
+        \end{proofcase}
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParBinderReduction[*] \end{array}$
     \begin{proofcase}
+        Note that $\parp{\mathfrak{b}(\kappa, (x : t_1), t_2)} = \mathfrak{b}(\kappa, (x : \parp{t_1}), \parp{t_2})$.
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for $i = 1, 2$.
+        Thus, by the \textsc{ParBind} rule $\mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime) \parred \mathfrak{b}(\kappa, (x : \parp{t_1}), \parp{t_2})$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParBetaReduction[*] \end{array}$
     \begin{proofcase}
+        Note that $\parp{\app{(\abs{\lambda_m}{x}{t_1}{t_2})}{m}{t_3}} = [x := \parp{t_3}]\parp{t_2}$.
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for $i = 1, 2, 3$.
+        Thus, by Lemma~\ref{lem:a:par_subst} $[x := t_3^\prime]t_2^\prime \parred [x := \parp{t_3}]\parp{t_2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParSubstReduction[*] \end{array}$
     \begin{proofcase}
+        Note that $\parp{\psi(\text{refl}(t_1), t_2)} = \abs{\lambda_\omega}{x}{\app{\parp{t_2}}{\tau}{\parp{t_1}}}{x}$.
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for $i = 1, 2$.
+        Applying the \textsc{ParBind} rule yields $\abs{\lambda_\omega}{x}{\app{t_2^\prime}{\tau}{t_1^\prime}}{x} \parred \abs{\lambda_\omega}{x}{\app{\parp{t_2}}{\tau}{\parp{t_1}}}{x}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParFstReduction[*] \end{array}$
     \begin{proofcase}
+        Note that $\parp{[t_1, t_2; t_3].1} = \parp{t_1}$.
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for $i = 1, 2, 3$.
+        Thus, $t_1^\prime \parred \parp{t_1}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParSndReduction[*] \end{array}$
     \begin{proofcase}
+        Similar to previous case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParPrmFstReduction[*] \end{array}$
     \begin{proofcase}
+        Note that $\parp{\vartheta_1(\text{refl}(t_1), t_2, t_3)} \parred \parp{t_2}$.
+        By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for $i = 1, 2, 3$.
+        Thus, $t_2^\prime \parred \parp{t_2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ParPrmSndReduction[*] \end{array}$
     \begin{proofcase}
+        Similar to previous case.
     \end{proofcase}
 \end{proof}
 

@@ -35,14 +35,12 @@
 
 \Rule{\PairRule}
     {
-        \der{\D{1}}{\Gamma \vdash T \cinfr (x : A) \to_\tau B} \\
-        \der{\D{2}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{3}}{\Gamma, x : A \vdash B \cinfr \star} \\
-        \der{\D{4}}{\Gamma \vdash t \chck A} \\
-        \der{\D{5}}{\Gamma \vdash s \chck [x := t]B} \\
-        \der{\D{6}}{t \equiv s}
+        \der{\D{1}}{\Gamma \vdash (x : A) \cap B \cinfr \star} \\
+        \der{\D{2}}{\Gamma \vdash t \chck A} \\
+        \der{\D{3}}{\Gamma \vdash s \chck [x := t]B} \\
+        \der{\D{4}}{t \equiv s}
     }
-    {\Gamma \vdash [t, s; T] \infr (x : A) \cap B }
+    {\Gamma \vdash [t, s; (x : A) \cap B] \infr (x : A) \cap B }
     {Pair}
 
 \Rule{\FirstRule}
@@ -110,7 +108,7 @@
     {
         \der{\D{1}}{\Gamma \vdash a \cinfr (x:A) \cap B} \\
         \der{\D{2}}{\Gamma \vdash b \chck (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash e \chck a.2 =_A b.2} \\
+        \der{\D{3}}{\Gamma \vdash e \chck a.2 =_{[x := a.1]B} b.2} \\
     }
     {\Gamma \vdash \vartheta_2(e, a, b) \infr a =_{(x:A) \cap B} b}
     {PrmSnd}

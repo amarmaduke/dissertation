@@ -4,90 +4,79 @@
 \begin{lemma}
     \textcolor{white}{\_}
     \begin{enumerate}
-        \item If $\Gamma \vdash s \infr A$, $s \betared t$, and $\Gamma \betared \Delta$ then $\exists\ B.$ $A \betastar B$ and $\Delta \vdash t \infr B$
-        \item If $\Gamma \vdash s \infr A$ and $\Gamma \betared \Delta$ then $\exists\ B.$ $A \betastar B$ and $\Delta \vdash s \infr B$
-        \item If $\Gamma \vdash s \cinfr A$, $s \betared t$, and $\Gamma \betared \Delta$ then $\exists\ B.$ $A \betastar B$ and $\Delta \vdash t \cinfr B$
-        \item If $\Gamma \vdash s \cinfr A$ and $\Gamma \betared \Delta$ then $\exists\ B.$ $A \betastar B$ and $\Delta \vdash s \cinfr B$
-        \item If $\Gamma \vdash s \chck A$, $s \betared t$, and $\Gamma \betared \Delta$ then $\Delta \vdash t \chck A$
-        \item If $\Gamma \vdash s \chck A$ and $\Gamma \betared \Delta$ then $\Delta \vdash s \chck A$
-        \item If $\vdash \Gamma$ and $\Gamma \betared \Delta$ then $\vdash \Delta$
+        \item If $\Gamma \vdash t \infr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \parred B$ and $\Gamma^\prime \vdash t^\prime \infr B$
+        \item If $\Gamma \vdash t \cinfr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \parred B$ and $\Gamma^\prime \vdash t^\prime \cinfr B$
+        \item If $\Gamma \vdash t \chck A$, $\Gamma \parred \Gamma^\prime$, $t \parred t^\prime$, and $A \parred A^\prime$ then $\Gamma^\prime \vdash t^\prime \chck A^\prime$
+        \item If $\vdash \Gamma$ and $\Gamma \parred \Gamma^\prime$ then $\vdash \Gamma^\prime$
     \end{enumerate}
-    \label{lem:b:preservation_step}
+    \label{lem:b:preservation_par_step}
 \end{lemma}
 \begin{proof}
-    By mutual induction, cases 1 and 2 are merged into the inductive motive of $\Gamma \vdash s \infr A$, likewise for cases 3 and 4, and 5 and 6 for their respective relations.
+    By mutual induction.
 
     $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
     \begin{proofcase}
-        By case analysis, $\star \betared t$ is impossible.
-        \\ \\
-        Suppose $\Gamma \betared \Delta$.
-        By the IH applied to $\D{1}$: $\vdash \Delta$.
-        Thus, $\Delta \vdash \star \infr \kind$.
+        By the IH applied to $\D{1}$: $\vdash \Gamma^\prime$.
+        Inversion on $\star \parred t^\prime$ gives that $t^\prime = \star$.
+        The \textsc{Axiom} rule finishes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        By case analysis, $x \betared t$ is impossible.
-        \\ \\
-        Suppose $\Gamma \betared \Delta$.
-        By the IH applied to $\D{1}$: $\vdash \Delta$.
-        Note that context reduction does not alter associated variables.
-        Suppose that $A \betared A^\prime$ within $\Gamma \betared \Delta$.
-        Then $(x : A^\prime) \in \Delta$ and $\Delta \vdash x \infr A^\prime$.
-        Suppose instead that $A$ is unchanged by $\Gamma \betared \Delta$.
-        Then $(x : A) \in \Delta$ and $\Delta \vdash x \infr A$.
+        Applying the IH to $\D{1}$ gives $\vdash \Gamma^\prime$.
+        Because $(x : A) \in \Gamma$ there is an $A^\prime$ such that $A \parred A^\prime$ and $(x : A^\prime) \in \Gamma^\prime$.
+        The \textsc{Var} rule concludes.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $s \betared t$.
-        There are two possible cases:
-
-        $\text{Case: }\begin{array}{c} \BinderReductionOne[*] \end{array}$
-        \begin{proofcase}
-            Applying the IH yields $\D{1}$ $\exists\ T_1$ such that $\pdom(m, K) \betastar T_1$ and $\Delta \vdash A^\prime \cinfr T_1$.
-            However, $\pdom(m,K)$ cannot reduce, thus $T_1 = \pdom(m,K)$.
-            Note that $\Gamma, x : A \betared \Delta, x : A^\prime$.
-            Thus, by the IH applied to $\D{2}$ $\exists\ T_2$ such that $\Delta, x : A^\prime \vdash B \cinfr T_2$.
-            However, $\pcodom(m)$ cannot reduce, thus $T_2 = \pcodom(m)$.
-            Therefore, $\Delta \vdash (x : A^\prime) \to_m B \infr \pcodom(m)$.
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \BinderReductionTwo[*] \end{array}$
-        \begin{proofcase}
-            By the IH on $\D{2}$: $\exists\ T$ such that $\pcodom(m) \betastar T$ and $\Delta, x : A \vdash B^\prime \cinfr T$.
-            However, $\pcodom(m)$ cannot reduce, thus $T = \pcodom(m)$.
-            Thus, $\Delta \vdash (x : A) \to_m B^\prime \infr \pcodom(m)$.
-        \end{proofcase}
-        Suppose $\Gamma \betared \Delta$.
-        Then, also: $\Gamma, x : A \betared \Delta, x : A$.
-        Note that because this is mutual induction, the context argument is generalized in the inference cases.
-        Using the IH yields: $\exists\ T_1, T_2$ such that $\pdom(m, K) \betastar T_1$, $\pcodom(m) \betastar T_2$, $\Delta \vdash A \cinfr T_1$, and $\Delta, x : A \vdash B \cinfr T_2$.
-        As before, $T_1 = \pdom(m, K)$ and $T_2 = \pcodom(m)$.
-        Thus, $\Delta \vdash (x : A) \to_m B \infr \pcodom(m)$.
+        Note that there is only one reduction case: $(x : A) \to_m B \parred (x : A^\prime) \to_, B^\prime$ with $A \parred A^\prime$ and $B \parred B^\prime$.
+        By the IH on $\D{1}$: $\exists\ T_1$ such that $\pdom(m, K) \parred T_1$ and $\Gamma^\prime \vdash A^\prime \cinfr T_1$.
+        Inversion on $\pdom(m, K) \parred T_1$ means that $T_1 = \pdom(m, K)$.
+        Note that $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$.
+        Applying the IH to $\D{2}$ gives $\exists\ T_2$ such that $\pcodom(m) \parred T_2$ and $\Gamma^\prime, x : A^\prime \vdash B^\prime \cinfr T_2$.
+        Inversion on $\pcodom(m) \parred T_2$ means that $T_2 = \pcodom(m)$.
+        The \textsc{Pi} finishes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $s \betared t$.
-        There are two possible cases:
-
-        $\text{Case: }\begin{array}{c} \BinderReductionOne[*] \end{array}$
-        \begin{proofcase}
-            Exactly as the \textsc{Pi} case, the IH applied to $\D{1}$ yields: $\Delta \vdash A^\prime \cinfr \pdom(m, K)$.
-            Now $\Gamma, x : A \betared \Delta, x : A^\prime$.
-            Using the IH with $\D{2}$ means $\exists\ B^\prime$ such that $B \betastar B^\prime$ and $\Delta, x : A^\prime \vdash t \infr B^\prime$.
-            Applying the IH to $\D{3}$ with
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \BinderReductionTwo[*] \end{array}$
-        \begin{proofcase}
-        \end{proofcase}
+        Note that there is only one reduction case for $t \parred t^\prime$: $\abs{\lambda_m}{x}{A}{t} \parred \abs{\lambda_m}{x}{A^\prime}{t^\prime}$ with $A \parred A^\prime$ and $t \parred t^\prime$.
+        Applying the IH to $\D{1}$ gives $\exists\ T_1$ such that $\pdom(m, K) \parred T_1$ and $\Gamma^\prime \vdash A^\prime \cinfr T_1$.
+        By inversion on $\pdom(m, K) \parred T_1$ it is the case that $T_1 = \pdom(m, K)$.
+        Note that $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$.
+        The IH applied to $\D{2}$ gives $\exists\ B^\prime$ such that $B \parred B^\prime$ and $\Gamma^\prime, x : A^\prime \vdash t^\prime \infr B^\prime$.
+        By the IH used on $\D{3}$: $\exists\ T_2$ such that $\pcodom(m) \parred T_2$ and $\Gamma^\prime, x : A^\prime \vdash B^\prime \cinfr T_2$.
+        Again, by inversion $T_2 = \pcodom(m)$.
+        Note that reduction does not introduce variables, thus if $m = 0$ it is the case that $x \notin FV(|t^\prime|)$.
+        Also, by the \textsc{ParBind} rule $(x : A) \to_m B \parred (x : A^\prime) \to_m B^\prime$.
+        The \textsc{Lam} rule concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
+        By cases on $t \parred t^\prime$.
+
+        $\text{Case: }\begin{array}{c} \ParBetaReduction[*] \end{array}$
+        \begin{proofcase}
+            TODO
+            % Applying the IH to the outer $\D{1}$ gives $\exists\ T_1$ such that $(x : A) \to_m B \parred T_1$ and $\Gamma^\prime \vdash \abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime} \cinfr T_1$.
+            % By inversion on $(x : A) \to_m B \parred T_1$: $\exists\ A^\prime, B^\prime$ such that $T_1 = (x : A^\prime) \to_m B^\prime$, $A \parred A^\prime$, and $B \parred B^\prime$.
+
+
+            % By definition $\Gamma \vdash \abs{\lambda_m}{t_1}{t_2} \infr T$ and $T \betastar (x : A) \to_m B$.
+            % Inversion on this rule means that $T_1 = (x : C) \to_m D$ and thus $C \betastar A$ and $D \betastar B$.
+            % Now deconstructing $\Gamma \vdash \abs{\lambda_m}{t_1}{t_2} \infr (x : C) \to_m D$ yields $\Gamma \vdash C \cinfr \pdom(m, K)$, and $\Gamma, x : C \vdash t_2 \infr D$.
+            % Note that $t_1 = C$ by inversion.
+            % Let $C^\prime = t_1^\prime$.
+            % Applying the IH to $t_2$ gives $\exists\ B^\prime$ such that $\Gamma^\prime, x : C^\prime \vdash t_2^\prime \cinfr B^\prime$ and $B \parred B^\prime$.
+
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \ParConstructorReduction[*] \end{array}$
+        \begin{proofcase}
+            TODO
+        \end{proofcase}
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
@@ -104,6 +93,19 @@
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
     \begin{proofcase}
+        By cases on $t \parred t^\prime$.
+
+        $\text{Case: }\begin{array}{c} \ParSndReduction[*] \end{array}$
+        \begin{proofcase}
+           % Goal: find B' such that [x := t.1]B \parred B' and G' |- t'.2 : B'
+           Have $\Gamma^\prime \vdash [t_1^\prime, t_2^\prime, t_3^\prime] \cinfr (X : A^\prime) \cap B^\prime$.
+           
+
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \ParConstructorReduction[*] \end{array}$
+        \begin{proofcase}
+        \end{proofcase}
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
@@ -122,80 +124,50 @@
     \begin{proofcase}
     \end{proofcase}
 
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+    \end{proofcase}
+
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $s \betared t$.
-        Note that this can only mean $e \betared e^\prime$ in this case.
-        By the IH: $\Gamma \vdash e^\prime \chck \text{ctt} =_{\text{cBool}} \text{cff}$.
-        Thus, $\Gamma \vdash \delta(e^\prime) \infr (X : \star) \to_0 X$.
-        \\ \\
-        Suppose $\Gamma \betared \Delta$.
-        By the IH: $\Delta \vdash e \chck \text{ctt} =_{\text{cBool}} \text{cff}$.
-        Thus, $\Delta \vdash \delta(e) \infr (X : \star) \to_0 X$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
     \begin{proofcase}
-        Suppose that $s \betastar t$.
-        Proceed by induction on $s \betastar t$.
-        Note that the reflexivity case is trivial.
-        Suppose $s \betared z$ and $z \betastar t$.
-        By the outer IH with $s \betared z$ and $\D{1}$, $\exists\ T_1$ such that $A \betastar T_1$ and $\Gamma \vdash z \infr T_1$.
-        By confluence, $\exists\ B_1$ such that $T_1 \betastar B_1$ and $B \betastar B_1$.
-        Now, applying the inner IH with $z \betastar t$ gives $\exists\ B_2$ with $B_1 \betastar B_2$ and $\Gamma \vdash t \cinfr B_2$.
-        Note that $B \betastar B_1 \betastar B_2$.
-        % By the IH applied to $\D{1}$ $\exists\ A^\prime$ such that $A \betastar A^\prime$ and $\Gamma \vdash t \infr A^\prime$.
-        % Using confluence, $\exists\ B^\prime$ such that $A^\prime \betastar B^\prime$ and $B \betastar B^\prime$.
-        % Thus, $\Gamma \vdash t \cinfr B^\prime$.
-        % \\ \\
-        % Suppose that $\Gamma \betared \Delta$.
-        % By the IH applied to $\D{1}$ $\exists\ A^\prime$ such that $A \betastar A^\prime$ and $\Delta \vdash s \infr A^\prime$.
-        % Using confluence, $\exists\ B^\prime$ such that $A^\prime \betastar B^\prime$ and $B \betastar B^\prime$.
-        % Thus, $\Delta \vdash s \cinfr B^\prime$.
+        Applying the IH to $\D{1}$ gives $\exists\ T$ such that $A \parred T$ and $\Gamma^\prime \vdash t^\prime \infr T$.
+        By Lemma~\ref{lem:a:beta_implies_par}: $A \parstar B$.
+        Then, using Lemma~\ref{lem:a:par_strip}, $\exists\ C$ such that $B \parred C$ and $T \parstar C$.
+        By Lemma~\ref{lem:a:par_implies_beta}: $T \betastar C$.
+        The \textsc{RedInf} rule concludes.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
     \begin{proofcase}
-        Suppose that $s \betared t$.
-        By the IH applied to $\D{1}$ $\exists\ A^\prime$ such that $A \betastar A^\prime$ and $\Gamma \vdash t \infr A^\prime$.
-        Using Lemma~\ref{lem:2:infer_type_is_pseobj} on $\D{1}$ yields $A\pseobj$.
-        Applying Lemma~\ref{lem:2:conv_red_f} to $\D{2}$ yields $A^\prime \equiv B$.
-        Thus, $\Gamma \vdash t \chck B$.
-        \\ \\
-        Suppose that $\Gamma \betared \Delta$.
-        By the IH applied to $\D{1}$ $\exists\ A^\prime$ such that $A \betastar A^\prime$ and $\Delta \vdash s \infr A^\prime$.
-        Using Lemma~\ref{lem:2:infer_type_is_pseobj} on $\D{1}$ yields $A\pseobj$.
-        Applying Lemma~\ref{lem:2:conv_red_f} to $\D{2}$ yields $A^\prime \equiv B$.
-        By the IH applied to $\D{2}$ $\exists\ T$ such that $K \betastar T$ and $\Delta \vdash B \cinfr T$.
-        However, $K = \star$ or $K = \kind$ cannot step, therefore $T = K$.
-        Thus, $\Delta \vdash s \chck B$.
+        The IH applied to $\D{1}$ gives $\exists\ T_1$ such that $A \parred T_1$ and $\Gamma^\prime \vdash t^\prime \infr T_1$.
+        Applying the IH to $\D{2}$ yields $\exists\ T_2$ such that $K \parred T_2$ and $\Gamma^\prime \vdash B^\prime \cinfr T_2$.
+        Inversion on $K \parred T_2$ means $T_2 = K$.
+        By Lemma~\ref{lem:a:par_implies_beta} applied twice: $A \betastar T_1$, and $B \betastar B^\prime$.
+        By Lemma~\ref{lem:2:infer_is_pseobj} and Lemma~\ref{lem:2:infer_type_is_pseobj}: $A\pseobj$ and $B\pseobj$.
+        Applying Lemma~\ref{lem:2:conv_red_f} to $A \equiv B$ gives $T_1 \equiv B^\prime$.
+        The \textsc{Chk} rule concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
     \begin{proofcase}
-        Impossible by case analysis of $\Gamma \betared \Delta$ the context cannot be empty.
+        By inversion on $\varepsilon \parred \Gamma^\prime$: $\Gamma^\prime = \varepsilon$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
     \begin{proofcase}
-        By cases on $\Gamma, x : A \betared \Delta, x : A$.
-
-        % $\text{Case: }\begin{array}{c} \ContextReductionHeadRule[*] \end{array}$
-        % \begin{proofcase}
-        %     Necessarily $\Gamma = \Delta$.
-        %     By the IH applied to $\D{3}$ using $A \betared A^\prime$: $\Gamma \vdash A^\prime \cinfr K$.
-        %     The \textsc{CtxApp} rule concludes the case.
-        % \end{proofcase}
-
-        % $\text{Case: }\begin{array}{c} \ContextReductionTailRule[*] \end{array}$
-        % \begin{proofcase}
-        %     By the IH $\vdash \Delta$ and $\Delta \vdash A \cinfr K$.
-        %     Note that reduction does not introduce free variables, so $x \notin FV(\Delta)$.
-        %     The \textsc{CtxApp} rule concludes the case.
-        % \end{proofcase}
+        Note that in this case $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$ with $A \parred A^\prime$.
+        By the IH applied to $\D{2}$: $\vdash \Gamma^\prime$.
+        Parallel reduction does not introduce new variables, thus $x \notin FV(\Gamma^\prime)$.
+        Applying the IH to $\D{3}$ with $A \parred A^\prime$ yields $\exists\ T$ such that $K \parred T$ and $\Gamma^\prime \vdash A^\prime \cinfr T$.
+        Inversion on $K \parred T$ means $T = K$.
+        The \textsc{CtxApp} rule concludes.
     \end{proofcase}
 \end{proof}
