@@ -4,8 +4,8 @@
 \begin{lemma}
     \textcolor{white}{\_}
     \begin{enumerate}
-        \item If $\Gamma \vdash t \infr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \parred B$ and $\Gamma^\prime \vdash t^\prime \infr B$
-        \item If $\Gamma \vdash t \cinfr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \parred B$ and $\Gamma^\prime \vdash t^\prime \cinfr B$
+        \item If $\Gamma \vdash t \infr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \equiv B$ and $\Gamma^\prime \vdash t^\prime \infr B$
+        \item If $\Gamma \vdash t \cinfr A$, $\Gamma \parred \Gamma^\prime$, and $t \parred t^\prime$ then $\exists\ B.$ $A \equiv B$ and $\Gamma^\prime \vdash t^\prime \cinfr B$
         \item If $\Gamma \vdash t \chck A$, $\Gamma \parred \Gamma^\prime$, $t \parred t^\prime$, and $A \parred A^\prime$ then $\Gamma^\prime \vdash t^\prime \chck A^\prime$
         \item If $\vdash \Gamma$ and $\Gamma \parred \Gamma^\prime$ then $\vdash \Gamma^\prime$
     \end{enumerate}
@@ -16,41 +16,18 @@
 
     $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
     \begin{proofcase}
-        By the IH applied to $\D{1}$: $\vdash \Gamma^\prime$.
-        Inversion on $\star \parred t^\prime$ gives that $t^\prime = \star$.
-        The \textsc{Axiom} rule finishes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Applying the IH to $\D{1}$ gives $\vdash \Gamma^\prime$.
-        Because $(x : A) \in \Gamma$ there is an $A^\prime$ such that $A \parred A^\prime$ and $(x : A^\prime) \in \Gamma^\prime$.
-        The \textsc{Var} rule concludes.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Note that there is only one reduction case: $(x : A) \to_m B \parred (x : A^\prime) \to_, B^\prime$ with $A \parred A^\prime$ and $B \parred B^\prime$.
-        By the IH on $\D{1}$: $\exists\ T_1$ such that $\pdom(m, K) \parred T_1$ and $\Gamma^\prime \vdash A^\prime \cinfr T_1$.
-        Inversion on $\pdom(m, K) \parred T_1$ means that $T_1 = \pdom(m, K)$.
-        Note that $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$.
-        Applying the IH to $\D{2}$ gives $\exists\ T_2$ such that $\pcodom(m) \parred T_2$ and $\Gamma^\prime, x : A^\prime \vdash B^\prime \cinfr T_2$.
-        Inversion on $\pcodom(m) \parred T_2$ means that $T_2 = \pcodom(m)$.
-        The \textsc{Pi} finishes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
-        Note that there is only one reduction case for $t \parred t^\prime$: $\abs{\lambda_m}{x}{A}{t} \parred \abs{\lambda_m}{x}{A^\prime}{t^\prime}$ with $A \parred A^\prime$ and $t \parred t^\prime$.
-        Applying the IH to $\D{1}$ gives $\exists\ T_1$ such that $\pdom(m, K) \parred T_1$ and $\Gamma^\prime \vdash A^\prime \cinfr T_1$.
-        By inversion on $\pdom(m, K) \parred T_1$ it is the case that $T_1 = \pdom(m, K)$.
-        Note that $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$.
-        The IH applied to $\D{2}$ gives $\exists\ B^\prime$ such that $B \parred B^\prime$ and $\Gamma^\prime, x : A^\prime \vdash t^\prime \infr B^\prime$.
-        By the IH used on $\D{3}$: $\exists\ T_2$ such that $\pcodom(m) \parred T_2$ and $\Gamma^\prime, x : A^\prime \vdash B^\prime \cinfr T_2$.
-        Again, by inversion $T_2 = \pcodom(m)$.
-        Note that reduction does not introduce variables, thus if $m = 0$ it is the case that $x \notin FV(|t^\prime|)$.
-        Also, by the \textsc{ParBind} rule $(x : A) \to_m B \parred (x : A^\prime) \to_m B^\prime$.
-        The \textsc{Lam} rule concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
@@ -59,18 +36,15 @@
 
         $\text{Case: }\begin{array}{c} \ParBetaReduction[*] \end{array}$
         \begin{proofcase}
-            TODO
-            % Applying the IH to the outer $\D{1}$ gives $\exists\ T_1$ such that $(x : A) \to_m B \parred T_1$ and $\Gamma^\prime \vdash \abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime} \cinfr T_1$.
-            % By inversion on $(x : A) \to_m B \parred T_1$: $\exists\ A^\prime, B^\prime$ such that $T_1 = (x : A^\prime) \to_m B^\prime$, $A \parred A^\prime$, and $B \parred B^\prime$.
-
-
-            % By definition $\Gamma \vdash \abs{\lambda_m}{t_1}{t_2} \infr T$ and $T \betastar (x : A) \to_m B$.
-            % Inversion on this rule means that $T_1 = (x : C) \to_m D$ and thus $C \betastar A$ and $D \betastar B$.
-            % Now deconstructing $\Gamma \vdash \abs{\lambda_m}{t_1}{t_2} \infr (x : C) \to_m D$ yields $\Gamma \vdash C \cinfr \pdom(m, K)$, and $\Gamma, x : C \vdash t_2 \infr D$.
-            % Note that $t_1 = C$ by inversion.
-            % Let $C^\prime = t_1^\prime$.
-            % Applying the IH to $t_2$ gives $\exists\ B^\prime$ such that $\Gamma^\prime, x : C^\prime \vdash t_2^\prime \cinfr B^\prime$ and $B \parred B^\prime$.
-
+            Applying the IH to the outer $\D{1}$ gives $\exists\ T_1$ such that $(x : A) \to_m B \equiv T_1$ and $\Gamma^\prime \vdash \abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime} \chck T_1$.
+            By definition, $\exists\ T_2$ such that $\Gamma^\prime \vdash \abs{\lambda_m}{x}{t_1^\prime}{t_2^\prime} \infr T_2$, $\Gamma^\prime \vdash T_1 \cinfr K$, and $T_1 \equiv T_2$.
+            Inversion on the subsequent rule gives $\exists\ C, D$ such that $T_2 = (x : C) \to_m D$ and $t_1^\prime = C$.
+            Using Lemma~\ref{lem:2:infer_is_pseobj} and Theorem~\ref{thm:2:conv_trans}: $(x : A) \to_m B \equiv (x : C) \to_m D$ which means $A \equiv C$ and $B \equiv D$.
+            The IH used on $\D{2}$ yields $\Gamma^\prime \vdash t_3^\prime \chck A$.
+            Applying Theorem~\ref{thm:2:conv_trans} to this gives $\Gamma^\prime \vdash t_3^\prime \chck C$.
+            Note that $\Gamma^\prime, x : C \vdash t_2^\prime \infr D$.
+            By Lemma~\ref{lem:2:subst_check}: $\Gamma^\prime \vdash [x := t_3^\prime]t_2^\prime \chck [x := t_3^\prime]D$.
+            Finally, $[x := t_3]B \equiv [x := t_3^\prime]D$ by Lemma~\ref{lem:2:conv_subst}.
         \end{proofcase}
 
         $\text{Case: }\begin{array}{c} \ParConstructorReduction[*] \end{array}$
@@ -98,8 +72,7 @@
         $\text{Case: }\begin{array}{c} \ParSndReduction[*] \end{array}$
         \begin{proofcase}
            % Goal: find B' such that [x := t.1]B \parred B' and G' |- t'.2 : B'
-           Have $\Gamma^\prime \vdash [t_1^\prime, t_2^\prime, t_3^\prime] \cinfr (X : A^\prime) \cap B^\prime$.
-           
+
 
         \end{proofcase}
 
@@ -138,22 +111,10 @@
 
     $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
     \begin{proofcase}
-        Applying the IH to $\D{1}$ gives $\exists\ T$ such that $A \parred T$ and $\Gamma^\prime \vdash t^\prime \infr T$.
-        By Lemma~\ref{lem:a:beta_implies_par}: $A \parstar B$.
-        Then, using Lemma~\ref{lem:a:par_strip}, $\exists\ C$ such that $B \parred C$ and $T \parstar C$.
-        By Lemma~\ref{lem:a:par_implies_beta}: $T \betastar C$.
-        The \textsc{RedInf} rule concludes.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
     \begin{proofcase}
-        The IH applied to $\D{1}$ gives $\exists\ T_1$ such that $A \parred T_1$ and $\Gamma^\prime \vdash t^\prime \infr T_1$.
-        Applying the IH to $\D{2}$ yields $\exists\ T_2$ such that $K \parred T_2$ and $\Gamma^\prime \vdash B^\prime \cinfr T_2$.
-        Inversion on $K \parred T_2$ means $T_2 = K$.
-        By Lemma~\ref{lem:a:par_implies_beta} applied twice: $A \betastar T_1$, and $B \betastar B^\prime$.
-        By Lemma~\ref{lem:2:infer_is_pseobj} and Lemma~\ref{lem:2:infer_type_is_pseobj}: $A\pseobj$ and $B\pseobj$.
-        Applying Lemma~\ref{lem:2:conv_red_f} to $A \equiv B$ gives $T_1 \equiv B^\prime$.
-        The \textsc{Chk} rule concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
@@ -163,11 +124,5 @@
 
     $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
     \begin{proofcase}
-        Note that in this case $\Gamma, x : A \parred \Gamma^\prime, x : A^\prime$ with $A \parred A^\prime$.
-        By the IH applied to $\D{2}$: $\vdash \Gamma^\prime$.
-        Parallel reduction does not introduce new variables, thus $x \notin FV(\Gamma^\prime)$.
-        Applying the IH to $\D{3}$ with $A \parred A^\prime$ yields $\exists\ T$ such that $K \parred T$ and $\Gamma^\prime \vdash A^\prime \cinfr T$.
-        Inversion on $K \parred T$ means $T = K$.
-        The \textsc{CtxApp} rule concludes.
     \end{proofcase}
 \end{proof}

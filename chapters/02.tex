@@ -81,6 +81,20 @@
 \end{proof}
 
 \begin{lemma}
+    If $t_i \betastar t_i^\prime$ for any $i$ then,
+    \begin{enumerate}
+        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betastar \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
+        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betastar \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
+    \end{enumerate}
+    \label{lem:2:beta_par}
+\end{lemma}
+\begin{proof}
+    Pick any $i$ and apply the reductions to the associate subterm.
+    A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
+    Repeat until all $i$ reductions are applied.
+\end{proof}
+
+\begin{lemma}
     If $a \betared b$ then $[x := t]a \betared [x := t]b$
     \label{lem:2:betared_subst}
 \end{lemma}
@@ -140,7 +154,7 @@
 
 \begin{lemma}
     If $a \betastar b$ then $[x := t]a \betastar [x := t]b$
-    \label{lem:2:betastar_subst}
+    \label{lem:2:betastar_subst_weak1}
 \end{lemma}
 \begin{proof}
     By induction on $a \betastar b$.
@@ -156,22 +170,67 @@
 \end{proof}
 
 \begin{lemma}
-    If $a \betaconv b$ then $[x := t]a \betaconv [x := t]b$
-    \label{lem:2:betaconv_subst}
+    If $s \betared t$ then $[x := s]a \betastar [x := t]a$
+    \label{lem:2:betastar_subst_weak2}
 \end{lemma}
 \begin{proof}
-    By definition $\exists\ z$ such that $a \betastar z$ and $b \betastar z$.
-    Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := t]a \betastar [x := t]z$ and $[x := t]b \betastar [x := z]$.
+    By induction on $a$.
+
+    $\text{Case: }\begin{array}{c} x \end{array}$
+    \begin{proofcase}
+        Rename $y$.
+        Suppose $x = y$, then $[x := s]y = s \betared t = [x := t]y$.
+        Thus, $[x := s]y \betastar [x := t]y$.
+        Suppose $x \neq y$, then $[x := s]y = y \betastar y = [x := t]y$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \mathfrak{b}(\kappa_1, x : t_1, t_2) \end{array}$
+    \begin{proofcase}
+        By the IH $[x := s]t_1 \betastar [x := t]t_1$ and $[x := s]t_2 \betastar [x := t]t_2$.
+        Lemma~\ref{lem:2:beta_par} concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \end{array}$
+    \begin{proofcase}
+        By the IH $[x := s]t_i \betastar [x := t]t_i$ for all $i$.
+        Lemma~\ref{lem:2:beta_par} concludes the case.
+    \end{proofcase}
 \end{proof}
 
 \begin{lemma}
-    If $|a| \betaconv |b|$ then $|[x := t]a| \betaconv |[x := t]b|$
+    If $s \betastar t$ and $a \betastar b$ then $[x := s]a \betastar [x := t]b$
+    \label{lem:2:betastar_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is Lemma~\ref{lem:2:betastar_subst_weak1}.
+
+    $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
+    \begin{proofcase}
+        Let $z = t^\prime$.
+        By the IH applied to $\D{2}$: $[x := z]a \betastar [x := t]b$.
+        Lemma~\ref{lem:2:betastar_subst_weak2} yields $[x := s]a \betastar [x := z]a$.
+        Transitivity concludes with $[x := s]a \betastar [x := t]b$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s \betaconv t$ and $a \betaconv b$ then $[x := s]a \betaconv [x := t]b$
+    \label{lem:2:betaconv_subst}
+\end{lemma}
+\begin{proof}
+    By definition $\exists\ z_1, z_2$ such that $t \betastar z_1$, $s \betastar z_1$, $a \betastar z_2$, and $b \betastar z_2$.
+    Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := s]a \betastar [x := z_1]z_2$ and $[x := t]b \betastar [x := z_1]z_2$.
+\end{proof}
+
+\begin{lemma}
+    If $|s| \betaconv |t|$ and $|a| \betaconv |b|$ then $|[x := s]a| \betaconv |[x := t]b|$
     \label{lem:2:betaconv_erased_subst}
 \end{lemma}
 \begin{proof}
-    By definition $\exists\ z$ such that $|a| \betastar z$ and $|b| \betastar z$.
-    By Lemma~\ref{lem:2:betastar_subst} applied twice $[x := |t|]|a| \betastar [x := |t|]z$ and $[x := |t|]|b| \betastar [x := |t|]z$.
-    Finally, by Lemma~\ref{lem:2:erase_subst} $[x := |t|]|a| = |[x := t]a|$ and $[x := |t|]|b| = |[x := t]b|$.
+    By definition $\exists\ z_1, z_2$ such that $|s| \betastar z_1$, $|t| \betastar z_1$, $|a| \betastar z_2$ and $|b| \betastar z_2$.
+    By Lemma~\ref{lem:2:betastar_subst} applied twice $[x := |s|]|a| \betastar [x := |z_1|]z_2$ and $[x := |t|]|b| \betastar [x := |z_1|]z_2$.
+    Finally, by Lemma~\ref{lem:2:erase_subst} $[x := |s|]|a| = |[x := s]a|$ and $[x := |t|]|b| = |[x := t]b|$.
 \end{proof}
 
 \input{figures/02/erasure.tex}
@@ -183,20 +242,6 @@
 \outline{Describe reduction, note that it has the same non-axiom rules as F omega. Describe the additional axioms}
 
 \outline{Note that conversion is defined differently than just reduction, define both proof conversion and object conversion}
-
-\begin{lemma}
-    If $t_i \betastar t_i^\prime$ for any $i$ then,
-    \begin{enumerate}
-        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betastar \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
-        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betastar \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
-    \end{enumerate}
-    \label{lem:2:beta_par}
-\end{lemma}
-\begin{proof}
-    Pick any $i$ and apply the reductions to the associate subterm.
-    A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
-    Repeat until all $i$ reductions are applied.
-\end{proof}
 
 \begin{lemma}[Confluence]
     If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
@@ -215,14 +260,17 @@
     Transitivity is a consequence of confluence, see Theorem~\ref{thm:1:trans}.
 \end{proof}
 
-\begin{corollary}
+\begin{lemma}
     If $t_i \betaconv t_i^\prime$ for any $i$ then,
     \begin{enumerate}
         \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betaconv \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
         \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betaconv \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
     \end{enumerate}
-    \label{cor:2:conv_congr}
-\end{corollary}
+    \label{lem:2:conv_congr}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{lem:2:beta_par} applied on both sides.
+\end{proof}
 
 \outline{Note how confluence is \textbf{not} enough to prove transitivity of conversion}
 
@@ -497,13 +545,31 @@
 \end{proof}
 
 \begin{lemma}
-    If $a\pseobj$, $b\pseobj$, and $a \equiv b$ then $[x := t]a \equiv [x := t]b$
+    If $s, t, a, b\pseobj$, $s \equiv t$, and $a \equiv b$ then $[x := s]a \equiv [x := t]b$
     \label{lem:2:conv_subst}
 \end{lemma}
 \begin{proof}
-    By Lemma~\ref{thm:2:beta_iff_conv} $|a| \betaconv |b|$.
-    Then, by Lemma~\ref{lem:2:betaconv_erased_subst} $|[x := t]a| \betaconv |[x := t]b|$.
-    Finally, by Lemma~\ref{thm:2:beta_iff_conv} again, $[x := t]a \equiv [x := t]b$.
+    By Lemma~\ref{thm:2:beta_iff_conv} $|s| \betaconv |t|$ and $|a| \betaconv |b|$.
+    Then, by Lemma~\ref{lem:2:betaconv_erased_subst} $|[x := s]a| \betaconv |[x := t]b|$.
+    Finally, by Lemma~\ref{thm:2:beta_iff_conv} again, $[x := s]a \equiv [x := t]b$.
+\end{proof}
+
+\input{figures/02/psetype.tex}
+
+\begin{lemma}
+    If $b\psetype$ and $t\psetype$ then $[x := t]b\psetype$
+    \label{lem:2:psetype_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $b\psetype$.
+    All cases follow immediately by the IH and applying the associated rule except the variable case.
+
+    $\text{Case: }\begin{array}{c} \PseTypeVar[*] \end{array}$
+    \begin{proofcase}
+        Rename to $y$.
+        If $x = y$ then $[x := t]y = t$ and $t\psetype$.
+        If $x \neq y$ then $[x := t]y = y$ and $y\psetype$.
+    \end{proofcase}
 \end{proof}
 
 \outline{Introduce the typing rules, explain a lot of them in detail in the prose}
@@ -540,6 +606,120 @@
         By the IH $A\pseobj$ and $t\pseobj$.
         Because $m = 0$, $x \notin FV(|t|)$.
         Thus, applying the lambda rule yields $\abs{\lambda_0}{x}{A}{t}\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t \infr A$ then $A\psetype$
+        \item If $\Gamma \vdash t \cinfr A$ then $A\psetype$
+        \item If $\Gamma \vdash t \chck A$ then $A\psetype$
+        \item If $\vdash \Gamma$ and $(x : A) \in \Gamma$ then $A\psetype$
+    \end{enumerate}
+    \label{lem:2:infer_is_psetype}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Trivial
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the IH.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        TODO
     \end{proofcase}
 \end{proof}
 
@@ -838,16 +1018,16 @@
 %     \label{lem:2:subst_cinfer}
 % \end{lemma}
 
-% \begin{lemma}[Substitution of Checking]
-%     Suppose $\Gamma \vdash b \chck B$.
-%     \begin{enumerate}
-%         \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
-%         \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
-%         \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
-%         \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
-%     \end{enumerate}
-%     \label{lem:2:subst_check}
-% \end{lemma}
+\begin{lemma}[Substitution of Checking]
+    Suppose $\Gamma \vdash b \chck B$.
+    \begin{enumerate}
+        \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+        \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
+    \end{enumerate}
+    \label{lem:2:subst_check}
+\end{lemma}
 
 % \begin{lemma}
 %     If $\Gamma \vdash f \chck (x : A) \to_m B$ and $\Gamma \vdash a \chck A$ then $\Gamma \vdash \app{f}{m}{a} \chck [x := a]B$
