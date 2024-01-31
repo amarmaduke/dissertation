@@ -48,7 +48,7 @@
     {\Gamma \vdash \star \infr \kind}
     {Axiom}
 
-\Rule{\VarRule}
+\Rule{\VarRuleF}
     {
         \der{\D{1}}{\vdash \Gamma}
         \\ \der{\D{2}}{(x : A) \in \Gamma}
@@ -67,8 +67,8 @@
 
 \Rule{\CheckRule}
     {
-        \der{\D{1}}{\Gamma \vdash t \infr A} \\
-        \der{\D{2}}{\Gamma \vdash B \cinfr K} \\
+        \der{\D{1}}{B = \kind \vee \Gamma \vdash B \cinfr K} \\
+        \der{\D{2}}{\Gamma \vdash t \infr A} \\
         \der{\D{3}}{A \equiv B}
     }  
     {\Gamma \vdash t \chck B}
@@ -79,7 +79,7 @@
     {\vdash \varepsilon}
     {CtxEm}
 
-\Rule{\ContextAppendRule}
+\Rule{\ContextAppendRuleF}
     {
         \der{\D{1}}{x \notin FV(\Gamma)} \\
         \der{\D{2}}{\vdash \Gamma} \\

@@ -4,9 +4,9 @@
     \begin{align*}
         t &::= x\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
         \kappa_1 &::= \lambda_m\ |\ \Pi_m\ |\ \cap \\
-        \kappa_2 &::=\star\ |\ \kind\ | \bullet_m |\ \text{pair}\ |\ \text{proj}_1\ |\ \text{proj}_2\ |\ \text{eq}\ |\ \text{refl}\ |\ \psi\ |\ \vartheta_1\ |\ \vartheta_2\ |\ \delta\ |\ \varphi  \\
+        \kappa_2 &::=\diamond\ |\ \star\ |\ \kind\ | \bullet_m |\ \text{pair}\ |\ \text{proj}_1\ |\ \text{proj}_2\ |\ \text{eq}\ |\ \text{refl}\ |\ \psi\ |\ \vartheta_1\ |\ \vartheta_2\ |\ \delta\ |\ \varphi  \\
         m &::= \omega\ |\ 0\ |\ \tau \\
-        &\mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
+        &\mathfrak{a}(\diamond) = \mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
         &\mathfrak{a}(\text{proj}_1) = \mathfrak{a}(\text{proj}_2) = \mathfrak{a}(\text{refl}) = \mathfrak{a}(\delta) = 1 \\
         &\mathfrak{a}(\bullet_m) = \mathfrak{a}(\psi) = \mathfrak{a}(\varphi) = 2 \\
         &\mathfrak{a}(\text{pair}) = \mathfrak{a}(\text{eq}) = \mathfrak{a}(\vartheta_1) = \mathfrak{a}(\vartheta_2) = 3
@@ -14,26 +14,27 @@
     \vspace{-.4in}
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
+            \diamond &:= \mathfrak{c}(\diamond) \\
             \star &:= \mathfrak{c}(\star) \\
             \kind &:= \mathfrak{c}(\kind) \\
             \abs{\lambda_m}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda_m, x : t_1, t_2) \\
             (x : t_1) \to_m t_2 &:= \mathfrak{b}(\Pi_m, x : t_1, t_2) \\
             (x : t_1) \cap t_2 &:= \mathfrak{b}(\cap, x : t_1, t_2) \\
             t_1 \bullet_m t_2 &:= \mathfrak{c}(\bullet_m, t_1, t_2) \\
-            [t_1, t_2; t_3] &:= \mathfrak{c}(\text{pair}, t_1, t_2, t_3) \\
+            \varphi(t_1, t_2) &:= \mathfrak{c}(\varphi, t_1, t_2) \\
             \psi(t_1, t_2) &:= \mathfrak{c}(\psi, t_1, t_2)
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
+            [t_1, t_2; t_3] &:= \mathfrak{c}(\text{pair}, t_1, t_2, t_3) \\
             t.1 &:= \mathfrak{c}(\text{proj}_1, t) \\
             t.2 &:= \mathfrak{c}(\text{proj}_2, t) \\
             t_1 =_{t_2} t_3 &:= \mathfrak{c}(\text{eq}, t_1, t_2, t_3) \\
             \text{refl}(t) &:= \mathfrak{c}(\text{refl}, t) \\
             \vartheta_1(t_1, t_2, t_3) &:= \mathfrak{c}(\vartheta_1, t_1, t_2, t_3) \\
             \vartheta_2(t_1, t_2, t_3) &:= \mathfrak{c}(\vartheta_2, t_1, t_2, t_3) \\
-            \delta(t) &:= \mathfrak{c}(\delta, t) \\
-            \varphi(t_1, t_2) &:= \mathfrak{c}(\varphi, t_1, t_2)
+            \delta(t) &:= \mathfrak{c}(\delta, t)
         \end{align*}
     \end{minipage}
     \vspace{-.05in}

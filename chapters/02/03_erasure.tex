@@ -1,0 +1,346 @@
+\section{Erasure and Pseudo-objects}
+
+\input{figures/02/erasure.tex}
+
+
+\begin{lemma}
+    $|[x := t]b| = [x := |t|]|b|$
+    \label{lem:2:erase_subst}
+\end{lemma}
+\begin{proof}
+    By induction on the size of $b$.
+
+    $\text{Case: }\mathfrak{b}(\kappa, (x : t_1), t_2)$
+    \begin{proofcase}
+        If $b = \abs{\lambda_0}{y}{A}{b^\prime}$, then $|b| = |b^\prime|$ which is a smaller term.
+        Then, by the IH $|[x := t]b^\prime| = [x := |t|]|b^\prime|$.
+        Thus,
+        \begin{align*}
+            &|[x := t]\abs{\lambda_0}{y}{A}{b^\prime}| = |\abs{\lambda_0}{y}{[x := t]A}{[x := t]b^\prime}| \\
+            &= |[x := t]b^\prime| = [x := |t|]|b^\prime| = [x := |t|]|\abs{\lambda_0}{y}{A}{b^\prime}|
+        \end{align*}
+        For the remaining tags, assume w.l.o.g. $\kappa = \cap$.
+        Then $b = (y : A) \cap B$, and by the IH $|[x := t]A| = [x := |t|]|A|$ and $|[x := t]B| = [x := |t|]|B|$.
+        Thus,
+        \begin{align*}
+            &|[x := t]((y : A) \cap B)| = |(y : [x := t]A) \cap [x := t]B| \\
+            &= (y : |[x := t]A|) \cap |[x := t]B| = (y : [x := |t|]|A|) \cap [x := |t|]|B|
+        \end{align*}
+        And, $[x := |t|]|(y : A) \cap B| = (y : [x := |t|]|A|) \cap [x := |t|]|B|$.
+        Thus, both sides are equal.
+    \end{proofcase}
+
+    $\text{Case: }\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}(\kappa)})$
+    \begin{proofcase}
+        If $\kappa \in \{ \star, \kind \}$ then the equality is trivial.
+
+        If $\kappa \in \{ \bullet_0, \text{pair}, \text{proj}_1, \text{proj}_2, \psi, \vartheta, \delta \}$ then $|\mathfrak{c}(\kappa, t_1, \ldots)| = |t_1|$.
+        Moreover, substitution commutes and both sides of the equality are equal.
+
+        If $\kappa \in \{ \text{refl}, \varphi \}$ then the equality is trivial.
+
+        If $\kappa \in \{ \bullet_\omega, \bullet_\tau, \text{eq} \}$ then w.l.o.g. assume $\kappa = \text{eq}$.
+        Now $|[x := t](a =_A b)| = |[x := t]a| =_{|[x := t]A|} |[x := t]b|$.
+        By the IH this becomes $[x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
+        On the right-hand side, $[x := |t|]|a =_A b| = [x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
+        Thus, both sides are equal.
+
+    \end{proofcase}
+
+    $\text{Case: }b \text{ variable}$
+    \begin{proofcase}
+        Suppose $b = x$, then $|[x := t]x| = |t|$ and $[x := |t|]|x| = |t|$.
+        Suppose $b = y$, then $|[x := t]y| = y$ and $[x := |t|]|y| = y$.
+        Thus, both sides are equal.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $|s| \betaconv |t|$ and $|a| \betaconv |b|$ then $|[x := s]a| \betaconv |[x := t]b|$
+    \label{lem:2:betaconv_erased_subst}
+\end{lemma}
+\begin{proof}
+    By definition $\exists\ z_1, z_2$ such that $|s| \betastar z_1$, $|t| \betastar z_1$, $|a| \betastar z_2$ and $|b| \betastar z_2$.
+    By Lemma~\ref{lem:2:betastar_subst} applied twice $[x := |s|]|a| \betastar [x := |z_1|]z_2$ and $[x := |t|]|b| \betastar [x := |z_1|]z_2$.
+    Finally, by Lemma~\ref{lem:2:erase_subst} $[x := |s|]|a| = |[x := s]a|$ and $[x := |t|]|b| = |[x := t]b|$.
+\end{proof}
+
+\input{figures/02/pseobj.tex}
+
+
+\begin{lemma}
+    If $s\pseobj$ and $s \betared t$ then $|s| \betaconv |t|$
+    \label{lem:2:erase_pseobj_red}
+\end{lemma}
+\begin{proof}
+    By induction on $s\pseobj$.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+
+        $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+        \begin{proofcase}
+            Note that $\abs{\lambda_m}{x}{A}{b}\pseobj$.
+            If $m = 0$ then $x \notin FV(b)$ and $|[x := t]b| = |b|$.
+            Thus, $|\app{(\abs{\lambda_0}{x}{A}{b})}{0}{t}| = |\abs{\lambda_0}{x}{A}{b}| = |b|$.
+            If $m = \omega$, then $|\app{(\abs{\lambda_\omega}{x}{A}{b})}{\omega}{t}| = \app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|}$.
+            By definition of reduction $\app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|} \betaconv [x := |t|]|b|$.
+            Finally, by Lemma~\ref{lem:2:erase_subst} the goal is obtained.
+            The case of $m = \tau$ is almost exactly the same.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+        \begin{proofcase}
+            $|[t_1, t_2; A].1| = |[t_1, t_2; A]| = |t_1|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+        \begin{proofcase}
+            Observe that $|[t_1, t_2; A].2| = |t_1|$ and $[t_1, t_2; A]\pseobj$. \\
+            Thus, $|s| = |t_1| \betaconv |t_2|$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        \begin{proofcase}
+            $|\psi(\text{refl}(t),P)| = |\text{refl}(t)| = \absu{\lambda_\omega}{x}{x} = |\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            $|\vartheta_1(\text{refl}(t_1), t_2, t_3)| = |\text{refl}(t_1)| = \absu{\lambda_\omega}{x}{x} = |\text{refl}(t_2)|$
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Same as previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
+        \begin{proofcase}
+            By the IH, $|t_i| \betaconv |t_i^\prime|$. The goal is achieved by Corollary~\ref{cor:2:conv_congr}
+        \end{proofcase}
+
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, $t$ must be a variable.
+        Thus, $|s| = |t|$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betared t$ then $|t| \betaconv |b|$
+    \label{lem:2:pseobj_red_f_step}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{lem:2:erase_pseobj_red} $|s| \betaconv |t|$ and by Lemma~\ref{lem:2:beta_conv_equivalence} $|t| \betaconv |b|$.
+\end{proof}
+
+\begin{lemma}
+    If $b\pseobj$ and $t\pseobj$ then $[x := t]b\pseobj$
+    \label{lem:2:pseobj_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $b\pseobj$. The $\lambda_0$ and pair cases are no different from the respective $\mathfrak{b}$ and $\mathfrak{c}$ cases.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By the IH $[x := t]t_1\pseobj$ and $[x := t]t_2\pseobj$.
+        Thus, $\mathfrak{b}(\kappa, (y : [x := t]t_1), [x := t]t_2)\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By the IH $[x := t]t_i\pseobj$. \\
+        Thus, $\mathfrak{c}(\kappa, [x := t]t_1, \ldots [x := t]t_{\mathfrak{a}(\kappa)})\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        If $s = x$ then $[x := t]x = t$, and $t\pseobj$.
+        Otherwise, $s = y$ with $y$ a variable and $y\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$ and $s \betared t$ then $t\pseobj$
+    \label{lem:2:pseobj_preservation_step}
+\end{lemma}
+\begin{proof}
+    By induction on $s\pseobj$.
+
+    $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$. Suppose w.l.o.g. that $t_2 \betared t_2^\prime$.
+        Observe that $t_2\pseobj$ because it is a subterm of $s$.
+        Then by the IH $t_2^\prime\pseobj$.
+        Thus, $\mathfrak{b}(\kappa, x : t_1, t_2^\prime) \pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$. Suppose w.l.o.g that $t \betared t^\prime$.
+        Note that if $x \notin FV(|t|)$ then $x \notin FV(|t^\prime|)$, reduction only reduces the amount of free variables.
+        Observe that $t \pseobj$.
+        Then by the IH $t^\prime\pseobj$.
+        Thus, $\abs{\lambda_0}{x}{A}{t^\prime}\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+
+        $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+        \begin{proofcase}
+            Observe that $b\pseobj$ and $t\pseobj$ because both are subterms of $s$.
+            By Lemma~\ref{lem:2:pseobj_subst} $[x := t]b\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+        \begin{proofcase}
+            Observe that $t_1\pseobj$ because it is a subterm of $s$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+        \begin{proofcase}
+            Observe that $t_2\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        \begin{proofcase}
+            Observe that $t\pseobj$ and $P\pseobj$.
+            By application of constructor and binder rules $\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Observe that $t_2\pseobj$.
+            By application of constructor rule $\text{refl}(t_2)\pseobj$.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        \begin{proofcase}
+            Same as previous case.
+        \end{proofcase}
+
+        $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
+        \begin{proofcase}
+            By the IH $t_i^\prime\pseobj$.
+            By application of the constructor rule the goal is obtained.
+        \end{proofcase}
+
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$.
+        Suppose w.l.o.g. $t_1 \betared t_1^\prime$.
+        Note that $t_1\pseobj$ because it is a subterm of $s$.
+        By the IH $t_1^\prime\pseobj$.
+        By Lemma~\ref{lem:2:pseobj_red_f_step} $|t_1^\prime| \betaconv |t_2|$.
+        Thus, $[t_1^\prime, t_2; A]\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
+    \begin{proofcase}
+        By cases on $s \betared t$, $t$ must be a variable.
+        Thus, $t\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betastar t$ then $|t| \betaconv |b|$
+    \label{lem:2:pseobj_red_f}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is trivial.
+    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_red_f_step} and Lemma~\ref{lem:2:pseobj_preservation_step}
+    and applying the IH.
+\end{proof}
+
+\begin{theorem}
+    If $s\pseobj$ and $s \betastar t$ then $t\pseobj$
+    \label{lem:2:pseobj_preservation}
+\end{theorem}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is trivial.
+    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_preservation_step} and applying the IH.
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $|t| \betaconv |b|$, and $s \betastar t$ then $|s| \betaconv |b|$
+    \label{lem:2:pseobj_red_b}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    Consequence of Lemma~\ref{lem:2:erase_pseobj_red} and Lemma~\ref{lem:2:pseobj_preservation}.
+\end{proof}
+
+\begin{lemma}
+    If $s\pseobj$, $s \equiv b$, and $s \betastar t$ then $t \equiv b$
+    \label{lem:2:conv_red_f}
+\end{lemma}
+\begin{proof}
+    Note that $\exists\ z_1, z_2$ such that $s \betastar z_1$, $b \betastar z_2$, and $|z_1| \betaconv |z_2|$.
+    By confluence $\exists\ z_1^\prime$ such that $z_1 \betastar z_1^\prime$ and $t \betastar z_1^\prime$.
+    Then, by Lemma~\ref{lem:2:pseobj_preservation} $z_1\pseobj$.
+    Finally, by Lemma~\ref{lem:2:pseobj_red_f} $|z_1^\prime| \betaconv |z_2|$.
+    Therefore, $t \equiv b$.
+\end{proof}
+
+\begin{theorem}
+    If $b\pseobj$, $a \equiv b$, and $b \equiv c$ then $a \equiv c$
+    \label{thm:2:conv_trans}
+\end{theorem}
+\begin{proof}
+    Note that $\exists\ u_1, u_2$ such that $a \betastar u_1$, $b \betastar u_2$, and $|u_1| \betaconv |u_2|$.
+    Additionally, $\exists\ v_1, v_2$ such that $b \betastar v_1$, $c \betastar v_2$, and $|v_1| \betaconv |v_2|$.
+    By confluence, $\exists\ z$ such that $u_2 \betastar z$ and $v_1 \betastar z$.
+    Then, by Lemma~\ref{lem:2:pseobj_preservation} $u_2\pseobj$ and $v_1\pseobj$.
+    Next, by Lemma~\ref{lem:2:pseobj_red_f} $|u_1| \betaconv |z|$ and $|z| \betaconv |v_2|$.
+    Thus, $|u_1| \betaconv |v_2|$ by Lemma~\ref{lem:2:beta_conv_equivalence} and $a \equiv c$.
+\end{proof}
+
+\begin{theorem}
+    Suppose $s\pseobj$ and $t\pseobj$, then $|s| \betaconv |t|$ iff $s \equiv t$
+    \label{thm:2:beta_iff_conv}
+\end{theorem}
+\begin{proof}
+    Case $(\Rightarrow)$:
+    Suppose $|s| \betaconv |t|$.
+    By definition $s \betastar s$ and $t \betastar t$.
+    Thus, $s \equiv t$.
+    Case $(\Leftarrow)$:
+    Suppose $s \equiv t$, then $\exists\ z_1, z_2$ such that $s \betastar z_1$, $t \betastar z_2$, and $|z_1| \betaconv |z_2|$.
+    By two applications of Lemma~\ref{lem:2:pseobj_red_b} $|s| \betaconv |t|$.
+\end{proof}
+
+\begin{lemma}
+    If $s, t, a, b\pseobj$, $s \equiv t$, and $a \equiv b$ then $[x := s]a \equiv [x := t]b$
+    \label{lem:2:conv_subst}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{thm:2:beta_iff_conv} $|s| \betaconv |t|$ and $|a| \betaconv |b|$.
+    Then, by Lemma~\ref{lem:2:betaconv_erased_subst} $|[x := s]a| \betaconv |[x := t]b|$.
+    Finally, by Lemma~\ref{thm:2:beta_iff_conv} again, $[x := s]a \equiv [x := t]b$.
+\end{proof}
+

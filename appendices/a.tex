@@ -52,7 +52,7 @@
         Same as above using \textsc{ParPrmSnd}.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \NonbinderReduction[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
     \begin{proofcase}
         By the IH applied to $\D{1}$: $t_i \parred t_i^\prime$.
         Note that there is only one subderivation.
@@ -60,16 +60,11 @@
         Using the \textsc{ParCtor} rule concludes the case.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \BinderReductionOne[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \BinderOneReduction[*] \end{array}$
     \begin{proofcase}
         Applying the IH to $\D{1}$ yields $t_1 \parred t_1^\prime$.
         By Lemma~\ref{lem:a:par_refl}: $t_2 \parred t_2$.
         Using the \textsc{ParBind} rule concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \BinderReductionTwo[*] \end{array}$
-    \begin{proofcase}
-        Similar to previous case.
     \end{proofcase}
 \end{proof}
 

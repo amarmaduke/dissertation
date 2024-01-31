@@ -10,7 +10,7 @@
 
 \Rule{\LambdaPseObj}
     {
-        \der{\D{1}}{A \pseobj} \\
+        \der{\D{1}}{A\pseobj} \\
         \der{\D{2}}{t \pseobj} \\
         \der{\D{3}}{x \notin FV(|t|)}
     }
@@ -29,10 +29,10 @@
     {
         \der{\D{1}}{t_1 \pseobj} \\
         \der{\D{2}}{t_2 \pseobj} \\
-        \der{\D{3}}{A \pseobj} \\
+        \der{\D{3}}{t_3 \pseobj} \\
         \der{\D{4}}{|t_1| \betaconv |t_2|}
     }
-    {[t_1, t_2; A] \pseobj}
+    {[t_1, t_2; t_3] \pseobj}
     {}
 
 \begin{figure}

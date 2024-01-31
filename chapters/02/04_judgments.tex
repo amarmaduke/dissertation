@@ -1,0 +1,321 @@
+\section{Judgments}
+
+
+\input{figures/02/domain.tex}
+\input{figures/02/infer1.tex}
+\input{figures/02/infer2.tex}
+\input{figures/02/infer3.tex}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t \infr A$ then $t\pseobj$
+        \item If $\Gamma \vdash t \cinfr A$ then $t\pseobj$
+        \item If $\Gamma \vdash t \chck A$ then $t\pseobj$
+    \end{enumerate}
+    \label{lem:2:infer_is_pseobj}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    There are only two non-trivial, the rest hold immediately by the IH and applying the associated rule.
+    Well-formed context cases are omitted because they are not used in the induction.
+
+    $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth}$\PairRule[*]$ \end{minipage}\end{array}$
+    \begin{proofcase}
+        By the IH $t\pseobj$, $s\pseobj$, and $(x : A) \cap B\pseobj$.
+        By Theorem~\ref{thm:2:beta_iff_conv} $|t| \betaconv |s|$.
+        Applying the pair rule yields $[t,s;(x : A) \cap B]\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c}\begin{minipage}{0.7\textwidth} $\LambdaRule[*]$ \end{minipage}\end{array}$
+    \begin{proofcase}
+        Consider only the case when $m = 0$ as the other cases are trivial.
+        By the IH $A\pseobj$ and $t\pseobj$.
+        Because $m = 0$, $x \notin FV(|t|)$.
+        Thus, applying the lambda rule yields $\abs{\lambda_0}{x}{A}{t}\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\outline{Define the lifting of reduction to contexts}
+
+\begin{lemma}
+    If $\Gamma \vdash t \infr A$ or $\Gamma \vdash t \cinfr A$ or $\Gamma \vdash t \chck A$ then $\vdash \Gamma$
+    \label{lem:2:ctx_wf}
+\end{lemma}
+\begin{proof}
+    Straightforward by induction, all leaves of a derivation have $\vdash \Gamma$ as a premise.
+\end{proof}
+
+\begin{lemma}[Weakening]
+    Suppose $\Gamma \vdash B \cinfr K$ for $K = \kind$ or $K = \star$.
+    \begin{enumerate}
+        \item If $\Gamma, \Delta \vdash t \infr A$ then $\Gamma, x : B, \Delta \vdash t \infr A$
+        \item If $\Gamma, \Delta \vdash t \cinfr A$ then $\Gamma, x : B, \Delta \vdash t \cinfr A$
+        \item If $\Gamma, \Delta \vdash t \chck A$ then $\Gamma, x : B, \Delta \vdash t \chck A$
+        \item if $\vdash \Gamma, \Delta$ then $\vdash \Gamma, x : B, \Delta$
+    \end{enumerate}
+    \label{lem:2:weaken}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Omitted cases follow immediately from application of the IH to all subderivations and applying the associated rule of the case.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH on $\D{1}$: $\vdash \Gamma, x : B, \Delta$.
+        Applying the \textsc{Axiom} rule concludes this case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}        
+        By the IH on $\D{1}$: $\vdash \Gamma, x : B, \Delta$.
+        If $(y : A) \in \Gamma$ then clearly $(y : A) \in \Gamma, x : B, \Delta$.
+        Thus, applying the \textsc{Var} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{2}$ gives $\Gamma, x : B, \Delta, y : A \vdash B \cinfr \pcodom(m)$.
+        Notice that $\Delta$ is generalized in the induction hypothesis, thus allowing for the capture of the additional context assumption introduced in $\D{2}$.
+        Applying the IH to $\D{1}$ and the \textsc{Pi} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        By the \textsc{CtxEm} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH on $\D{2}$: $\vdash \Gamma, x : B, \Delta$.
+        By the IH on $\D{3}$: $\Gamma, x : B, \Delta \vdash A \cinfr K$.
+        Recall that renaming is applied implicitly to preserve meaning.
+        In this case, either $\Gamma$ and $\Delta$ could be renamed so that $x$ is unique, or $x$ itself renamed so that $x \notin FV(\Gamma, \Delta)$.
+        Either way some conclusion of the following form is obtained: Pick $y \notin FV(\Gamma, \Delta)$ and $y \neq x$.
+        Thus, $\vdash \Gamma, x : B, \Delta, y : A$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $\vdash \Gamma$ and $(x : A) \in \Gamma$ then $\exists\ K$ such that $\Gamma \vdash A \cinfr K$, where $K = \kind$ or $K = \star$
+    \label{lem:2:ctx_get}
+\end{lemma}
+\begin{proof}
+    By definition, $\exists\ \Delta_1, \Delta_2$ such that $\Gamma = \Delta_1, x : A, \Delta_2$ and $\Delta_1 \vdash A \cinfr K$.
+    By weakening, $\Delta_1, x : A \vdash A \cinfr K$.
+    Induction on $\Delta_2$ and repeated application of weakening concludes the proof.
+\end{proof}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t \infr A$ then $A\pseobj$
+        \item If $\Gamma \vdash t \cinfr A$ then $A\pseobj$
+        \item If $\Gamma \vdash t \chck A$ then $A\pseobj$
+    \end{enumerate}
+    \label{lem:2:infer_type_is_pseobj}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Cases where $A\pseobj$ trivially by application of a finite number of rules are omitted.
+    The well-formed context cases are omitted because they are not used in the mutual induction.
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:ctx_get} and Lemma~\ref{lem:2:infer_is_pseobj}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the \textsc{Pi} rule with $\D{1}$ and $\D{3}$ gives $\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)$.
+        By Lemma~\ref{lem:2:infer_is_pseobj} the case concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Deconstruction and inversion on $\D{1}$ yields the judgment $\Gamma, x : A \vdash B \cinfr \pcodom(m)$.
+        Thus, by Lemma~\ref{lem:2:infer_is_pseobj}: $B\pseobj$ and $a\pseobj$.
+        Finally, by Lemma~\ref{lem:2:pseobj_subst} $[x := a]B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_is_pseobj} applied to $\D{1}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $(x : A) \cap B \pseobj$ which means $A\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $(x : A) \cap B \pseobj$ which means $B\pseobj$.
+        The \textsc{Fst} rule applied to $\D{1}$ gives $\Gamma \vdash t.1 \infr A$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $t.1\pseobj$.
+        Finally, by Lemma~\ref{lem:2:pseobj_subst} $[x := t.1]B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_is_pseobj} $t\pseobj$ and $A\pseobj$.
+        Applying the constructor rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a =_A b\pseobj$ which means $a\pseobj$, $b\pseobj$, and $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $P\pseobj$.
+        The constructor rule yields $\app{P}{\tau}{a}\pseobj$ and $\app{P}{\tau}{b}\pseobj$.
+        The binder rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a.1 =_A b.1\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
+        Applying the constructor rule finishes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH $a.2 =_{[x := a.1]B} b.2\pseobj$ and $(x : A) \cap B\pseobj$. Which means $a\pseobj$ and $b\pseobj$.
+        Applying the constructor rule finishes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the IH applied to $\D{1}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $A\pseobj$.
+        By Lemma~\ref{lem:2:pseobj_preservation}: $B\pseobj$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_is_pseobj} on $\D{2}$: $B\pseobj$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}[Substitution of Inference]
+    Suppose $\Gamma \vdash b \infr B$.
+    \begin{enumerate}
+        \item If $\Gamma, x : B, \Delta \vdash t \infr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \infr [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \cinfr A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr [x := b]A$
+        \item If $\Gamma, x : B, \Delta \vdash t \chck A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t \chck [x := b]A$
+        \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
+    \end{enumerate}
+    \label{lem:2:subst_infer}
+\end{lemma}
+\begin{proof}
+    By mutual induction.
+    Omitted cases are obtained by applying the IH to all subderivations and applying the associated rule.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\vdash \Gamma, [x := b]\Delta$.
+        Using the \textsc{Axiom} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Rename the case to $\Gamma \vdash y \infr A$.
+        By the IH applied to $\D{1}$: $\vdash \Gamma, [x := b]\Delta$.
+        Suppose $y \neq x$.
+        Then $(y : A) \in \Gamma, x : B, \Delta$ implies $(y : A) \in \Gamma, [x := b]\Delta$.
+        Applying the \textsc{Var} rule concludes this case.
+        Suppose $y = x$.
+        Then $[x := b]y = b$ and $A = B$.
+        Recall that $\Gamma \vdash b \infr B$.
+        It must be the case that $x \notin FV(\Gamma)$ by $\D{1}$.
+        Thus, $x \notin FV(B)$ and $[x := b]B = B$.
+        Finally, by weakening $\Gamma, [x := b]\Delta \vdash b \infr B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]A \cinfr \pdom(m, K)$.
+        By the IH applied to $\D{2}$: $\Gamma, [x := b]\Delta, y : [x := b]A \vdash [x := b]B \cinfr \pcodom(m)$.
+        Applying the \textsc{Pi} rule gives $\Gamma, [x := b]\Delta \vdash (y : [x := b]A) \to_m [x := b]B \infr \pcodom(m)$.
+        Folding substitution concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        As with the previous case, applying the IH to $\D{1}$, $\D{2}$, and $\D{3}$ yield the necessary subderivations to build the desired term with the \textsc{Lam} rule.
+        Note that the substituted variable, $x$, cannot be equal to the bound variable, $y$, by implicit renaming.
+        Moreover, $y \notin FV([x := b]|t|)$ if $m = 0$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH gives, for $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]f \cinfr (y : [x := b]A) \to_m [x := b]B$, and for $\D{2}$: $\Gamma, [x := b]\Delta \vdash [x := b]a \chck [x := b]A$.
+        Thus, applying the \textsc{App} rule gives $\Gamma, [x := b]\Delta \vdash \app{([x := b]f)}{m}{([x := b]a)} \infr [y := [x := b]a][x := b]B$.
+        By Lemma~\ref{lem:2:subst_commute} $[y := [x := b]a][x := b] = [x := b][y := a]$.
+        Thus, $\Gamma, [x := b]\Delta \vdash [x := b](\app{f}{m}{a}) \infr [x := b][y := a]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{3}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]s \chck [x := b][y := t]B$.
+        Notice that the bound variable is renamed to $y$ implicitly.
+        By Lemma~\ref{lem:2:subst_commute} $[x := b][y := t]B = [y := [x := b]t][x := b]B$.
+        Applying Lemma~\ref{lem:2:infer_is_pseobj} to $\D{2}$ and $\D{3}$ gives $t\pseobj$ and $s\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{4}$: $[x := b]t \equiv [x := b]s$.
+        The IH applied to $\D{1}$ and $\D{2}$ and the application of the \textsc{Pair} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]t \cinfr (y : [x := b]A) \cap [x := b]B$.
+        The \textsc{Snd} rule and some folding of substitution yields $\Gamma, [x := b]\Delta \vdash [x := b]t.2 \infr [y := [x := b]t.1][x := b]B$.
+        Finally, by Lemma~\ref{lem:2:subst_commute} $[y := [x := b]t.1][x := b]B = [x := b][y := t.1]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Deconstructing $\D{1}$ and using inversion yields $\Gamma \vdash A \cinfr \star$ and $\Gamma \vdash A^\prime \cinfr \star$.
+        Applying Lemma~\ref{lem:2:infer_is_pseobj} means that $A\pseobj$ and $A^\prime\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} applied to $\D{2}$: $[x := b]A \equiv [x := b]A^\prime$.
+        To see why $FV(|[x := b]e|)$ is empty, consider that if $x$ is in a free position in $e$, then necessarily $x \in FV(|e|)$, which is not true.
+        Thus, $x$ can only be in an erased position in $e$, but then $|[x := b]e| = |e|$, because $x$ is erased, so its substituted term must also be erased.
+        Applying the IH to $\D{1}$ and $\D{3}$ and using the \textsc{Cast} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $\Gamma, [x := b]\Delta \vdash [x := b]e \chck [x := b]\text{ctt} =_{[x := b]\text{cBool}} [x := b]\text{cff}$.
+        However, ctt, cff and cBool are all closed terms, thus $[x := b]\text{ctt} = \text{ctt}$, etc.
+        Moreover, $[x := b]((X : \star) \to_0 X) = (X : \star) \to_0 X$.
+        Thus, applying the \textsc{Sep} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \HeadInferenceRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:betastar_subst} $[x := b]A \betastar [x := b]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CheckRule[*] \end{array}$
+    \begin{proofcase}
+        By Lemma~\ref{lem:2:infer_type_is_pseobj}: $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_is_pseobj}: $B\pseobj$.
+        Then, by Lemma~\ref{lem:2:conv_subst} $[x := b]A \equiv [x := b]B$.
+        Note that $[x := b]K = K$ because $K = \star$ or $K = \kind$.
+        The case concludes by applying the IH to $\D{1}$ and $\D{2}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextEmptyRule[*] \end{array}$
+    \begin{proofcase}
+        Impossible by inversion, context is not empty.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ContextAppendRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$: $\vdash \Gamma, [x := b]\Delta$.
+        The IH applied to $\D{3}$: $\Gamma, [x := b]\Delta \vdash [x := b]A \cinfr K$.
+        Pick $y \notin FV(\Gamma)$.
+        Applying the \textsc{CtxApp} rule gives $\vdash \Gamma, [x := b]\Delta, y : [x := b]A$.
+    \end{proofcase}
+\end{proof}

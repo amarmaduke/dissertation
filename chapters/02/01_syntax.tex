@@ -1,0 +1,155 @@
+\section{Syntax and Reduction}
+
+\input{figures/02/syntax.tex}
+\input{figures/02/reduction.tex}
+
+\begin{lemma}
+    If $x \neq y$ then $[x := a][y := b]t = [y := [x := a]b][x := a]t$
+    \label{lem:2:subst_commute}
+\end{lemma}
+\begin{proof}
+    By induction on $t$.
+    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes those cases.
+    Suppose $t$ is a variable, $z$.
+    If $z = x$, then $z \neq y$ and $t = a$ on both sides.
+    If $z = y$, then $z \neq x$ and $t = [x := a]b$ on both sides.
+    If $z \neq x$ and $z \neq y$, then $t = z$ on both sides.
+\end{proof}
+
+\begin{lemma}
+    If $t_i \betastar t_i^\prime$ for any $i$ then,
+    \begin{enumerate}
+        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betastar \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
+        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betastar \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
+    \end{enumerate}
+    \label{lem:2:beta_par}
+\end{lemma}
+\begin{proof}
+    Pick any $i$ and apply the reductions to the associate subterm.
+    A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
+    Repeat until all $i$ reductions are applied.
+\end{proof}
+
+\begin{lemma}
+    If $a \betared b$ then $[x := t]a \betared [x := t]b$
+    \label{lem:2:betared_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $a \betared b$.
+
+    $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+    \begin{proofcase}
+        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{x}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
+        Note that the final equality holds by Lemma~\ref{lem:2:subst_commute}.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+    \begin{proofcase}
+        $[x := t][t_1, t_2, A].1 = [[x := t]t_1, [x := t]t_2, [x := ]A].1 \betared [x := t]t_1$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+    \begin{proofcase}
+        $[x := t][t_1, t_2, A].2 = [[x := t]t_1, [x := t]t_2, [x := ]A].2 \betared [x := t]t_2$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+    \begin{proofcase}
+        $[x := s]\psi(\text{refl(t)}, P) = \psi(\text{refl([x := s]t)}, [x := s]P) \betared \abs{\lambda_\omega}{y}{\app{[x := s]P}{\tau}{[x := s]t}}{y} = [x := s](\abs{\lambda_\omega}{y}{\app{P}{\tau}{t}}{y})$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+    \begin{proofcase}
+        $[x := s]\vartheta_1(\text{refl}(t_1), t_2, t_3) = \vartheta_1(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+    \begin{proofcase}
+        $[x := s]\vartheta_2(\text{refl}(t_1), t_2, t_3) = \vartheta_2(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
+    \begin{proofcase}
+        By the IH, $[x := t]t_i \betared [x := t]t_i^\prime$.
+        Note that $$[x := t]\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}}(\kappa)) = \mathfrak{c}(\kappa, [x := t]t_1, \ldots, [x := t]t_{\mathfrak{a}}(\kappa))$$
+        Applying the constructor reduction rule and reversing the previous equality concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderOneReduction[*] \end{array}$
+    \begin{proofcase}
+        By the IH, $[x := t]t_1 \betared [x := t]t_1^\prime$.
+        Note that $$[x := t]\mathfrak{b}(\kappa, (y : t_1), t_2) = \mathfrak{b}(\kappa, (y : [x := t]t_1), [x := t]t_2)$$
+        Applying the first binder reduction rule and reversing the previous equality concludes the case.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $a \betastar b$ then $[x := t]a \betastar [x := t]b$
+    \label{lem:2:betastar_subst_weak1}
+\end{lemma}
+\begin{proof}
+    By induction on $a \betastar b$.
+    The reflexivity case is trivial.
+
+    $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
+    \begin{proofcase}
+        Let $z = t^\prime$.
+        By the IH applied to $\D{2}$: $[x := t]z \betastar [x := t]b$.
+        By Lemma~\ref{lem:2:betared_subst} applied to $\D{1}$: $[x := t]a \betared [x := t]b$.
+        Applying the transitivity rule yields $[x := t]a \betastar [x := t]b$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s \betared t$ then $[x := s]a \betastar [x := t]a$
+    \label{lem:2:betastar_subst_weak2}
+\end{lemma}
+\begin{proof}
+    By induction on $a$.
+
+    $\text{Case: }\begin{array}{c} x \end{array}$
+    \begin{proofcase}
+        Rename $y$.
+        Suppose $x = y$, then $[x := s]y = s \betared t = [x := t]y$.
+        Thus, $[x := s]y \betastar [x := t]y$.
+        Suppose $x \neq y$, then $[x := s]y = y \betastar y = [x := t]y$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \mathfrak{b}(\kappa_1, x : t_1, t_2) \end{array}$
+    \begin{proofcase}
+        By the IH $[x := s]t_1 \betastar [x := t]t_1$ and $[x := s]t_2 \betastar [x := t]t_2$.
+        Lemma~\ref{lem:2:beta_par} concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \end{array}$
+    \begin{proofcase}
+        By the IH $[x := s]t_i \betastar [x := t]t_i$ for all $i$.
+        Lemma~\ref{lem:2:beta_par} concludes the case.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s \betastar t$ and $a \betastar b$ then $[x := s]a \betastar [x := t]b$
+    \label{lem:2:betastar_subst}
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$.
+    The reflexivity case is Lemma~\ref{lem:2:betastar_subst_weak1}.
+
+    $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
+    \begin{proofcase}
+        Let $z = t^\prime$.
+        By the IH applied to $\D{2}$: $[x := z]a \betastar [x := t]b$.
+        Lemma~\ref{lem:2:betastar_subst_weak2} yields $[x := s]a \betastar [x := z]a$.
+        Transitivity concludes with $[x := s]a \betastar [x := t]b$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $s \betaconv t$ and $a \betaconv b$ then $[x := s]a \betaconv [x := t]b$
+    \label{lem:2:betaconv_subst}
+\end{lemma}
+\begin{proof}
+    By definition $\exists\ z_1, z_2$ such that $t \betastar z_1$, $s \betastar z_1$, $a \betastar z_2$, and $b \betastar z_2$.
+    Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := s]a \betastar [x := z_1]z_2$ and $[x := t]b \betastar [x := z_1]z_2$.
+\end{proof}

@@ -8,7 +8,7 @@
             |\!\star\!| &= \star \\
             |\kind| &= \kind \\
             |\abs{\lambda_0}{x}{A}{t}| &= |t| \\
-            |\abs{\lambda_\omega}{x}{A}{t}| &= \absu{\lambda_\omega}{x}{|t|} \\
+            |\abs{\lambda_\omega}{x}{A}{t}| &= \abs{\lambda_\omega}{x}{\diamond}{|t|} \\
             |\abs{\lambda_\tau}{x}{A}{t}| &= \abs{\lambda_\tau}{x}{|A|}{|t|} \\
             |(x:A) \to_m B| &= (x:|A|) \to_m |B| \\
             |(x:A) \cap B| &= (x:|A|) \cap |B| \\
@@ -19,17 +19,18 @@
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
-            |[t_1, t_2; T]| &= |t_1| \\
+            |\!\diamond\!| &= \diamond \\
+            |[t_1, t_2; t_3]| &= |t_1| \\
             |t.1| &= |t| \\
             |t.2| &= |t| \\
             |x =_A y| &= |x| =_{|A|} |y| \\
-            |\text{refl}(t)| &= \absu{\lambda_\omega}{x}{x} \\
+            |\text{refl}(t)| &= \abs{\lambda_\omega}{x}{\diamond}{x} \\
             %|J(A, P, x, y, e, w)| &= \app{|e|}{\omega}{|w|} \\
             |\psi(e, P)| &= |e| \\
             |\vartheta_1(e, t_1, t_2)| &= |e| \\
             |\vartheta_2(e, t_1, t_2)| &= |e| \\
             |\delta(e)| &= |e| \\
-            |\varphi(f,e)| &= \absu{\lambda_\omega}{x}{x}
+            |\varphi(f,e)| &= \abs{\lambda_\omega}{x}{\diamond}{x}
         \end{align*}
     \end{minipage}
     \caption{Erasure of syntax, for type-like and kind-like syntax erasure is homomorphic, for term-like syntax erasure reduces to the untyped lambda calculus.}

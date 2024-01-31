@@ -1,19 +1,19 @@
 
-\Rule{\BinderReductionOne}
+\Rule{\BinderOneReduction}
     {
         \der{\D{1}}{t_1 \betared t_1^\prime}
     }
     {\mathfrak{b}(\kappa, x : t_1, t_2) \betared \mathfrak{b}(\kappa, x : t_1^\prime, t_2) }
     {}
 
-\Rule{\BinderReductionTwo}
+\Rule{\BinderTwoReduction}
     {
         \der{\D{1}}{t_2 \betared t_2^\prime}
     }
     {\mathfrak{b}(\kappa, x : t_1, t_2) \betared \mathfrak{b}(\kappa, x : t_1, t_2^\prime) }
     {}
 
-\Rule{\NonbinderReduction}
+\Rule{\ConstructorReduction}
     {
         \der{\D{1}}{t_i \betared t_i^\prime} \\
         i \in {1, \ldots, \mathfrak{a}(\kappa)}

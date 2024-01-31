@@ -1,17 +1,35 @@
 
+\Rule{\VarRule}
+    {
+        \der{\D{1}}{\vdash \Gamma}
+        \\ \der{\D{2}}{(x_m : A) \in \Gamma}
+    }
+    {\Gamma \vdash x \infr A}
+    {Var}
+
+\Rule{\ContextAppendRule}
+    {
+        \der{\D{1}}{x \notin FV(\Gamma)} \\
+        \der{\D{2}}{\vdash \Gamma} \\
+        \der{\D{3}}{\Gamma \vdash A \cinfr K}
+    }
+    {\vdash \Gamma, x_m : A}
+    {CtxApp}
+
+
 \Rule{\PiRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \pdom(m, K)}
-        \\ \der{\D{2}}{\Gamma, x : A \vdash B \cinfr \pcodom(m)}
+        \\ \der{\D{2}}{\Gamma, x_m : A \vdash B \cinfr \pcodom(m)}
     }
-    {\Gamma \vdash (x : A) \to_m B \infr \text{codom}_\Pi(m)}
+    {\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)}
     {Pi}
 
 \Rule{\LambdaRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \pdom(m, K)}
-        \\ \der{\D{2}}{\Gamma, x : A \vdash t \infr B}
-        \\ \der{\D{3}}{\Gamma, x : A \vdash B \cinfr \pcodom(m)}
+        \\ \der{\D{2}}{\Gamma, x_m : A \vdash t \infr B}
+        \\ \der{\D{3}}{\Gamma, x_m : A \vdash B \cinfr \pcodom(m)}
         \\ \der{\D{4}}{x \notin FV(|t|)\text{ if } m = 0}
     }
     {\Gamma \vdash \abs{\lambda_m}{x}{A}{t} \infr (x : A) \to_m B}
@@ -28,14 +46,14 @@
 \Rule{\IntersectionRule}
     {
         \der{\D{1}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{2}}{\Gamma, x : A \vdash B \cinfr \star}
+        \der{\D{2}}{\Gamma, x_\tau : A \vdash B \cinfr \star}
     }
     {\Gamma \vdash (x : A) \cap B \infr \star}
     {Int}
 
 \Rule{\PairRule}
     {
-        \der{\D{1}}{\Gamma \vdash (x : A) \cap B \cinfr \star} \\
+        \der{\D{1}}{\Gamma \vdash (x : A) \cap B \infr \star} \\
         \der{\D{2}}{\Gamma \vdash t \chck A} \\
         \der{\D{3}}{\Gamma \vdash s \chck [x := t]B} \\
         \der{\D{4}}{t \equiv s}
