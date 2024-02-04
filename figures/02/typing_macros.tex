@@ -1,134 +1,128 @@
 
+\Rule{\AxiomRule}
+    {\textcolor{white}{\_}}
+    {\Gamma \vdash \star : \kind}
+    {Axiom}
+
 \Rule{\VarRule}
     {
-        \der{\D{1}}{\vdash \Gamma}
-        \\ \der{\D{2}}{(x_m : A) \in \Gamma}
+        \der{\D{1}}{(x_m : A) \in \Gamma}
     }
-    {\Gamma \vdash x \infr A}
+    {\Gamma \vdash x : A}
     {Var}
 
-\Rule{\ContextAppendRule}
+\Rule{\WeakenRule}
     {
         \der{\D{1}}{x \notin FV(\Gamma)} \\
-        \der{\D{2}}{\vdash \Gamma} \\
-        \der{\D{3}}{\Gamma \vdash A \cinfr K}
+        \der{\D{2}}{\Gamma \vdash t : A} \\
+        \der{\D{3}}{\Gamma \vdash B : K}
     }
-    {\vdash \Gamma, x_m : A}
-    {CtxApp}
+    {\Gamma, x : B \vdash t : A}
+    {Weaken}
 
+\Rule{\ConvRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A : K} \\
+        \der{\D{2}}{\Gamma \vdash t : B} \\
+        \der{\D{3}}{A \equiv B}
+    }
+    {\Gamma \vdash t : A}
+    {Conv}
 
 \Rule{\PiRule}
     {
-        \der{\D{1}}{\Gamma \vdash A \cinfr \pdom(m, K)}
-        \\ \der{\D{2}}{\Gamma, x_m : A \vdash B \cinfr \pcodom(m)}
+        \der{\D{1}}{\Gamma \vdash A : \pdom(m, K)}
+        \\ \der{\D{2}}{\Gamma, x_m : A \vdash B : \pcodom(m)}
     }
-    {\Gamma \vdash (x : A) \to_m B \infr \pcodom(m)}
+    {\Gamma \vdash (x : A) \to_m B : \pcodom(m)}
     {Pi}
 
 \Rule{\LambdaRule}
     {
-        \der{\D{1}}{\Gamma \vdash A \cinfr \pdom(m, K)}
-        \\ \der{\D{2}}{\Gamma, x_m : A \vdash t \infr B}
-        \\ \der{\D{3}}{\Gamma, x_m : A \vdash B \cinfr \pcodom(m)}
-        \\ \der{\D{4}}{x \notin FV(|t|)\text{ if } m = 0}
+        \der{\D{1}}{\Gamma \vdash (x : A) \to_m B : \pcodom(m)}
+        \\ \der{\D{2}}{\Gamma, x_m : A \vdash t : B}
+        \\ \der{\D{3}}{x \notin FV(|t|)\text{ if } m = 0}
     }
-    {\Gamma \vdash \abs{\lambda_m}{x}{A}{t} \infr (x : A) \to_m B}
+    {\Gamma \vdash \abs{\lambda_m}{x}{A}{t} : (x : A) \to_m B}
     {Lam}
 
 \Rule{\AppRule}
     {
-        \der{\D{1}}{\Gamma \vdash f \cinfr (x : A) \to_m B} \\
-        \der{\D{2}}{\Gamma \vdash a \chck A}
+        \der{\D{1}}{\Gamma \vdash f : (x : A) \to_m B} \\
+        \der{\D{2}}{\Gamma \vdash a : A}
     }
-    {\Gamma \vdash \app{f}{m}{a} \infr [x := a]B}
+    {\Gamma \vdash \app{f}{m}{a} : [x := a]B}
     {App}
 
 \Rule{\IntersectionRule}
     {
-        \der{\D{1}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{2}}{\Gamma, x_\tau : A \vdash B \cinfr \star}
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma, x_\tau : A \vdash B : \star}
     }
-    {\Gamma \vdash (x : A) \cap B \infr \star}
+    {\Gamma \vdash (x : A) \cap B : \star}
     {Int}
 
 \Rule{\PairRule}
     {
-        \der{\D{1}}{\Gamma \vdash (x : A) \cap B \infr \star} \\
-        \der{\D{2}}{\Gamma \vdash t \chck A} \\
-        \der{\D{3}}{\Gamma \vdash s \chck [x := t]B} \\
+        \der{\D{1}}{\Gamma \vdash (x : A) \cap B : \star} \\
+        \der{\D{2}}{\Gamma \vdash t : A} \\
+        \der{\D{3}}{\Gamma \vdash s : [x := t]B} \\
         \der{\D{4}}{t \equiv s}
     }
-    {\Gamma \vdash [t, s; (x : A) \cap B] \infr (x : A) \cap B }
+    {\Gamma \vdash [t, s; (x : A) \cap B] : (x : A) \cap B }
     {Pair}
 
 \Rule{\FirstRule}
-    {\der{\D{1}}{\Gamma \vdash t \cinfr (x:A) \cap B}}
-    {\Gamma \vdash t.1 \infr A}
+    {\der{\D{1}}{\Gamma \vdash t : (x:A) \cap B}}
+    {\Gamma \vdash t.1 : A}
     {Fst}
 
 \Rule{\SecondRule}
-    {\der{\D{1}}{\Gamma \vdash t \cinfr (x:A) \cap B}}
-    {\Gamma \vdash t.2 \infr [x := t.1]B}
+    {\der{\D{1}}{\Gamma \vdash t : (x:A) \cap B}}
+    {\Gamma \vdash t.2 : [x := t.1]B}
     {Snd}
 
 \Rule{\EqualityRule}
     {
-        \der{\D{1}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{2}}{\Gamma \vdash a \chck A} \\
-        \der{\D{2}}{\Gamma \vdash b \chck A}
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma \vdash a : A} \\
+        \der{\D{2}}{\Gamma \vdash b : A}
     }
-    {\Gamma \vdash a =_A b \infr \star}
+    {\Gamma \vdash a =_A b : \star}
     {Eq}
 
 \Rule{\ReflRule}
     {
-        \der{\D{1}}{\Gamma \vdash t \infr A} \\
-        \der{\D{2}}{\Gamma \vdash A \cinfr \star}
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma \vdash t : A}
     }
-    {\Gamma \vdash \text{refl}(t) \infr t =_A t}
+    {\Gamma \vdash \text{refl}(t) : t =_A t}
     {Refl}
-
-\Rule{\EqualityInductionRule}
-    {
-        \der{\D{1}}{\Gamma \vdash A \cinfr \star} \\
-        \der{\D{2}}{
-            \Gamma \vdash P \chck (x\ y : A) \to_\tau (e : x =_A y) \to_\tau \star
-        } \\
-        \der{\D{3}}{\Gamma \vdash x \chck A} \\
-        \der{\D{4}}{\Gamma \vdash y \chck A} \\
-        \der{\D{5}}{\Gamma \vdash e \chck x =_A y} \\
-        \der{\D{6}}{
-            \Gamma \vdash w \chck (a : A) \to_0
-                \appthr{P}{\tau}{a}{\tau}{a}{\tau}{\text{refl}(a)}
-        }
-    }
-    {\Gamma \vdash J(A, P, x, y, e, w) \infr \appthr{P}{\tau}{x}{\tau}{y}{\tau}{e}}
-    {J}
 
 \Rule{\SubstRule}
     {
-        \der{\D{1}}{\Gamma \vdash e \cinfr a =_A b} \\
-        \der{\D{2}}{\Gamma \vdash P \chck A \to_\tau \star}
+        \der{\D{1}}{\Gamma \vdash e : a =_A b} \\
+        \der{\D{2}}{\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y) \to_\tau \star}
     }
-    {\Gamma \vdash \psi(e, P) \infr \app{P}{\tau}{a} \to_\omega \app{P}{\tau}{b}}
+    {\Gamma \vdash \psi(e, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
     {Subst}
 
 \Rule{\PromoteFstRule}
     {
-        \der{\D{1}}{\Gamma \vdash a \cinfr (x:A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash b \chck (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash e \chck a.1 =_A b.1} \\
+        \der{\D{1}}{\Gamma \vdash a : (x:A) \cap B} \\
+        \der{\D{2}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{3}}{\Gamma \vdash e : a.1 =_A b.1} \\
     }
-    {\Gamma \vdash \vartheta_1(e, a, b) \infr a =_{(x:A) \cap B} b}
+    {\Gamma \vdash \vartheta_1(e, a, b) : a =_{(x:A) \cap B} b}
     {PrmFst}
 
 \Rule{\PromoteSndRule}
     {
-        \der{\D{1}}{\Gamma \vdash a \cinfr (x:A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash b \chck (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash e \chck a.2 =_{[x := a.1]B} b.2} \\
+        \der{\D{1}}{\Gamma \vdash a : (x:A) \cap B} \\
+        \der{\D{2}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{3}}{\Gamma \vdash e : a.2 =_{[x := a.1]B} b.2} \\
     }
-    {\Gamma \vdash \vartheta_2(e, a, b) \infr a =_{(x:A) \cap B} b}
+    {\Gamma \vdash \vartheta_2(e, a, b) : a =_{(x:A) \cap B} b}
     {PrmSnd}
 
 % \Rule{\CastRule}
@@ -143,17 +137,17 @@
 
 \Rule{\CastRule}
     {
-        \der{\D{1}}{\Gamma \vdash f \cinfr (a : A) \to_\omega (x:A^\prime) \cap B} \\
+        \der{\D{1}}{\Gamma \vdash f : (a : A) \to_\omega (x:A^\prime) \cap B} \\
         \der{\D{2}}{A \equiv A^\prime} \\
-        \der{\D{3}}{\Gamma \vdash e \chck (a : A) \to_\omega a =_A (\app{f}{\omega}{a}).1} \\
+        \der{\D{3}}{\Gamma \vdash e : (a : A) \to_\omega a =_A (\app{f}{\omega}{a}).1} \\
         \der{\D{4}}{FV(|e|) = \varnothing}
     }
-    {\Gamma \vdash \varphi(f, e) \infr (a : A) \to_\omega (x:A^\prime) \cap B}
+    {\Gamma \vdash \varphi(f, e) : (a : A) \to_\omega (x:A) \cap B}
     {Cast}
 
 \Rule{\SeparationRule}
     {
-        \der{\D{1}}{\Gamma \vdash e \chck \text{ctt} =_{\text{cBool}} \text{cff}}
+        \der{\D{1}}{\Gamma \vdash e : \text{ctt} =_{\text{cBool}} \text{cff}}
     }
-    {\Gamma \vdash \delta(e) \infr (X : \star) \to_0 X}
+    {\Gamma \vdash \delta(e) : (X : \star) \to_0 X}
     {Sep}

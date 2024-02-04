@@ -12,14 +12,16 @@
         \app{(\abs{\lambda_m}{x}{A;B}{b})}{m}{t} &\betared [x := t]b \\
         [t_1, t_2; t_3].1 &\betared t_1 \\
         [t_1, t_2; t_3].2 &\betared t_2 \\
-        \psi(\text{refl}(a),P) &\betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{a}}{x} \\
+        \psi(\text{refl}(a),P) &\betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)}}{x} \\
         %J(A, P, x, y, \text{refl}(z), w) &\betared \app{w}{0}{z} \\
         \vartheta_1(\text{refl}(t_1), t_2, t_3) &\betared \text{refl}(t_2) \\
         \vartheta_2(\text{refl}(t_1), t_2, t_3) &\betared \text{refl}(t_2) \\
     \end{align*}
+    \vspace{-.4in}
     $$s_1 \betaconv s_2 \text{ iff } \exists\ t.\ s_1 \betastar t \text{ and } s_2 \betastar t$$
     $$s_1 \equiv s_2 \text{ iff } \exists\ t_1, t_2.\ s_1 \betastar t_1, s_2 \betastar t_2, \text{ and } |t_1| \betaconv |t_2|$$
     \caption{Reduction and conversion for arbitrary syntax.}
+    \label{fig:reduction}
 \end{figure}
 
 

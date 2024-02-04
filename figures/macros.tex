@@ -53,3 +53,11 @@
         \renewcommand{\inferlabel}[1]{\textsc{####1}}
     }
 }
+
+\newenvironment{tightcenter}{%
+  \setlength\topsep{-5pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}

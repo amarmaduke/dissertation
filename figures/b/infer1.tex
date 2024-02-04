@@ -3,11 +3,14 @@
     \centering
     \begin{minipage}{0.5\textwidth}
         $$\AxiomRule$$
+        $$\HeadInferenceRule$$
+        $$\ContextEmptyRule$$
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         $$\VarRule$$
+        $$\CheckRule$$
+        $$\ContextAppendRule$$
     \end{minipage}%
-    $$\ConvRule$$
     $$\PiRule$$
     $$\LambdaRule$$
     $$\AppRule$$
@@ -15,5 +18,4 @@
         Inference rules for function types, including erased functions.
         The variable $K$ is either $\star$ or $\kind$.
     }
-    \label{fig:2:typ1}
 \end{figure}

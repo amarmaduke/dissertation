@@ -3,18 +3,33 @@
 \input{figures/02/syntax.tex}
 \input{figures/02/reduction.tex}
 
+Syntax for the system is defined generically as before.
+See Figure~\ref{fig:syntax} for a complete description.
+For the moment the new syntactic forms are merely raw data with no logically or even computational meaning.
+Nevertheless, a basic fact about substitution on syntax is provable.
+
 \begin{lemma}
-    If $x \neq y$ then $[x := a][y := b]t = [y := [x := a]b][x := a]t$
+    If $x \neq y$ and $y \notin FV(a)$ then \begin{tightcenter} $[x := a][y := b]t = [y := [x := a]b][x := a]t$ \end{tightcenter}
     \label{lem:2:subst_commute}
 \end{lemma}
 \begin{proof}
     By induction on $t$.
     If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes those cases.
     Suppose $t$ is a variable, $z$.
-    If $z = x$, then $z \neq y$ and $t = a$ on both sides.
+    If $z = x$, then $z \neq y$ and $t = a$ on both sides because $y \notin FV(a)$.
     If $z = y$, then $z \neq x$ and $t = [x := a]b$ on both sides.
     If $z \neq x$ and $z \neq y$, then $t = z$ on both sides.
 \end{proof}
+
+Computational meaning is added via reduction rules described in Figure~\ref{fig:reduction}.
+The new reductions model projection of pairs (e.g. $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g. $\vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2)$) and an elimination form for equality.
+Note that conversion is different from a traditional PTS.
+Convertibility with respect to reduction is written: $t \betaconv s$.
+A detailed discussion of conversion is delayed until Section~\ref{sec:2:erasure}.
+
+Before more important facts about reduction can be discussed it is important to observe the interaction between reduction and substitution.
+First, note that multistep reduction (i.e. the reflexive-transitive closure of the reduction relation) is congruent with respect to syntax.
+Second, substitution is shown to commute with multistep reduction through a series of lemmas.
 
 \begin{lemma}
     If $t_i \betastar t_i^\prime$ for any $i$ then,
@@ -145,6 +160,9 @@
     \end{proofcase}
 \end{proof}
 
+Lemma~\ref{lem:2:betastar_subst} is the only fact about the interaction of substitution and reduction that is needed moving forward.
+A straightforward consequence is a similar lemma about substitution commuting with convertibility w.r.t. reduction.
+
 \begin{lemma}
     If $s \betaconv t$ and $a \betaconv b$ then $[x := s]a \betaconv [x := t]b$
     \label{lem:2:betaconv_subst}
@@ -152,4 +170,48 @@
 \begin{proof}
     By definition $\exists\ z_1, z_2$ such that $t \betastar z_1$, $s \betastar z_1$, $a \betastar z_2$, and $b \betastar z_2$.
     Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := s]a \betastar [x := z_1]z_2$ and $[x := t]b \betastar [x := z_1]z_2$.
+\end{proof}
+
+Transitivity, as before, is a consequence of confluence.
+Confluence is not an obvious property to obtain and can also be an involved property to prove.
+For example, a natural variant for the $\vartheta_1$ reduction rule is $\vartheta_1(\text{refl}(t.1)) \betared \text{refl}(t)$, but this breaks confluence.
+To see why, consider $\vartheta_1(\text{refl}([x, y, z].1))$.
+One choice leads to $\vartheta_1(\text{refl}(x))$, and the other leads to $\text{refl}(x)$.
+However, these terms are not joinable, hence confluence fails.
+The full proof of confluence is relegated to Appendix~\ref{ap:a}, but note that the approach closely follows the PLFA book \cite{plfa22.08}.
+
+\begin{lemma}[Confluence]
+    If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
+\end{lemma}
+\begin{proof}
+    See Appendix~\ref{ap:a}.
+\end{proof}
+
+As with F$^\omega$ the important consequence of confluence is that conversion w.r.t. reduction is an equivalence relation.
+However, this is \textit{not} the conversion relation that will be used in typing judgments.
+Thus, while important, it is still only a stepping stone to showing judgmental conversion is transitive.
+
+\begin{lemma}
+    For any $s$ and $t$ the relation $s \betaconv t$ is an equivalence.
+    \label{lem:2:beta_conv_equivalence}
+\end{lemma}
+\begin{proof}
+    Reflexivity is immediate because $s \betastar s$.
+    Symmetry is also immediate because if $s \betaconv t$ then $\exists\ z$ such that $s \betastar z$ and $t \betastar z$, but logical conjunction is commutative.
+    Transitivity is a consequence of confluence, see Theorem~\ref{thm:1:trans}.
+\end{proof}
+
+Additionally, there is a final useful fact about convertibility w.r.t. reduction that is occasionally used throughout the rest of this work.
+That is, like reduction, conversion w.r.t. reduction of subexpressions yields conversion of the entire term.
+
+\begin{lemma}
+    If $t_i \betaconv t_i^\prime$ for any $i$ then,
+    \begin{enumerate}
+        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betaconv \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
+        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betaconv \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
+    \end{enumerate}
+    \label{lem:2:conv_congr}
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{lem:2:beta_par} applied on both sides.
 \end{proof}

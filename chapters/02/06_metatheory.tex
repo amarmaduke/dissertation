@@ -1,0 +1,66 @@
+\section{Classification and Preservation}
+
+\begin{lemma}
+    If $\Gamma \vdash t : A$ then $A = \kind$ or $\Gamma \vdash A : K$
+\end{lemma}
+\begin{proof}
+    By induction.
+    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, and \textsc{Conv} rules are trivial.
+    The \textsc{Fst} and \textsc{PrmFst} rules are omitted because they are very similar to \textsc{Snd} and \textsc{PrmSnd} respectively.
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Because $x_m : A \in \Gamma$ then $\Gamma = \Delta_1, x_m : A, \Delta_2$.
+        By $\vdash \Gamma$: $\Delta_1 \vdash A : K$.
+        Now using weakening $\Gamma \vdash A : K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\Gamma \vdash (x : A) \to_m B : K$.
+        Now $\Gamma, x : A \vdash B : K$.
+        Using the substitution lemma gives $\Gamma \vdash [x := a]B : K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$ gives $\Gamma \vdash (x : A )\cap B : K$.
+        Thus, $\Gamma, x : A \vdash B : K$.
+        Applying the substitution lemma gives $\Gamma \vdash [x := t.1]B : K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by applying the \textsc{Eq} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\Gamma \vdash a =_A b : K$.
+        By inversion this gives $\Gamma \vdash A : \star$, $\Gamma \vdash a : A$, and $\Gamma \vdash b : A$.
+        Now by the \textsc{App} rule $\Gamma \vdash \app{P}{\tau}{a} : \star$ and $\Gamma \vdash \app{P}{\tau}{b} : \star$.
+        Using weakening gives $\Gamma, x : \app{P}{\tau}{a} \vdash \app{P}{\tau}{b} : \star$.
+        Now the \textsc{Pi} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$: $\Gamma \vdash (x : A) \cap B : K$.
+        Note that $K$ must be $\star$.
+        Now applying the \textsc{Eq} rule gives $\Gamma \vdash a =_{(x : A) \cap B} b : \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the IH applied to $\D{1}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        Have $\Gamma \vdash (X : \star) \to_\omega X : \star$ via short sequence of rules.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    If $\vdash \Gamma$, $\Gamma \vdash t : A$, $\Gamma \betared \Gamma^\prime$, and $t \betared t^\prime$ then $\vdash \Gamma^\prime$ and $\Gamma^\prime \vdash t^\prime : A$
+\end{lemma}
