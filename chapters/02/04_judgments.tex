@@ -2,7 +2,7 @@
 \label{sec:2:judgments}
 
 
-The typing judgments, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
+The inference judgment, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
 As stated previously, the erasure of a proof is an \textit{object}.
 Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ it's object.
 The judgment follows a standard PTS style, but the rules are carefully chosen so that an inference algorithm is possible.
@@ -57,7 +57,7 @@ Indeed, the equality rules are the area of significant deviation from the origin
 $\ReflRule$ The reflexivity rule is the only value for equality types.
 It is the standard inductive formulation of the equality type.
 
-$\SubstRule$ The substitution rule is dependent variation of the Leibniz's Law.
+$\SubstRule$ The substitution rule is a dependent variation of the Leibniz's Law.
 It is a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
 
@@ -143,6 +143,7 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 
 \begin{lemma}[Weakening]
     If $\Gamma, \Delta \vdash t : A$ and $\Gamma \vdash B : K$ then $\Gamma, x_m : B, \Delta \vdash t : A$ for $x$ fresh
+    \label{lem:2:weakening}
 \end{lemma}
 \begin{proof}
     By induction.
@@ -172,6 +173,7 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
         \item If $\Gamma, x : B, \Delta \vdash t : A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t : [x := b]A$
         \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
     \end{enumerate}
+    \label{lem:2:substitution}
 \end{lemma}
 \begin{proof}
     By mutual recursion.

@@ -106,12 +106,12 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 
     $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
     \begin{proofcase}
-        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+        By cases on $s \betared t$, applying the IH and Lemma~\ref{lem:2:conv_congr}.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
     \begin{proofcase}
-        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+        By cases on $s \betared t$, applying the IH and Lemma~\ref{lem:2:conv_congr}.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
@@ -140,9 +140,9 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
             Thus, $|s| = |t_1| \betaconv |t_2|$.
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
         \begin{proofcase}
-            $|\psi(\text{refl}(t),P)| = |\text{refl}(t)| = \absu{\lambda_\omega}{x}{x} = |\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}|$
+            $|\psi(\text{refl}(t),P)| = |\text{refl}(t)| = \absu{\lambda_\omega}{x}{x} = |\abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x}|$
         \end{proofcase}
 
         $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
@@ -157,14 +157,14 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 
         $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
         \begin{proofcase}
-            By the IH, $|t_i| \betaconv |t_i^\prime|$. The goal is achieved by Corollary~\ref{cor:2:conv_congr}
+            By the IH, $|t_i| \betaconv |t_i^\prime|$. The goal is achieved by Lemma~\ref{lem:2:conv_congr}
         \end{proofcase}
 
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
     \begin{proofcase}
-        By cases on $s \betared t$, applying the IH and Corollary~\ref{cor:2:conv_congr}.
+        By cases on $s \betared t$, applying the IH and Lemma~\ref{lem:2:conv_congr}.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
@@ -252,10 +252,10 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
             Observe that $t_2\pseobj$.
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
         \begin{proofcase}
             Observe that $t\pseobj$ and $P\pseobj$.
-            By application of constructor and binder rules $\abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x}\pseobj$.
+            By application of constructor and binder rules $\abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x}\pseobj$.
         \end{proofcase}
 
         $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
@@ -358,7 +358,7 @@ While the core theory of Cedille2 is its own system the purpose is to refine the
 A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e. erased terms) not with annotated terms themselves.
 Having Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check conversion w.r.t. reduction of objects.
 Not only does this maintain the spirit of Cedille, but it also enables optimizations in type checking.
-Indeed, arbitrarily expensive sequences of reductions could potentially be erased and not considered when checking $|s| \betaconv |t|$ instead of $s \equiv t$.
+Indeed, arbitrarily expensive sequences of reductions could potentially be erased when checking $|s| \betaconv |t|$ instead of $s \equiv t$.
 
 \begin{theorem}
     Suppose $s\pseobj$ and $t\pseobj$, then $|s| \betaconv |t|$ iff $s \equiv t$

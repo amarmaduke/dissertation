@@ -1,8 +1,15 @@
 \section{Classification and Preservation}
 
-\begin{lemma}
+Classification is a critical property of a system like CC with unified syntax.
+It allows for the syntax to instead be stratified into levels which would enable an intrinsic presentation of the system.
+For the core theory of Cedille2 there are only two universes like the original CC, thus the stratification places terms into three separate levels.
+A term is either a \textit{kind} (thus $A = \kind$), a \textit{type-constructor} (thus $\Gamma \vdash A : \kind$), or a \textit{proof-term} (thus $\Gamma \vdash A : \star$).
+Note that if $A = \star$ then a term is called simply a \textit{type}.
+
+\begin{theorem}[Classification]
     If $\Gamma \vdash t : A$ then $A = \kind$ or $\Gamma \vdash A : K$
-\end{lemma}
+    \label{lem:2:classification}
+\end{theorem}
 \begin{proof}
     By induction.
     The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, and \textsc{Conv} rules are trivial.
@@ -61,6 +68,271 @@
     \end{proofcase}
 \end{proof}
 
+Preservation is the second important property of the system.
+It states that the status of a term (i.e. both its classification and status as a well-founded proof) do not change with respect to reduction.
+Note that $\Gamma \betared \Gamma^\prime$ if there exists exactly one $(x_m : A) \in \Gamma$ such that $A \betared A^\prime$.
+
 \begin{lemma}
-    If $\vdash \Gamma$, $\Gamma \vdash t : A$, $\Gamma \betared \Gamma^\prime$, and $t \betared t^\prime$ then $\vdash \Gamma^\prime$ and $\Gamma^\prime \vdash t^\prime : A$
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t : A$ and $t \betared t^\prime$ then $\Gamma \vdash t^\prime : A$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \betared \Gamma^\prime$ then $\Gamma^\prime \vdash t : A$
+        \item If $\vdash \Gamma$ and $\Gamma \betared \Gamma^\prime$ then $\vdash \Gamma^\prime$
+    \end{enumerate}
+    \label{lem:2:preservation_no_type_step}
 \end{lemma}
+\begin{proof}
+    By mutual recursion.
+
+    \noindent \textbf{1.} Pattern-matching on $\Gamma \vdash t : A$.
+    The \textsc{Ax} and \textsc{Var} cases are impossible by inversion on $t \betared t^\prime$.
+    \textsc{Int} is very similar to \textsc{Pi}, \textsc{Fst} is very similar to \textsc{Snd}, and \textsc{PrmFst} is very similar to \textsc{PrmSnd}.
+    The \text{Refl}, \textsc{Sep}, and \textsc{Conv} rules are trivial.
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $A \betared A^\prime$.
+        Applying \textit{1} to $\D{1}$ gives $\Gamma \vdash A^\prime : \pdom(m, K)$.
+        Note that $\Gamma, x_m : A \betared \Gamma, x_m : A^\prime$.
+        Thus, using \textit{2} with $\D{2}$ gives $\Gamma, x_m : A^\prime \vdash B : \pcodom(m)$.
+        Using the \textsc{Pi} rule concludes the case.
+        \\ \\
+        Suppose $B \betared B^\prime$.
+        Applying \textit{1} to $\D{2}$ gives $\Gamma, x_m : A \vdash B^\prime : \pcodom(m)$.
+        The \textsc{Pi} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $A \betared A^\prime$.
+        Then $(x : A) \to_m B \betared (x : A^\prime) \to_m B$.
+        Now, using \textit{1} with $\D{1}$ gives $\Gamma \vdash (x : A^\prime) \to_m B : \pcodom(m)$.
+        Note that $\Gamma, x_m : A \betared \Gamma, x_m : A^\prime$.
+        Using \textit{2} with $\D{2}$ yields $\Gamma, x_m : A^\prime \vdash t : B$.
+        Applying the \textsc{Lam} rule concludes the case.
+        \\ \\
+        Suppose $t \betared t^\prime$.
+        Using \textit{1} with $\D{2}$ gives $\Gamma, x_m : A \vdash t^\prime : B$.
+        Note that reduction does not introduce free variables, thus $x \notin FV(|t^\prime|)$ if $m = 0$.
+        The \textsc{Lam} rule concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $f \betared f^\prime$.
+        Applying \textit{1} with $\D{1}$ gives $\Gamma \vdash f^\prime : (x : A) \to_m B$.
+        The \textsc{App} rule concludes.
+        \\ \\
+        Suppose $a \betared a^\prime$.
+        Using \textit{1} with $\D{2}$ gives $\Gamma \vdash a^\prime : A$.
+        Again, the \textsc{App} rule concludes the case.
+        \\ \\
+        Suppose $f = \abs{\lambda_m}{x}{C}{t}$ and $\app{f}{m}{a} \betared [x := a]t$.
+        There must exist $C$ and $D$ such that $\Gamma \vdash C : \pdom(m, K)$ and $\Gamma, x_m : C \vdash t : D$ with $A \equiv C$ and $B \equiv D$.
+        By classification (Lemma~\ref{lem:2:classification}) and the \textsc{Conv} rule, $\Gamma \vdash a : C$.
+        Now using the substitution lemma (Lemma~\ref{lem:2:substitution}) $\Gamma \vdash [x := a]t : [x := a]D$.
+        Using Lemma~\ref{lem:2:conv_subst} gives $[x := a]B \equiv [x := a]D$.
+        Classification and \textsc{Conv} again yields $\Gamma \vdash [x := a]t : [x := a]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $t \betared t^\prime$.
+        Applying \textit{1} to $\D{2}$ gives $\Gamma \vdash t^\prime : A$.
+        Note that $[x := t]B \equiv [x := t^\prime]B$ by Lemma~\ref{lem:2:conv_subst}.
+        Moreover, deconstructing $\D{1}$ yields $\Gamma, x_\tau : A \vdash B : \star$.
+        By the substitution lemma $\Gamma \vdash [x := t^\prime]B : \star$.
+        Thus, by the \textsc{Conv} rule $\Gamma \vdash s : [x := t^\prime]B$.
+        Finally, Lemma~\ref{lem:2:conv_red_f} gives $t^\prime \equiv s$ from $\D{4}$.
+        The \textsc{Pair} rule concludes the case.
+        \\ \\
+        Suppose $s \betared s^\prime$.
+        By \textit{1} applied to $\D{3}$: $\Gamma \vdash s^\prime : [x := t]B$.
+        Using Lemma~\ref{lem:2:conv_subst} with $\D{4}$ yields $t \equiv s^\prime$.
+        The \textsc{Pair} rule concludes.
+        \\ \\
+        Suppose $A \betared A^\prime$.
+        Then $(x : A) \cap B \betared (x : A^\prime) \cap B$.
+        Applying this reduction to \textit{1} with $\D{1}$ gives $\Gamma \vdash (x : A^\prime) \cap B : \star$.
+        Deconstructing this yields $\Gamma \vdash A^\prime : \star$.
+        Now by the \textsc{Conv} rule $\Gamma \vdash t : A^\prime$.
+        Using the \textsc{Pair} rule concludes.
+        \\ \\
+        Suppose $B \betared B^\prime$.
+        Then $(x : A) \cap B \betared (x : A^\prime) \cap B$.
+        Applying this reduction to \textit{1} with $\D{1}$ gives $\Gamma \vdash (x : A) \cap B^\prime : \star$.
+        Deconstructing this yields $\Gamma, x_m : A^\prime \vdash B^\prime : \star$.
+        Note that $B \betared B^\prime$ implies that $B \equiv B^\prime$.
+        Moreover, using Lemma~\ref{lem:2:conv_subst} gives $[x := t]B \equiv [x := t]B^\prime$.
+        The substitution lemma gives $\Gamma \vdash [x := t]B^\prime : \star$.
+        Now the \textsc{Conv} rule yields $\Gamma \vdash s [x := t]B^\prime$.
+        The \textsc{Pair} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $t \betared t^\prime$.
+        Then applying \textit{1} to $\D{1}$ gives $\Gamma \vdash t^\prime : (x : A) \cap B$.
+        Applying the \textsc{Snd} rule concludes the case.
+        \\ \\
+        Suppose $t = [t_1, t_2, t_3]$ and $t.2 \betared t_2$.
+        Then we have $\Gamma \vdash [t_1, t_2, t_3] : (x : A) \cap B$.
+        Deconstructing this rule yields $\Gamma \vdash t_1 : A$, $\Gamma, x_\tau : A \vdash B : \star$, and $\Gamma \vdash t_2 : [x := t_1]B$.
+        By the substitution lemma $\Gamma \vdash [x := t.1]B : \star$.
+        Note that $t.1 \betared t_1$ thus $t.1 \equiv t_1$.
+        Now using Lemma~\ref{lem:2:conv_subst} gives $[x := t.1]B \equiv [x := t_1]B$.
+        Thus, by the \textsc{Conv} rule $\Gamma \vdash t_2 : [x := t.1]B$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $a \betared a^\prime$.
+        Applying \textit{1} to $\D{2}$ gives $\Gamma \vdash a^\prime : A$.
+        The \textsc{Eq} rule concludes.
+        \\ \\
+        Suppose $b \betared b^\prime$.
+        Applying \textit{1} to $\D{3}$ gives $\Gamma \vdash b^\prime : A$.
+        The \textsc{Eq} rule concludes.
+        \\ \\
+        Suppose $A \betared A^\prime$.
+        Applying \textit{1} to $\D{1}$ gives $\Gamma \vdash A^\prime : \star$.
+        Note that $A \equiv A^\prime$.
+        Thus, by the \textsc{Conv} rule applied twice: $\Gamma \vdash a : A^\prime$ and $\Gamma \vdash b : A^\prime$.
+        Using the \textsc{Eq} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $e \betared e^\prime$.
+        Then by \textit{1} applied to $\D{1}$: $\Gamma \vdash e^\prime : a =_A b$.
+        The \textsc{Subst} rule concludes the case.
+        \\ \\
+        Suppose $P \betared P^\prime$.
+        By \textit{1} applied to $\D{2}$: $\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y) \to\tau \star$.
+        The \textsc{Subst} rule concludes the case.
+        \\ \\
+        Suppose $e = \text{refl}(u)$ and $\psi(e, P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)}}{x}$.
+        Now $\Gamma \vdash \text{refl}(u) : a =_A b$ which forces $u \equiv a$ and $u \equiv b$.
+        Thus, $\apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)} \equiv \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)}$ and $\apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)} \equiv \apptwo{P}{\tau}{b}{\tau}{e}$.
+        Which gives $\apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)} \to_\omega \apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)} \equiv \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}$.
+        Note that $\Gamma \vdash \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e} : K$ by classification.
+        Therefore, using the \textsc{Conv} rule gives $\Gamma \vdash \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{u}{\tau}{\text{refl}(u)}}{x} : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $e \betared e^\prime$.
+        Applying \textit{1} to $\D{3}$ gives $\Gamma \vdash e^\prime : a.2 =_{[x := a.1]B} b.2$.
+        Using the \textsc{PrmSnd} rule concludes the case.
+        \\ \\
+        Suppose $a \betared a^\prime$.
+        Using \textit{1} with $\D{1}$ gives $\Gamma \vdash a^\prime : (x : A) \cap B$.
+        Deconstructing $\D{3}$ gives $\Gamma \vdash b.2 : [x := a.1]B$.
+        Note by Lemma~\ref{lem:2:conv_subst} that $[x := a.1]B \equiv [x := a^{\prime}.1]B$.
+        Classification used with $\D{1}$ and deconstructing yields $\Gamma, x_\tau : A \vdash B : \star$.
+        Using \textsc{Fst} gives $\Gamma \vdash a^{\prime}.1 : A$.
+        Now by the substitution lemma $\Gamma \vdash [x := a^{\prime}.1]B : \star$.
+        Finally, the \textsc{Conv} rule yields $\Gamma \vdash b.2 : [x := a^{\prime}.1]B$.
+        By the \textsc{Snd} rule: $\Gamma \vdash a^{\prime}.2 : [x := a^{\prime}.1]B$.
+        Piecing it all together with the \textsc{Eq} rule gives $\Gamma \vdash e : a^{\prime}.2 =_{[x := a^{\prime}.1]B} b.2$.
+        Finally, by the \textsc{PrmSnd} rule $\Gamma \vdash \vartheta_2(e, a^\prime, b) : a^\prime =_{(x : A) \cap B} b$.
+        \\ \\
+        Suppose $b \betared b^\prime$.
+        Applying \textit{1} to $\D{2}$ gives $\Gamma \vdash b^\prime : (x : A) \cap B$.
+        Deconstructing $\D{3}$ gives $\Gamma \vdash b.2 : [x := a.1]B$.
+        Applying \textit{1} again with this derivation yields $\Gamma \vdash b^{\prime}.2 : [x := a.1]B$.
+        Recombining using the \textsc{Eq} rule gives $\Gamma \vdash e : a.2 =_{[x := a.1]B} b^{\prime}.2$.
+        Thus, by the \textsc{prmSnd} rule $\Gamma \vdash \vartheta_2(e, a, b^\prime) : a =_{(x : A) \cap B} b^\prime$.
+        \\ \\
+        Suppose $e = \text{refl}(u)$ and $\vartheta_2(e, a, b) \betared \text{refl(a)}$.
+        Now it must be the case that $u \equiv a.2$ and $u \equiv b.2$.
+        Thus, $a \equiv b$.
+        By classification applied to $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
+        Using the \textsc{Eq} rule gives $\Gamma \vdash a =_{(x : A) \cap B} b : \star$.
+        Note that $\Gamma \vdash \text{refl}(a) : a =_{(x : A) \cap B} a$, but $a =_{(x : A) \cap B} a \equiv a =_{(x : A) \cap B} b$.
+        Thus, by the \textsc{Conv} rule $\Gamma \vdash \text{refl}(a) : a =_{(x : A) \cap B} b$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $f \betared f^\prime$.
+        Applying \textit{1} to $\D{1}$ and using the \textsc{Cast} rule concludes this case.
+        \\ \\
+        Suppose $e \betared e^\prime$.
+        Note that reduction does not introduce free variables, thus $FV(|e^\prime|)$ remains empty.
+        Now, using \textit{1} with $\D{2}$ and using the \textsc{Cast} rule concludes.
+    \end{proofcase}
+
+    \noindent \textbf{2.} Pattern-matching on $\Gamma \vdash t : A$.
+    Note that except \textsc{Ax} and \textsc{Var} all the other cases are immediate by applying \textit{2} to all sub-derivations and using the associated rule.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by the \textsc{Ax} rule, the context does not matter.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Partition $\Gamma$ in the following way: $\Delta_1, x_m : A, \Delta_2$.
+        Note that $\vdash \Gamma$ is assumed, thus $\Delta_1 \vdash A : K$.
+        Suppose $\Delta_1 \betared \Delta_1^\prime$.
+        By \textit{2}: $\Delta_1^\prime \vdash A : K$ and $(x_m : A) \in \Gamma^\prime$.
+        The \textsc{Var} rule concludes.
+        \\ \\
+        Suppose $A \betared A^\prime$.
+        Then by \textit{2} it is the case that $\Delta_1 \vdash A^\prime : K$.
+        Thus, $(x_m : A^\prime) : \Gamma^\prime$.
+        By the \textsc{Var} rule $\Gamma^\prime \vdash x : A^\prime$.
+        However, note that $A \equiv A^\prime$, thus by the \textsc{Conv} rule $\Gamma^\prime \vdash x : A$.
+        \\ \\
+        Suppose $\Delta_2 \betared \Delta_2^\prime$.
+        Then immediately $(x_m : A) \in \Gamma^\prime$ and by the \textsc{Var} rule $\Gamma^\prime \vdash x : A$.
+    \end{proofcase}
+
+    \noindent \textbf{3.} Pattern-matching on $\Gamma$.
+    If $\Gamma$ is empty then $\varepsilon \betared \Gamma^\prime$ forces $\Gamma^\prime = \varepsilon$ and $\vdash \varepsilon$.
+    Thus, let $\Gamma = \Delta, x_m : A$.
+    \\ \\
+    Suppose $\Delta, x_m : A \betared \Delta^\prime, x_m : A$
+    Then by \textit{3} applied to $\Delta$: $\vdash \Delta^\prime$.
+    Now, because $\vdash \Delta, x_m : A$ it is the case that $\Delta \vdash A : K$.
+    Using \textit{2} gives $\Delta^\prime \vdash A : K$.
+    Therefore, $\vdash \Delta^\prime, x_m : A$.
+    \\ \\
+    Suppose $\Delta, x_m : A \betared \Delta, x_m : A^\prime$.
+    Again $\vdash \Delta, x_m : A$ gives $\Delta \vdash A : K$.
+    Using \textit{1} gives $\Delta \vdash A^\prime : K$.
+    Thus, $\vdash \Delta, x_m : A^\prime$.
+\end{proof}
+
+\begin{lemma}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t : A$ and $t \betastar t^\prime$ then $\Gamma \vdash t^\prime : A$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \betastar \Gamma^\prime$ then $\Gamma^\prime \vdash t : A$
+        \item If $\vdash \Gamma$ and $\Gamma \betastar \Gamma^\prime$ then $\vdash \Gamma^\prime$
+    \end{enumerate}
+    \label{lem:2:preservation_no_type}
+\end{lemma}
+\begin{proof}
+    For each property the proof proceeds by induction on multistep reduction using Lemma~\ref{lem:2:preservation_no_type_step} and the IH in the inductive case.
+\end{proof}
+
+\begin{lemma}
+    If $\Gamma \vdash t : A$ and $A \betastar A^\prime$ then $\Gamma \vdash t : A^\prime$
+    \label{lem:2:preservation_type}
+\end{lemma}
+\begin{proof}
+    By classification: $\Gamma \vdash A : K$.
+    Using Lemma~\ref{lem:2:preservation_no_type} gives $\Gamma \vdash A^\prime : K$.
+    Note that $A \equiv A^\prime$.
+    Thus, by the \textsc{Conv} rule $\Gamma \vdash t : A^\prime$.
+\end{proof}
+
+\begin{theorem}[Preservation]
+    If $\Gamma \vdash t : A$, $\Gamma \betastar \Gamma^\prime$, $t \betastar t^\prime$, and $A \betastar A^\prime$ then $\Gamma^\prime \vdash t^\prime : A^\prime$
+    \label{lem:2:preservation}
+\end{theorem}
+\begin{proof}
+    Consequence of Lemma~\ref{lem:2:preservation_no_type} and Lemma~\ref{lem:2:preservation_type}.
+\end{proof}

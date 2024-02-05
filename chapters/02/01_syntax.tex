@@ -5,7 +5,7 @@
 
 Syntax for the system is defined generically as before.
 See Figure~\ref{fig:syntax} for a complete description.
-For the moment the new syntactic forms are merely raw data with no logically or even computational meaning.
+For the moment the new syntactic forms are merely raw data with no logical or computational meaning.
 Nevertheless, a basic fact about substitution on syntax is provable.
 
 \begin{lemma}
@@ -68,9 +68,9 @@ Second, substitution is shown to commute with multistep reduction through a seri
         $[x := t][t_1, t_2, A].2 = [[x := t]t_1, [x := t]t_2, [x := ]A].2 \betared [x := t]t_2$
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\app{P}{\tau}{t}}{x} \end{array}$
+    $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
     \begin{proofcase}
-        $[x := s]\psi(\text{refl(t)}, P) = \psi(\text{refl([x := s]t)}, [x := s]P) \betared \abs{\lambda_\omega}{y}{\app{[x := s]P}{\tau}{[x := s]t}}{y} = [x := s](\abs{\lambda_\omega}{y}{\app{P}{\tau}{t}}{y})$
+        $[x := s]\psi(\text{refl(t)}, P) = \psi(\text{refl}([x := s]t), [x := s]P) \betared \abs{\lambda_\omega}{y}{\apptwo{[x := s]P}{\tau}{[x := s]t}{\tau}{\text{refl}([x := s]t)}}{y} = [x := s](\abs{\lambda_\omega}{y}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{y})$
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
@@ -188,7 +188,7 @@ The full proof of confluence is relegated to Appendix~\ref{ap:a}, but note that 
 \end{proof}
 
 As with F$^\omega$ the important consequence of confluence is that conversion w.r.t. reduction is an equivalence relation.
-However, this is \textit{not} the conversion relation that will be used in typing judgments.
+However, this is \textit{not} the conversion relation that will be used in the inference judgment.
 Thus, while important, it is still only a stepping stone to showing judgmental conversion is transitive.
 
 \begin{lemma}
