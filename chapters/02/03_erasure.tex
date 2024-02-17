@@ -72,6 +72,14 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
     \end{proofcase}
 \end{proof}
 
+\begin{theorem}
+    \label{lem:2:erasure_idempotent}
+    $||t|| = |t|$
+\end{theorem}
+\begin{proof}
+    Trivial by induction on $t$.
+\end{proof}
+
 \begin{lemma}
     If $|s| \betaconv |t|$ and $|a| \betaconv |b|$ then $|[x := s]a| \betaconv |[x := t]b|$
     \label{lem:2:betaconv_erased_subst}

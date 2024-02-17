@@ -1,0 +1,81 @@
+
+\Rule{\PiRuleFpOne}
+    {
+        \der{\D{1}}{\Gamma \vdash A : \kind}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B : \kind}
+    }
+    {\Gamma \vdash (x : A) \to B : \kind}
+    {Pi1}
+
+\Rule{\PiRuleFpTwo}
+    {
+        \der{\D{1}}{\Gamma \vdash A : K}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash B : \star}
+    }
+    {\Gamma \vdash (x : A) \to B : \star}
+    {Pi2}
+
+\Rule{\LambdaRuleFp}
+    {
+        \der{\D{1}}{\Gamma \vdash (x:A) \to B : K}
+        \\ \der{\D{2}}{\Gamma, x : A \vdash t : B}
+    }
+    {\Gamma \vdash \abs{\lambda}{x}{A}{t} : (x : A) \to B}
+    {Lam}
+
+\Rule{\AppRuleFp}
+    {
+        \der{\D{1}}{\Gamma \vdash f : (x : A) \to B} \\
+        \der{\D{2}}{\Gamma \vdash a : A}
+    }
+    {\Gamma \vdash f\ a : [x := a]B}
+    {App}
+
+\Rule{\AxiomRuleFp}
+    {\textcolor{white}{\_}}
+    {\Gamma \vdash \star : \kind}
+    {Axiom}
+
+\Rule{\VarRuleFp}
+    {
+       \der{\D{1}}{(x : A) \in \Gamma}
+    }
+    {\Gamma \vdash x : A}
+    {Var}
+
+\Rule{\ConvRuleFp}
+    {
+        \der{\D{1}}{\Gamma \vdash A : K} \\
+        \der{\D{2}}{\Gamma \vdash t : B} \\
+        \der{\D{3}}{A \betaconv B}
+    }
+    {\Gamma \vdash t : A}
+    {Conv}
+
+\Rule{\ProductRuleFp}
+    {
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma \vdash B : \star}
+    }
+    {\Gamma \vdash A \times B : \star}
+    {Int}
+
+\Rule{\PairRuleFp}
+    {
+        \der{\D{1}}{\Gamma \vdash A \times B : \star} \\
+        \der{\D{2}}{\Gamma \vdash t : A} \\
+        \der{\D{3}}{\Gamma \vdash s : B}
+    }
+    {\Gamma \vdash (t, s) : A \times B }
+    {Pair}
+
+\Rule{\FirstRuleFp}
+    {\der{\D{1}}{\Gamma \vdash t : A \times B}}
+    {\Gamma \vdash t.1 : A}
+    {Fst}
+
+\Rule{\SecondRuleFp}
+    {\der{\D{1}}{\Gamma \vdash t : A \times B}}
+    {\Gamma \vdash t.2 : B}
+    {Snd}
+

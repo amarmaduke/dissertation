@@ -27,6 +27,7 @@
 \newcommand{\pseterm}{~\mbox{\normalfont pseterm}}
 
 \newcommand{\ptrunc}[1]{\lfloor #1 \rfloor}
+\newcommand{\sema}[1]{\llbracket #1 \rrbracket}
 
 \newcommand{\parred}{\Rrightarrow}
 \newcommand{\parstar}{\Rrightarrow^*}
@@ -38,6 +39,13 @@
 
 \newcommand{\pdom}{\mbox{\normalfont dom}_\Pi}
 \newcommand{\pcodom}{\mbox{\normalfont codom}_\Pi}
+
+\newcommand{\pkind}{\mbox{\normalfont kind}}
+\newcommand{\ptype}{\mbox{\normalfont type}}
+\newcommand{\pterm}{\mbox{\normalfont term}}
+
+\newcommand{\fpId}{\text{Id}}
+\newcommand{\fpid}{\text{id}}
 
 \newcommand{\Rule}[4]{
     \newcommand{#1}[1][a]{
@@ -55,9 +63,10 @@
 }
 
 \newenvironment{tightcenter}{%
-  \setlength\topsep{-5pt}
+  \setlength\topsep{0pt}
   \setlength\parskip{0pt}
   \begin{center}
 }{%
   \end{center}
 }
+

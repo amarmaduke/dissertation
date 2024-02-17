@@ -1,0 +1,20 @@
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        $$\BinderOneReduction$$
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        $$\BinderTwoReduction$$
+    \end{minipage}%
+    $$\ConstructorReduction$$
+    \begin{align*}
+        (\abs{\lambda}{x}{A}{b})\ t &\betared [x := t]b \\
+        [t_1, t_2].1 &\betared t_1 \\
+        [t_1, t_2].2 &\betared t_2
+    \end{align*}
+    \caption{Reduction rules for System F$^\omega$.}
+    \label{fig:reduction_fp}
+\end{figure}
+
+

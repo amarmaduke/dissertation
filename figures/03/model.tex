@@ -1,0 +1,102 @@
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        V(\kind) &= \star \\
+        V(\star) &= \star \\
+        V((x : A) \to_m B) &= V(A) \to V(B) &\text{if} \text{ $A$ kind} \\
+        V((x : A) \to_m B) &= V(B) &\text{otherwise}
+    \end{align*}
+    \begin{align*}
+        \sema{\kind} &= 0 \\
+        \sema{\star} &= 0 \\
+        \sema{x_\square} &= x \\
+        \sema{(x : A) \to_m B} &= (x : V(A)) \to \sema{A} \to \sema{B} &\text{if}& \text{ $A$ kind} \\
+        \sema{(x : A) \to_m B} &= (x : \sema{A}) \to \sema{B} &\text{if}& \text{ $A$ type} \\
+        \sema{\abs{\lambda_\tau}{x}{A}{t}} &= \abs{\lambda}{x}{V(A)}{\sema{t}} &\text{if}& \text{ $A$ kind} \\
+        \sema{\abs{\lambda_\tau}{x}{A}{t}} &= \sema{t} &\text{if}& \text{ $A$ type} \\
+        \sema{\app{f}{\tau}{a}} &= \sema{f}\ \sema{a} &\text{if}& \text{ $a$ type} \\
+        \sema{\app{f}{\tau}{a}} &= \sema{f} &\text{if}& \text{ $a$ term} \\
+        \sema{(x : A) \cap B} &= \sema{A} \times \sema{B} \\
+        \sema{a =_A b} &= \fpId
+    \end{align*}
+    \begin{align*}
+        \sema{x_m : A} &= x : V(A), w_x : \sema{A} &\text{if}& \text{ $A$ kind} \\
+        \sema{x_m : A} &= x : \sema{A} &\text{if}& \text{ $A$ type} \\
+        \sema{\varepsilon} &= 0 : \star, \bot : (X : \star) \to X \\
+        \sema{\Gamma, x_m : A} &= \sema{\Gamma}, \sema{x_m : A}
+    \end{align*}
+    \caption{
+        Model for kinds and types, not that type dependencies are dropped.
+        Define $\fpId := (X : \star) \to X \to X$.
+    }
+    \label{fig:3:model_types}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        c^B &= \bot\ B \hspace{0.5in}\text{if $B$ type} \\
+        c^\star &= 0 \\
+        c^{(x : A) \to B} &= \abs{\lambda}{x}{A}{c^B}
+    \end{align*}
+    \begin{align*}
+        [*] &= c^0 \\
+        [ x_{\square} ] &= w_x \\
+        [ x_\star ] &= x \\
+        [(x : A) \to_m B] &= c^{0 \to 0 \to 0}\ [A]\ ([x := c^{V(A)}][w_x := c^{\sema{A}}][B]) &\text{if}& \text{ $A$ kind} \\
+        [(x : A) \to_m B] &= c^{0 \to 0 \to 0}\ [A]\ ([x := c^{\sema{A}}][B]) &\text{if}& \text{ $A$ type} \\
+        [\abs{\lambda_m}{x}{A}{t}] &= (\abs{\lambda}{y}{0}{
+            \abs{\lambda}{x}{V(A)}{
+                \abs{\lambda}{w_x}{\sema{A}}{[t]}
+            }
+        })\ [A] &\text{if}& \text{ $A$ kind} \\
+        [\abs{\lambda_m}{x}{A}{t}] &= (\abs{\lambda}{y}{0}{
+            \abs{\lambda}{x}{\sema{A}}{[t]}
+        })\ [A] &\text{if}& \text{ $A$ type} \\
+        [\app{f}{m}{a}] &= [f]\ \sema{a}\ [a] &\text{if}& \text{ $a$ type} \\
+        [\app{f}{m}{a}] &= [f]\ [a] &\text{if}& \text{ $a$ term} \\
+    \end{align*}
+    \begin{align*}
+        [(x : A) \cap B] &= c^{0 \to 0 \to 0}\ [A]\ ([x := c^{\sema{A}}][B]) \\
+        [[t_1, t_2; A]] &= (\abs{\lambda}{y}{0}{([t_1], [t_2])})\ [A] \\
+        [t.1] &= [t].1 \\
+        [t.2] &= [t].2 \\
+        [a =_A b] &= c^{0 \to \sema{A} \to \sema{A} \to 0}\ [A]\ [a]\ [b] \\
+        [\text{refl}(t; A)] &= (\abs{\lambda}{y_1}{0}{
+                \abs{\lambda}{y_2}{\sema{A}}{\fpid}
+            })\ [A]\ [t] \\
+        [\psi(e; A, P)] &= (\abs{\lambda}{y_1}{0}{
+                \abs{\lambda}{y_2}{\sema{A} \to \fpId \to 0}{
+                    [e]\ \sema{P}
+                }
+            })\ [A]\ [P] \\
+        [\vartheta_i(e, a, b; T)] &= (\abs{\lambda}{y_1}{\sema{T}}{
+            \abs{\lambda}{y_2}{0} {
+                \abs{\lambda}{y_3}{\sema{T}}{
+                    [e]
+                }
+            }
+        })\ [b]\ [T]\ [a] \\
+        [\varphi(f, e; A, T)] &= (\abs{\lambda}{y_1}{0}{
+            \abs{\lambda}{y_2}{0}{
+                \abs{\lambda}{y_3}{\sema{T}}{
+                    \abs{\lambda}{y_4}{\sema{A} \to \fpId}{
+                        c^{\sema{T}}
+                    }
+                }
+            }
+        })\ [A]\ [T]\ [f]\ [e] \\
+        [\delta(e)] &= (\abs{\lambda}{y}{\fpId}{
+            \bot
+        })\ [e]
+    \end{align*}
+    \caption{
+        Model for terms, note that critically every subexpression is represented in the model to make sure no reductions are potentially lost.
+        The definition of $c$ is used to construct a canonical element for any kind or type.
+        Define $\fpid := \abs{\lambda}{X}{\star}{
+            \abs{\lambda}{x}{X}{x}
+        }$.
+    }
+    \label{fig:3:model_terms}
+\end{figure}

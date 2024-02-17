@@ -1,0 +1,32 @@
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        t &::= x\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
+        \kappa_1 &::= \lambda\ |\ \Pi \\
+        \kappa_2 &::=\star\ |\ \kind\ |\ \text{app}\ |\ \text{prod}\ |\ \text{pair}\ |\ \text{fst}\ |\ \text{snd} \\
+        &\mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
+        &\mathfrak{a}(\text{fst}) = \mathfrak{a}(\text{fst}) = 1 \\
+        &\mathfrak{a}(\text{app}) = \mathfrak{a}(\text{prod}) = \mathfrak{a}(\text{pair}) = 2
+    \end{align*}
+    \vspace{-.4in}
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \star &:= \mathfrak{c}(\star) \\
+            \kind &:= \mathfrak{c}(\kind) \\
+            \abs{\lambda}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda, x : t_1, t_2) \\
+            (x : t_1) \to t_2 &:= \mathfrak{b}(\Pi, x : t_1, t_2) \\
+            t_1\ t_2 &:= \mathfrak{c}(\text{app}, t_1, t_2)
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            t_1 \times t_2 &= \mathfrak{c}(\text{prod}, t_1, t_2) \\
+            (t_1, t_2) &= \mathfrak{c}(\text{pair}, t_1, t_2) \\
+            t.1 &= \mathfrak{c}(\text{fst}, t) \\
+            t.2 &= \mathfrak{c}(\text{snd}, t)
+        \end{align*}
+    \end{minipage}
+    \caption{Syntax for System F$^\omega$ with pairs.}
+    \label{fig:syntax_fp}
+\end{figure}

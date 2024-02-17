@@ -1,0 +1,38 @@
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \mathcal{C}(x_\star) &= \pterm \\
+            \mathcal{C}(\star) &= \pkind \\
+            \mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}) &= \ptype \\
+            \mathcal{C}(\abs{\lambda_\omega}{x}{A}{t}) &= \pterm \\
+            \mathcal{C}((x : A) \to_\tau B) &= \pkind \\
+            \mathcal{C}((x : A) \to_\omega B) &= \ptype \\
+            \mathcal{C}((x : A) \to_0 B) &= \ptype
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \mathcal{C}(x_\square) &= \ptype \\
+            \mathcal{C}(\app{f}{\tau}{a}) &= \ptype \\
+            \mathcal{C}(\app{f}{\omega}{a}) &= \pterm \\
+            \mathcal{C}((x : A) \cap B) &= \ptype \\
+            \mathcal{C}(a =_A b) &= \ptype \\
+            \mathcal{C}(\text{refl}(t)) &= \pterm \\
+            \mathcal{C}(\varphi(f, e)) &= \pterm
+        \end{align*}
+    \end{minipage}
+    \begin{align*}
+        \mathcal{C}(\abs{\lambda_0}{x}{A}{t}) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
+        \mathcal{C}(\app{f}{0}{a}) &= \pterm &\text{if }& \mathcal{C}(f) = \pterm\\
+        \mathcal{C}([t_1, t_2; A]) &= \pterm &\text{if }& \mathcal{C}(t_1) = \pterm\\
+        \mathcal{C}(t.1) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
+        \mathcal{C}(t.2) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
+        \mathcal{C}(\psi(e, P)) &= \pterm &\text{if }& \mathcal{C}(e) =\pterm\\
+        \mathcal{C}(\vartheta_i(e, a, b)) &= \pterm &\text{if }& \mathcal{C}(e) = \pterm\\
+        \mathcal{C}(\delta(e)) &= \pterm &\text{if }& \mathcal{C}(e) = \pterm \\
+        \mathcal{C}(t) &= \text{undefined} &&\text{otherwise}
+    \end{align*}
+    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
+\end{figure}

@@ -6,9 +6,10 @@
 
 \Rule{\VarRule}
     {
-        \der{\D{1}}{(x_m : A) \in \Gamma}
+        \der{\D{1}}{{x \notin FV(\Gamma_1; \Gamma_2)}} \\
+        \der{\D{2}}{\Gamma_1 \vdash A : K}
     }
-    {\Gamma \vdash x : A}
+    {\Gamma_1; x_m : A; \Gamma_2 \vdash x_K : A}
     {Var}
 
 \Rule{\WeakenRule}
@@ -32,7 +33,7 @@
 \Rule{\PiRule}
     {
         \der{\D{1}}{\Gamma \vdash A : \pdom(m, K)}
-        \\ \der{\D{2}}{\Gamma, x_m : A \vdash B : \pcodom(m)}
+        \\ \der{\D{2}}{\Gamma; x_m : A \vdash B : \pcodom(m)}
     }
     {\Gamma \vdash (x : A) \to_m B : \pcodom(m)}
     {Pi}
@@ -40,7 +41,7 @@
 \Rule{\LambdaRule}
     {
         \der{\D{1}}{\Gamma \vdash (x : A) \to_m B : \pcodom(m)}
-        \\ \der{\D{2}}{\Gamma, x_m : A \vdash t : B}
+        \\ \der{\D{2}}{\Gamma; x_m : A \vdash t : B}
         \\ \der{\D{3}}{x \notin FV(|t|)\text{ if } m = 0}
     }
     {\Gamma \vdash \abs{\lambda_m}{x}{A}{t} : (x : A) \to_m B}
@@ -57,7 +58,7 @@
 \Rule{\IntersectionRule}
     {
         \der{\D{1}}{\Gamma \vdash A : \star} \\
-        \der{\D{2}}{\Gamma, x_\tau : A \vdash B : \star}
+        \der{\D{2}}{\Gamma; x_\tau : A \vdash B : \star}
     }
     {\Gamma \vdash (x : A) \cap B : \star}
     {Int}
@@ -96,33 +97,36 @@
         \der{\D{1}}{\Gamma \vdash A : \star} \\
         \der{\D{2}}{\Gamma \vdash t : A}
     }
-    {\Gamma \vdash \text{refl}(t) : t =_A t}
+    {\Gamma \vdash \text{refl}(t; A) : t =_A t}
     {Refl}
 
 \Rule{\SubstRule}
     {
-        \der{\D{1}}{\Gamma \vdash e : a =_A b} \\
-        \der{\D{2}}{\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y) \to_\tau \star}
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma \vdash e : a =_A b} \\
+        \der{\D{3}}{\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star}
     }
-    {\Gamma \vdash \psi(e, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
+    {\Gamma \vdash \psi(e; A, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a; A)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
     {Subst}
 
 \Rule{\PromoteFstRule}
     {
-        \der{\D{1}}{\Gamma \vdash a : (x:A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash b : (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash e : a.1 =_A b.1} \\
+        \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
+        \der{\D{2}}{\Gamma \vdash a : (x:A) \cap B} \\
+        \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{4}}{\Gamma \vdash e : a.1 =_A b.1} \\
     }
-    {\Gamma \vdash \vartheta_1(e, a, b) : a =_{(x:A) \cap B} b}
+    {\Gamma \vdash \vartheta_1(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
     {PrmFst}
 
 \Rule{\PromoteSndRule}
     {
-        \der{\D{1}}{\Gamma \vdash a : (x:A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash b : (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash e : a.2 =_{[x := a.1]B} b.2} \\
+        \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
+        \der{\D{2}}{\Gamma \vdash a : (x:A) \cap B} \\
+        \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{4}}{\Gamma \vdash e : a.2 =_{[x := a.1]B} b.2} \\
     }
-    {\Gamma \vdash \vartheta_2(e, a, b) : a =_{(x:A) \cap B} b}
+    {\Gamma \vdash \vartheta_2(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
     {PrmSnd}
 
 % \Rule{\CastRule}
@@ -137,17 +141,18 @@
 
 \Rule{\CastRule}
     {
-        \der{\D{1}}{\Gamma \vdash f : (a : A) \to_\omega (x:A^\prime) \cap B} \\
-        \der{\D{2}}{A \equiv A^\prime} \\
-        \der{\D{3}}{\Gamma \vdash e : (a : A) \to_\omega a =_A (\app{f}{\omega}{a}).1} \\
-        \der{\D{4}}{FV(|e|) = \varnothing}
+        \der{\D{1}}{T = (a : A) \to_\omega (x : A) \cap B} \\
+        \der{\D{2}}{\Gamma \vdash T : \star} \\
+        \der{\D{3}}{\Gamma \vdash f : T} \\
+        \der{\D{4}}{\Gamma \vdash e : (a : A) \to_\omega a_\star =_A (\app{f}{\omega}{a_\star}).1} \\
+        \der{\D{5}}{FV(|e|) = \varnothing}
     }
-    {\Gamma \vdash \varphi(f, e) : (a : A) \to_\omega (x:A) \cap B}
+    {\Gamma \vdash \varphi(f, e; A, T) : T}
     {Cast}
 
 \Rule{\SeparationRule}
     {
         \der{\D{1}}{\Gamma \vdash e : \text{ctt} =_{\text{cBool}} \text{cff}}
     }
-    {\Gamma \vdash \delta(e) : (X : \star) \to_0 X}
+    {\Gamma \vdash \delta(e) : (X : \star) \to_0 X_\square}
     {Sep}

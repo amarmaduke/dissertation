@@ -1,4 +1,904 @@
-\chapter{Proof Normalization and Relationship to System F$^\omega$}
+\chapter{Proof Normalization and Relationship to System \texorpdfstring{F$^\omega$}{F omega}}
+\input{figures/03/typing_macros.tex}
 
+There are several techniques for showing strong normalization of a PTS, including saturated sets \cite{geuvers1994_sn_satset}, model theory \cite{terlouw1995_sn}, realizability \cite{ong1993}, etc.
+Geuvers and Nederhof describe yet another technique that models CC inside F$^\omega$ where term dependencies are all erased at the type level \cite{geuvers1991_sn_tof}.
+In this chapter the technique of Geuvers and Nederhof will be adapted to show strong normalization of proof reduction.
+Note, this will not entail that objects are strongly normalizing.
+Moreover, proof normalization ends up being a rather weak property, as it will not entail consistency either.
+Nevertheless, it is an important stepping stone to strong normalization for objects.
 
+\section{Model Description}
 
+\input{figures/03/syntax.tex}
+\input{figures/03/reduction.tex}
+\input{figures/03/infer.tex}
+
+Figure~\ref{fig:syntax_fp} describes the syntax of System F$^\omega$ augmented with pairs.
+The reduction relation for this system is presented in Figure~\ref{fig:reduction_fp} and the inference judgment in Figure~\ref{fig:typing_fp}.
+System F$^\omega$ augmented with pairs is only slightly differently from the original PTS description of F$^\omega$.
+Moreover, it is a subsystem of the Calculus of Inductive Constructions and thus enjoys various metatheoretic properties such as substitution and weakening lemmas, preservation, strong normalization, and consistency.
+
+The model follows all the same principles for the CC fragment of Cedille2.
+For example, consider the \textsc{Lam} rule.
+$$\LambdaRule$$
+The goal is to find three semantic functions: one for kinds ($V(-)$); one for types ($\sema{-}$); and one for terms ($[-]$), such that:
+    \begin{enumerate}
+        \item $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$
+        \item $\sema{\Gamma; x_m : A} \vdash_\omega [t] : \sema{B}$
+        \item $\sema{\Gamma} \vdash [\abs{\lambda_m}{x}{A}{t}] : \sema{(x : A) \to_m B}$
+    \end{enumerate}
+In order for this to work, term dependencies must all be dropped in function types.
+Moreover, kinds are squished, such that $V(\kind) = V(\star) = \star$.
+Thus, the judgment $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$ must form an F$^\omega$ type.
+The kind and type semantics is allowed to throw away terms and reductions because it only serves the purpose to maintain a well-typed output.
+Instead, it is the term semantics that must take care to preserve all possible reductions such that strong normalization is a consequence of the model.
+
+For dependent intersections, the type semantics is the obvious one: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
+Note that because $A$ must be a type, it must be the case that $x \notin FV(\sema{B})$ otherwise the resulting type is not well-formed in F$^\omega$.
+This is true already for function types, thus this extension needs no special treatment.
+For equality the situation is special, the approach taken is to interpret all equalities as the type of the identity function: $\sema{a =_A b} = \fpId$.
+There does not appear to be a more sensible choice, as the dependencies $a$ and $b$ must be dropped.
+
+\input{figures/03/model.tex}
+
+The model interpretation for contexts always introduces two fresh variables, $0 : \star$ which is a canonical type, and $\bot : (X : \star) \to X$ which is used to construct canonical inhabitants for any type or kind.
+Note that including $\bot$ prevents this model from entailing consistency for the source system.
+Regardless, F$^\omega$ is strongly normalizing in all contexts, thus the addition of $\bot$ does not prevent the model from serving its current purpose.
+Before exploring more in-depth examples of the model the reader is invited to skim to the semantic functions in Figure~\ref{fig:3:model_types} and Figure~\ref{fig:3:model_terms}.
+
+Consider the following examples to garner intuition for the semantic model:
+\begin{enumerate}
+    \item {
+        Given $\varepsilon \vdash_{c_2} \abs{\lambda_0}{X}{\star}{
+            \abs{\lambda_\omega}{x}{X_\square}{x_\star}
+        } : (X : \star) \to_0 X_\square \to_\omega X_\square$
+        then $$\sema{\varepsilon} = 0 : \star;\ \bot : (X : \star) \to X$$
+        $$[\abs{\lambda_0}{X}{\star}{
+            \abs{\lambda_\omega}{x}{X_\square}{x_\star}
+        }] = (\abs{\lambda}{y}{0}{
+            \abs{\lambda}{X}{\star}{
+                \abs{\lambda}{w_X}{0}{
+                    (\abs{\lambda}{y}{0}
+                        \abs{\lambda}{x}{X}{x}
+                    )\ w_X
+                }
+            }
+        })\ c^0$$
+        $$\sema{(X : \star) \to_0 X_\square \to_\omega X_\square}
+            = (X : \star) \to 0 \to X \to X$$
+    }
+    \item {
+        Given $\Gamma \vdash_{c_2} t : T$ where $\Gamma = A : \star;\ B : A_\square \to_\tau \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square$, $t = [(\app{f_\star}{\omega}{a_\star}).1, (\app{f_\star}{\omega}{a_\star}).2; (x : A_\square) \cap B_\square]$, and $T = (x : A_\square) \cap B_\square$ then
+        \begin{align*}
+            &\sema{A : \star; B : A \to_\tau \star; a : A; f : A \to_\omega (x : A) \cap B} =\\
+            &\quad 0 : \star;\ \bot : (X : \star) \to X;\ A : \star;\ w_A : 0;\ B : \star;\ w_B : A \to 0; \\
+            &\quad a : A;\ f : A \to A \times B
+        \end{align*}
+        \begin{align*}
+            &[(\app{f}{\omega}{a}).1, (\app{f}{\omega}{a}).2] =\\
+            &\quad (\abs{\lambda}{y}{0}{
+                ((f\ a).1, (f\ a).2)
+            })\ (c^{0 \to 0 \to 0}\ w_A\ [x := c^A]w_B)
+        \end{align*}
+        $$(x : A) \cap B = A \times B$$
+    }
+\end{enumerate}
+
+Notice that from the perspective of the type semantics ($\sema{-}$) that term dependencies in predicates must be dropped, but that they are preserved in the term semantics ($[-]$).
+Thus, extra layers of abstraction are added when interpreting function arguments that are kinds to capture the two different usages of that variable in the separate semantic functions.
+
+\section{Model Soundness}
+
+With the model defined the next step is to prove it is sound.
+The process begins by showing the interpretation of kinds ($V(-)$) is sound.
+This is not particularly difficult as the kind interpretation is quite simple.
+After proving soundness lemmas about substitution and conversion are also shown and follow without much difficulty.
+
+\begin{theorem}[Soundness of $V$]
+    \label{lem:3:soudness_of_v}
+    If $\Gamma \vdash_{c_2} t : \kind$ then $\Delta \vdash_\omega V(t) : \kind$ for any $\Delta$
+\end{theorem}
+\begin{proof}
+    By induction on $\Gamma \vdash_{c_2} t : \kind$.
+    The cases: \textsc{Lam}, \textsc{App}, \textsc{Int}, \textsc{Pair}, \textsc{Fst}, \textsc{Snd}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{PrmFst}, \textsc{PrmSnd}, \textsc{Cast}, \textsc{Sep}, and \textsc{Conv} are impossible by inversion.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Trivial by the \textsc{Ax} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $\vdash \Gamma$ is assumed, thus $\Gamma \vdash \kind : K$ which is impossible.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $A$ is a kind, then $\pdom(m, K) = \kind$ and $V((x : A) \to_m B) = V(A) \to V(B)$.
+        Applying the IH to $\D{1}$ and $\D{2}$ gives $\Delta_1 \vdash_\omega V(A) : \kind$ and $\Delta_2 \vdash_\omega V(B) : \kind$.
+        However, note that there are no variables in any well-defined $V(t)$ which $V(A)$ and $V(B)$ are.
+        Thus, $\Delta \vdash_\omega V(A) : \kind$ and $\Delta, x : V(A) \vdash_\omega V(B) : \kind$ by properties of $F^\omega$.
+        Now by the \textsc{Pi1} rule $\Delta \vdash_\omega V(A) \to V(B) : \kind$ as required.
+        \\ \\
+        Suppose $A$ is a type, then $\pdom(m, K) = \star$ and $V((x : A) \to_m B) = V(B)$.
+        By the IH applied to $\D{2}$: $\Delta \vdash_\omega V(B) : \kind$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:conv_of_v}
+    If $\Gamma_1 \vdash A : \kind$, $\Gamma_2 \vdash B : \kind$, and $A \equiv B$ then $V(A) = V(B)$
+\end{lemma}
+\begin{proof}
+    By induction on $\Gamma \vdash A : \kind$.
+    Note that $A$ is either $\star$ or $(x : C) \to_\tau D$.
+    Suppose $A = \star$, then because $\star \equiv B$ it must be that $B = \star$.
+    Thus, $V(A) = \star = V(B)$.
+    \\ \\
+    Suppose $A = (x : C_1) \to_\tau D_1$, but this forces $B = (x : C_2) \to_\tau D_2$ where $C_1 \equiv C_2$ and $D_1 \equiv D_2$.
+    Note that $\Gamma \vdash C_1 : K$ and $\Gamma, x : C_1 \vdash D_1 : \kind$.
+    Now by the IH: $V(D_1) = V(D_2)$ (note that the contexts need not agree).
+    If $C_1$ is a kind, then $V((x : C_1) \to_\tau D_1) = V(C_1) \to V(D_1)$ and by the IH $V(C_1) = V(C_2)$.
+    Instead, if $C_1$ is a type then $V((x : C_1) \to_\tau D_1) = V(D_1)$, but $V(D_1) = V(D_2)$.
+    Thus, $V(A) = V((x : C_1) \to_\tau D_1) = V((x : C_2) \to_\tau D_2) = V(B)$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:v_subst}
+    If $\Gamma \vdash V(t) : \kind$ then $[x := b]V(t) = V(t) = V([x := b]t)$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash V(t) : \kind$.
+    Note that there are only two possibilities:
+
+    $\text{Case: } t = \star$
+    \begin{proofcase}
+        Have $[x := b]V(\star) = [x := b]\star = \star = V(\star) = V([x := b]\star)$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} t = (x : A) \to_m B \end{array}$
+    \begin{proofcase}
+        Note that $A$ must be a kind or a type because $\Gamma \vdash V(t) : \kind$.
+        Suppose $A$ is a kind, then $V((x : A) \to_m B) = V(A) \to V(B)$.
+        Destructing the judgment gives $\Gamma \vdash V(A) : \kind$ and $\Gamma, x : V(A) \vdash V(B) : \kind$.
+        Thus, by the IH: $[x := b]V(A) = V(A) = V([x := b]A)$ and $[x := b]V(B) = V(B) = V([x := b]B)$.
+        By computation, $V([x := b](x : A) \to_m B) = V((x : [x := b]A) \to_m [x := b]B) = V([x := b]A) \to V([x := b]B) = V(A) \to V(B) = V((x : A) \to_m B)$.
+        Also, by computation $[x := b]V((x : A) \to_m B) = [x := b](V(A) \to V(B)) = [x := b]V(A) \to [x := b]V(B) = V(A) \to V(B) = V((x : A) \to_m B)$. 
+        \\ \\
+        Suppose $A$ is a type, then $V((x : A) \to_m B) = V(B)$.
+        By the IH: $[x := b]V(B) = V(B) = V([x := b]B)$.
+    \end{proofcase}
+\end{proof}
+
+Next is demonstrating soundness of the type semantics.
+Note again that type variables cannot appear free in the result of a well-defined interpretation of types.
+This is codified in the next lemma, and soundness follows from it and soundness of the model for kinds.
+A standard substitution lemma is proven after.
+
+\begin{lemma}
+    \label{lem:3:var_not_in_sema_when_kind}
+    Suppose $\Gamma \vdash t : A$, $x_m : B \in \Gamma$, and $B$ type, then $x \notin FV(\sema{t}_\Gamma)$
+    where $A = \kind$ or $\Gamma \vdash A : \kind$
+\end{lemma}
+\begin{proof}
+    Note that the restrictions on $A$ makes sure that $\sema{-}$ is well-defined.
+    The definition of $\sema{-}$ intentionally throws away any dependence on terms.
+    Thus, if $x$ is a term, because $B$ is a type, the only places where $x$ may appear in $t$ have all been thrown away.
+    Therefore, $x \notin FV(\sema{t})$.
+\end{proof}
+
+\begin{theorem}[Soundness of $\sema{-}$]
+    \label{lem:3:soundness_of_sema}
+    If $\Gamma \vdash_{c_2} t : A$ then $\sema{\Gamma} \vdash_\omega \sema{t}_\Gamma : V(A)$
+    where $A = \kind$ or $\Gamma \vdash A : \kind$
+\end{theorem}
+\begin{proof}
+    By induction on $\Gamma \vdash_{c_2} t : A$.
+    The cases: \textsc{Pair}, \textsc{Fst}, \textsc{Snd}, \textsc{Refl}, \textsc{Subst}, \textsc{PrmFst}, \textsc{PrmSnd}, \textsc{Cast}, and \textsc{Sep} are impossible by inversion on $A = \kind$ or $\Gamma \vdash A : \kind$.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        By computation $\sema{\star}_\Gamma = 0$ and $V(\kind) = \star$.
+        Note that $0 : \star \in \sema{\Gamma}$ thus this case is concluded by the \textsc{Var} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        By computation $\sema{x}_\Gamma = x$.
+        Note that $\vdash \Gamma$ is assumed, thus because $x_m : A \in \Gamma$ it is the case that $\Gamma \vdash A : K$.
+        In other words, $A \neq \kind$.
+        By the assumption this forces $K = \kind$ and $A$ is a kind.
+        Now by definition of $\sema{\Gamma}$: $x : V(A) \in \sema{\Gamma}$.
+        Thus, $\sema{\Gamma} \vdash_\omega x : V(A)$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        By computation $V(\pcodom(m)) = V(\pdom(m, K)) = \star$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_\omega \sema{A}_\Gamma : \star$
+            \item[$\D{2}$.] $\sema{\Gamma, x_m : A} \vdash_\omega \sema{B}_{\Gamma, x:A} : \star$ 
+        \end{enumerate}
+        Suppose that $A$ is a kind.
+        Then $\sema{(x : A) \to_m B}_\Gamma = (x : V(A)) \to \sema{A}_\Gamma \to \sema{B}_{\Gamma,x:A}$ and $\sema{\Gamma, x_m : A} = \sema{\Gamma}, x : V(A), w_x : \sema{A}_\Gamma$.\
+        The \textsc{Pi2} rule applied with the results of the IH gives
+            \begin{tightcenter} $\sema{\Gamma}, x : V(A) \vdash_\omega \sema{A}_\Gamma \to \sema{B}_{\Gamma, x : A} : \star$ \end{tightcenter}
+        Now by Lemma~\ref{lem:3:soudness_of_v} applied to $\D{1}$: $\sema{\Gamma} \vdash_\omega V(A) : \kind$.
+        Using the \textsc{Pi1} rule gives $\sema{\Gamma} \vdash_\omega V(A) \to \sema{A}_\Gamma \to \sema{B}_{\Gamma, x : A} : \star$.
+        \\ \\
+        Suppose that $A$ is a type.
+        Then $\sema{(x : A) \to_m B}_\Gamma = (x : \sema{A}_\Gamma) \to \sema{B}_{\Gamma,x:A}$ and $\sema{\Gamma, x_m : A} = \sema{\Gamma}, x : \sema{A}_\Gamma$.
+        Thus, by the \textsc{Pi2} rule $\sema{\Gamma} \vdash \sema{A}_\Gamma \to \sema{B}_{\Gamma,x:A} : \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        It must be the case that $\Gamma \vdash (x : A) \to_m B : \kind$.
+        Thus, $m = \tau$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_\tau B}_\Gamma : \star$
+            \item[$\D{2}$.] $\sema{\Gamma, x_\tau : A} \vdash_\omega \sema{t}_{\Gamma, x:A} : V(B)$ 
+        \end{enumerate}
+        Suppose $A$ is a kind.
+        Then $\sema{(x : A) \to_\tau B}_\Gamma = (x : V(A)) \to \sema{A}_\Gamma \to \sema{B}_{\Gamma,x:A}$, $\sema{\Gamma, x_m : A} = \sema{\Gamma}, x : V(A), w_x : \sema{A}_\Gamma$, and $\sema{\abs{\lambda_\tau}{x}{A}{t}}_\Gamma = \abs{\lambda}{x}{V(A)}{\sema{t}_{\Gamma,x:A}}$.
+        Note that $\sema{\Gamma} \vdash c^{\sema{A}_\Gamma} : \sema{A}_\Gamma$.
+        Thus, by substitution lemma for F$^\omega$: $\sema{\Gamma}, x : V(A) \vdash_\omega [w_x := c^{\sema{A}_\Gamma}]\sema{t}_{\Gamma, x:A} : [w_x := c^{\sema{A}_\Gamma}]V(B)$.
+        However, because $A$ is kind and by Lemma~\ref{lem:3:var_not_in_sema_when_kind}: $[w_x := c^{\sema{A}_\Gamma}]\sema{t}_{\Gamma, x:A} = \sema{t}_{\Gamma, x:A}$.
+        Note also that $FV(V(B))$ is empty, thus $[w_x := c^{\sema{A}_\Gamma}]V(B) = V(B)$.
+        Thus, $\sema{\Gamma}, x : V(A) \vdash_\omega \sema{t}_{\Gamma, x:A} : V(B)$.
+        Moreover, by Theorem~\ref{lem:3:soudness_of_v} it is the case that $\sema{\Gamma} \vdash V(A) : \kind$.
+        Using the \textsc{Lam} rule gives $\sema{\Gamma} \vdash_\omega \abs{\lambda}{x}{V(A)}{\sema{t}_{\Gamma, x:A}} : V(A) \to V(B)$.
+        \\ \\
+        Suppose $A$ is a type.
+        Then $\sema{\Gamma, x_m : A} = \sema{\Gamma}, x : \sema{A}_\Gamma$ and $\sema{\abs{\lambda_\tau}{x}{A}{t}}_\Gamma = \sema{t}_{\Gamma,x:A}$.
+        Note additionally that $V((x : A) \to_m B) = V(B)$.
+        Note that $\sema{\Gamma} \vdash c^{\sema{A}_\Gamma} : \sema{A}_\Gamma$.
+        By substitution lemma, Lemma~\ref{lem:3:var_not_in_sema_when_kind}, and as above: $\sema{\Gamma} \vdash_\omega \sema{t}_{\Gamma} : V(B)$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Note that it cannot be the case that $[x := a]B = \kind$ by inversion on $\D{1}$, thus $\Gamma \vdash [x := a]B : \kind$ which force $m = \tau$.
+        Furthermore, by $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
+        Applying the IH to $\D{1}$ thus gives $\sema{\Gamma} \vdash_\omega \sema{f}_\Gamma : V((x : A) \to_\tau B)$.
+        \\ \\
+        Suppose $A$ is a kind, then $a$ is a type.
+        Thus, $V((x : A) \to_\tau B) = V(A) \to V(B)$ and $\sema{\app{f}{\tau}{a}}_\Gamma = \sema{f}_\Gamma\ \sema{a}_\Gamma$.
+        Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash_\omega \sema{a}_\Gamma : V(A)$.
+        By the \textsc{App} rule: $\sema{\Gamma} \vdash \sema{f}_\Gamma\ \sema{a}_\Gamma : V(B)$.
+        Now by Lemma~\ref{lem:3:v_subst}: $V(B) = V([x := a]B)$.
+        \\ \\
+        Suppose $A$ is a type, then $a$ is a term.
+        Thus, $V((x : A) \to_\tau B) = V(B)$ and $\sema{\app{f}{\tau}{a}}_\Gamma = \sema{f}_\Gamma$.
+        But, $\sema{\Gamma} \vdash_\omega \sema{f}_\Gamma : V(B)$ already.
+        Now by Lemma~\ref{lem:3:v_subst}: $V(B) = V([x := a]B)$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_\omega \sema{A}_\Gamma : \star$
+            \item[$\D{2}$.] $\sema{\Gamma, x_\tau : A} \vdash_\omega \sema{B}_{\Gamma, x:A} : \star$ 
+        \end{enumerate}
+        Note that $A$ is a type thus $\sema{\Gamma, x_\tau : A} = \sema{\Gamma}, x : \sema{A}_\Gamma$.
+        Applying the \textsc{Lam} rule twice reduces the goal to $\sema{\Gamma}, \sema{A}_\Gamma : \star, \sema{B}_{\Gamma,x:A} : \star \vdash_\omega \sema{A}_\Gamma \times \sema{B}_{\Gamma,x:A} : \star$.
+        However, the pair case is an otherwise simple F$^\omega$ type, thus a short sequence of rules concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        By computation $\sema{a =_A b}_\Gamma = \fpId$ and $V(\star) = \star$.
+        A short sequence of rules in F$^\omega$ yields $\sema{\Gamma} \vdash \fpId : \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $A \neq \kind$ by $\D{1}$, and furthermore that $K = \kind$.
+        Now by classification and $\D{3}$: $\Gamma \vdash B : \kind$.
+        Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash_\omega \sema{t}_\Gamma : V(B)$.
+        Using Lemma~\ref{lem:3:conv_of_v} with $\D{3}$ gives $V(A) = V(B)$.
+        Thus, the \textsc{Conv} rule concludes the case.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:sema_subst}
+    Suppose $\Gamma \vdash_\omega \sema{t} : T$ then $\sema{[x := b]t} = [x := \sema{b}]\sema{t}$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash_\omega \sema{t} : T$.
+    Thus, only the cases where $\sema{t}$ is well-defined need to be considered.
+
+    $\text{Case: } t = \star \text{ or } t = \kind$
+    \begin{proofcase}
+        The situation is the same because $\sema{\star} = \sema{\kind}$.
+        By computation $\sema{[x := b]\star} = \sema{\star} = 0$ and $[x := \sema{b}]\sema{\star} = [x := \sema{b}]0 = 0$.
+    \end{proofcase}
+
+    $\text{Case: } t = y_\square$
+    \begin{proofcase}
+        Suppose $x \neq y$, then by computation $\sema{[x := b]y_\square} = \sema{y_\square} = y$ and $[x := \sema{b}]\sema{y_\square} = [x := \sema{b}]y = y$.
+        Suppose $x = y$, then $\sema{[x := b]y_\square} = \sema{b}$ and $[x := \sema{b}]\sema{y_\square} = [x := \sema{b}]y = \sema{b}$.
+    \end{proofcase}
+
+    $\text{Case: } t = (y : C) \to_m D$
+    \begin{proofcase}
+        Suppose $A$ is a kind.
+        Then $\sema{[x := b](y : C) \to_m D} = \sema{(y : [x := b]C) \to_m ([x := b]D)} = (y : V([x := b]A)) \to \sema{[x := b]C} \to \sema{[x := b]D}$.
+        By Lemma~\ref{lem:3:v_subst} and applying the IH:
+        \begin{align*}
+            (y &: V([x := b]A)) \to \sema{[x := b]C} \to \sema{[x := b]D} \\
+            &= (y : [x := \sema{b}]V(A)) \to [x := \sema{b}]\sema{C} \to [x := \sema{b}]\sema{D} \\
+            &= [x := \sema{b}]((y : V(A)) \to \sema{C} \to \sema{D}) \\
+            &= [x := \sema{b}]\sema{(y : C) \to_m D}
+        \end{align*}
+        Suppose $A$ is a type.
+        Then $\sema{[x := b](y : C) \to_m D} = \sema{(y : [x := b]C) \to_m ([x := b]D)} = (y : \sema{[x := b]C}) \to \sema{[x := b]D}$.
+        Applying the IH and chasing similar computations as above concludes the case.
+    \end{proofcase}
+
+    $\text{Case: } t = \abs{\lambda_\tau}{C}{c}$
+    \begin{proofcase}
+        Suppose $C$ is a kind.
+        Then $\sema{[x := b](\abs{\lambda_\tau}{x}{C}{c})} = \sema{\abs{\lambda_\tau}{x}{[x := b]C}{[x := b]c}} = \abs{\lambda}{x}{V([x := b]C)}{\sema{[x := b]c}}$.
+        By Lemma~\ref{lem:3:v_subst} and the IH:
+        \begin{align*}
+            \abs{\lambda}{x}{V([x := b]C)}&{\sema{[x := b]c}} \\
+            &= \abs{\lambda}{x}{[x := \sema{b}]V(C)}{[x := \sema{b}]\sema{c}} \\
+            &= [x := \sema{b}](\abs{\lambda}{x}{V(C)}{\sema{c}}) \\
+            &= [x := \sema{b}]\sema{\abs{\lambda}{x}{C}{c}} \\
+        \end{align*}
+        Suppose $C$ is a type.
+        Then $\sema{[x := b](\abs{\lambda_\tau}{x}{C}{c})} = \sema{\abs{\lambda_\tau}{x}{[x := b]C}{[x := b]c}} = \sema{[x := b]c}$.
+        By the IH: $\sema{[x := b]c} = [x := \sema{b}]\sema{c} = [x := \sema{b}]\sema{\abs{\lambda_\tau}{x}{C}{c}}$.
+    \end{proofcase}
+
+    $\text{Case: } t = \app{f}{\tau}{a}$
+    \begin{proofcase}
+        Suppose $a$ is a type.
+        Then $\sema{[x := b](\app{f}{\tau}{a})} = \sema{(\app{[x := b]f}{\tau}{[x := b]a})} = \sema{[x := b]f}\ \sema{[x := b]a}$.
+        Using the IH gives $\sema{[x := b]f}\ \sema{[x := b]a} = ([x := \sema{b}]\sema{f})\ ([x := \sema{b}]\sema{a}) = [x := \sema{b}](\sema{f}\ \sema{a}) = [x := \sema{b}]\sema{\app{f}{\tau}{a}}$.
+        \\ \\
+        Supppose $a$ is a term.
+        Then $\sema{[x := b](\app{f}{\tau}{a})} = \sema{(\app{[x := b]f}{\tau}{[x := b]a})} = \sema{[x := b]f}$.
+        Using the IH gives $\sema{[x := b]f} = [x := \sema{b}]\sema{f} = [x := \sema{b}]\sema{\app{f}{\tau}{a}}$.
+    \end{proofcase}
+
+    $\text{Case: } t = (y : C) \cap D$
+    \begin{proofcase}
+        By computation $\sema{[x := b]((y : C) \cap D)} = \sema{(y : [x := b]C) \cap [x := b]D} = \sema{[x := b]C} \times \sema{[x := b]D}$.
+        Using the IH gives $\sema{[x := b]C} \times \sema{[x := b]D} = ([x := \sema{b}]\sema{C}) \times ([x := \sema{b}]\sema{D}) = [x := \sema{b}](\sema{C} \times \sema{D}) = [x := \sema{b}]\sema{(x : C) \cap D}$.
+    \end{proofcase}
+
+    $\text{Case: } t = c =_C d$
+    \begin{proofcase}
+        By computation $\sema{[x := b](c =_C d)} = \sema{([x := b]c) =_{[x := b]C} ([x := b]d)} = \fpId$.
+        Again, by computation $[x := \sema{b}]\sema{c =_C d} = [x := \sema{b}]\fpId = \fpId$.
+    \end{proofcase}
+\end{proof}
+
+Finally, soundness of the term semantics must be shown.
+This is not as simple as the original argument for CC modelled in F$^\omega$ because conversion happens relative to erasure.
+Luckily, erasure is homomorphic on type-like structure, and because the type semantics drops any term dependencies it will be the case that erasure has no impact on the semantics of types.
+
+This argument proceeds in four steps.
+First, classification of syntax in $c_2$ is shown to be equal wrt erasure if the resulting kind semantics is well-defined.
+This is then lifted to show that erasure has no impact on the semantics of kinds, again assuming the kind semantics is well-defined.
+Next, classification of syntax in $c_2$ is shown to be equal wrt erasure if the resulting type semantics is well-defined.
+And, again, this result is lifted to show that erasure has no impact on the semantics of types.
+
+\begin{lemma}
+    \label{lem:3:vsema_erase_lemma}
+    If $\Gamma \vdash V(t) : \kind$ then $\mathcal{C}(t) = \mathcal{C}(|t|)$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash V(t) : \kind$.
+
+    $\text{Case: } t = \star \text{ or } t = \kind$
+    \begin{proofcase}
+        Note that $|\!\star\!| = \star$ and $|\kind| = \kind$, thus this case is trivial.
+    \end{proofcase}
+
+    $\text{Case: } t = (x : A) \to_m B$
+    \begin{proofcase}
+        Have $|(x : A) \to_m B| = (x : |A|) \to_m |B|$.
+        By computation $\mathcal{C}((x : A) \to_m B) = \mathcal{C}((x : |A|) \to_m |B|)$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:vsema_erase}
+    If $\Gamma \vdash V(t) : \kind$ then $V(t) = V(|t|)$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash V(t) : \kind$.
+
+    $\text{Case: } t = \star \text{ or } t = \kind$
+    \begin{proofcase}
+        By computation $V(|\kind|) = V(\kind) = V(\star) = V(|\!\star\!|)$.
+    \end{proofcase}
+
+    $\text{Case: } t = (x : A) \to_m B$
+    \begin{proofcase}
+        Suppose $A$ is a kind.
+        By Lemma~\ref{lem:3:vsema_erase_lemma}: $|A|$ kind.
+        Then $V((x : A) \to_m B) = V(A) \to V(B)$.
+        Note that the subexpressions are well-typed, thus by the IH $V(|A|) = V(A)$ and $V(|B|) = V(B)$.
+        Now by computation $V(|(x : A) \to_m B|) = V((x : |A|) \to_m |B|) = V(|A|) \to V(|B|) = V(A) \to V(B)$.
+        \\ \\
+        Suppose $A$ is not a kind.
+        Then $V((x : A) \to_m B) = V(B)$.
+        By the IH $V(|B|) = V(B)$.
+        Thus, by computation $V(|(x : A) \to_m B|) = V((x : |A|) \to_m |B|) = V(|B|) = V(B)$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:sema_erase_lemma}
+    If $\Gamma \vdash \sema{t} : T$ then $\mathcal{C}(t) = \mathcal{C}(|t|)$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash \sema{t} : T$.
+    For every case erasure is homomorphic and $\mathcal{C}(t)$ considers only the immediate tag.
+    Except the base cases, the rest are very similar.
+    Thus, only the eq case is considered.
+    
+
+    $\text{Case: } t = \star \text{ or } t = \kind \text{ or } t = x_\square$
+    \begin{proofcase}
+        For all cases $|t| = t$, thus trivial.
+    \end{proofcase}
+
+    $\text{Case: } t = a =_A b$
+    \begin{proofcase}
+        Have $|a =_A b| = |a| =_{|A|} |b|$ but $\mathcal{C}(|a| =_{|A|} |b|) = \ptype$ for any subexpressions.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:sema_erase}
+    If $\Gamma \vdash \sema{t} : T$ then $\sema{t} = \sema{|t|}$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $\Gamma \vdash \sema{t} : T$.
+    Erasure is again homomorphic on all remaining syntactic forms after inversion, thus only two cases are presented.
+
+    $\text{Case: } t = \star \text{ or } t = \kind \text{ or } t = x_\square$
+    \begin{proofcase}
+        In each case $|t| = t$ thus trivial.
+    \end{proofcase}
+
+    $\text{Case: } t = (x : A) \to_m B$
+    \begin{proofcase}
+        Have $|(x : A) \to_m B| = (x : |A|) \to_m |B|$.
+        Suppose wlog that $A$ is a kind.
+        Then $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
+        By Lemma~\ref{lem:3:vsema_erase} and the IH $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} = (x : V(A)) \to \sema{A} \to \sema{B}$.
+        Likewise, $\sema{(x : A) \to_m B} = (x : V(A)) \to \sema{A} \to \sema{B}$.
+    \end{proofcase}
+\end{proof}
+
+Now conversion of the kind and type models must be handled relative to erasure.
+The above lemmas demonstrate that if reduction happens in the erased term it should somehow be mirrored in reduction for the well-typed terms.
+For kinds this turns out to be simple equality, as any possible dependence involving reduction are always dropped the structure of $V(t)$ for any $t$ is rigid.
+The type semantics is slightly more complicated, but the same intuition holds: if a reduction where to occur in a term dependency then the resulting type models are equal, otherwise the reduction is exactly mirrored in the model.
+
+\begin{lemma}
+    \label{lem:3:vsema_erase_red_step}
+    If $\Gamma \vdash V(s) : \kind$ then $|s| \betared t$ then $V(s) = V(t)$
+\end{lemma}
+\begin{proof}
+    By induction on $|s| \betared t$.
+    Not that only binder reduction is possible by inversion on $\Gamma \vdash V(s) : \kind$.
+
+    $\text{Case: }\begin{array}{c} \BinderOneReduction[*] \end{array}$
+    \begin{proofcase}
+        Inversion on $\Gamma \vdash V(s) : \kind$ forces $s = (x : A) \to_m B$.
+        Note that $|A| \betared A^\prime$.
+        Suppose $A$ kind, then $V((x : A) \to_m B) = V(A) \to V(B)$.
+        Now by the IH $V(A) = V(A^\prime)$ and $V((x : A^\prime) \to_m |B|) = V(A^\prime) \to V(B)$ by Lemma~\ref{lem:3:vsema_erase}.
+        Suppose $A$ is not a kind, then $V((x : A) \to_m B) = V(B) = V((x : A^\prime) \to_m |B|)$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderTwoReduction[*] \end{array}$
+    \begin{proofcase}
+        Inversion on $\Gamma \vdash V(s) : \kind$ forces $s = (x : A) \to_m B$.
+        Note that $|B| \betared B^\prime$.
+        Suppose $A$ kind, then $V((x : A) \to_m B) = V(A) \to V(B)$.
+        Now by the IH $V(B) = V(B^\prime)$ and $V((x : |A|) \to_m B^\prime) = V(A) \to V(B^\prime)$ by Lemma~\ref{lem:3:vsema_erase}.
+        Suppose $A$ is not a kind, then $V((x : A) \to_m B) = V(B) = V(B^\prime) = V((x : |A|) \to_m B^\prime)$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:sema_erase_red_step}
+    If $\Gamma \vdash \sema{s} : T$ and $|s| \betared t$ then $\sema{s} \betared \sema{t}$ or $\sema{s} = \sema{t}$
+\end{lemma}
+\begin{proof}
+    By induction on $|s| \betared t$.
+    Note that only $\beta$-reduction is possible, as all other possible reduction steps are erased.
+
+    $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+    \begin{proofcase}
+        By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $m = \tau$.
+        Thus, $|s| = \app{(\abs{\lambda_\tau}{x}{|A|}{|b|})}{\tau}{|t|}$ and $|s| \betared [x := |t|]|b|$.
+        By Lemma~\ref{lem:2:erase_subst}: $[x := |t|]|b| = |[x := t]b|$.
+        Now, Lemma~\ref{lem:3:sema_erase} yields $\sema{|[x := t]b|} = \sema{[x := t]b}$ and $\sema{|s|} = \sema{s}$.
+        Using Lemma~\ref{lem:3:sema_subst} gives $\sema{[x := t]b} = [x := \sema{t}]\sema{b}$.
+        Suppose $A$ is a kind, and thus $t$ is a type.
+        Then $\sema{\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t}} = (\abs{\lambda}{x}{V(A)}{\sema{b}})\ \sema{t} \betared [x := \sema{t}] \sema{b}$.
+        Suppose $A$ is a type, and thus $t$ is a term.
+        Then $\sema{\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t}} = \sema{b}$, however this also means that $\Gamma \vdash \sema{b} : T$.
+        The internally bound variable $x$ is thrown away, so it cannot be the case that $\sema{b}$ is well-typed in F$^\omega$ while $x \in FV(b)$ (Note that $x$ can be renamed to be disjoint from $\Gamma$), hence $x \notin FV(b)$.
+        Thus, $[x := \sema{t}] \sema{b} = \sema{b}$ and the case is concluded.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
+    \begin{proofcase}
+        By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $*$, $\kind$, $\bullet_\tau$, or eq.
+        However, the cases $*$ and $\kind$ are impossible because they do not reduce.
+        Suppose $|s| = \app{|f|}{\tau}{|a|}$ and assume wlog that $|a| \betared a^\prime$.
+        If $a$ is a term then $\sema{\app{|f|}{\tau}{|a|}} = \sema{|f|} = \sema{\app{|f|}{\tau}{|a^\prime|}}$ and $\sema{|f|} = \sema{f}$ by Lemma~\ref{lem:3:sema_erase}.
+        Suppose $a$ is a type.
+        Then, by the IH $\sema{a} \betared \sema{a^\prime}$ or $\sema{a} = \sema{a^\prime}$.
+        Now $\sema{\app{|f|}{\tau}{|a|}} = \sema{|f|}\ \sema{|a|}$, but by Lemma~\ref{lem:3:sema_erase}: $\sema{|f|}\ \sema{|a|} = \sema{f}\ \sema{a}$.
+        Thus, $\sema{f}\ \sema{a} \betared \sema{f}\ \sema{a^\prime}$ or $\sema{f}\ \sema{a} = \sema{f}\ \sema{a^\prime}$.
+        \\ \\
+        Suppose $|s| = |a| =_{|A|} |b|$.
+        Note that $\sema{u =_U v} = \fpId$ for any $u, v, U$.
+        Thus, $\sema{s} = \sema{|s|} = \sema{t}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderOneReduction[*] \end{array}$
+    \begin{proofcase}
+        By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
+        The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
+        Have $|s| = (x : |A|) \to_m |B|$ and note that $|A| \betared A^\prime$.
+        Suppose wlog that $A$ kind.
+        Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
+        By the IH: $\sema{A} \betared \sema{A^\prime}$ or $\sema{A} = \sema{A^\prime}$.
+        Suppose wlog that $\sema{A} \betared \sema{A^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$ by Lemma~\ref{lem:3:vsema_erase_red_step}.
+        Now $\sema{(x : A^\prime) \to_m |B|} = (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \BinderTwoReduction[*] \end{array}$
+    \begin{proofcase}
+        By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
+        The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
+        Have $|s| = (x : |A|) \to_m |B|$ and note that $|B| \betared B^\prime$.
+        Suppose wlog that $A$ kind.
+        Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
+        By the IH: $\sema{B} \betared \sema{B^\prime}$ or $\sema{B} = \sema{B^\prime}$.
+        Suppose wlog that $\sema{B} \betared \sema{B^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
+        Now $\sema{(x : |A|) \to_m B^\prime} = (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:sema_erase_red}
+    If $\Gamma \vdash \sema{s} : T$ and $|s| \betastar t$ then $\sema{s} \betastar \sema{t}$
+\end{lemma}
+\begin{proof}
+    By induction on $|s| \betastar t$.
+    The reflexivity case is trivial by Lemma~\ref{lem:3:sema_erase}.
+    Suppose $|s| \betared z$ and $z \betastar t$.
+    By Lemma~\ref{lem:3:sema_erase_red_step} either $\sema{s} \betared \sema{z}$ or $\sema{s} = \sema{z}$.
+    If $\sema{s} \betared \sema{z}$ then by preservation $\Gamma \vdash \sema{z} : T$.
+    Note that $|z| = z$ by Lemma~\ref{lem:2:erasure_idempotent} and because reduction does not introduce new syntactic forms.
+    Applying the IH to $|z| \betastar t$ gives $\sema{z} \betastar \sema{t}$, thus $\sema{s} \betastar \sema{t}$.
+    If $\sema{s} = \sema{z}$ then obviously $\Gamma \vdash \sema{z} : T$ and the same argument as above works.
+\end{proof}
+
+With the reduction lemmas handled the required lemma about conversion is straightforward.
+Finally, soundness of the term semantics is proven by a straightforward induction on the inference judgment of $c_2$.
+
+\begin{lemma}
+    \label{lem:3:sema_conv}
+    If $\Gamma \vdash \sema{A} : T$, $\Gamma \vdash \sema{B} : T$, $A, B$\pseobj, and $A \equiv B$ then $\sema{A} \betaconv \sema{B}$
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{thm:2:beta_iff_conv} $|A| \betaconv |B|$.
+    Deconstructing this gives $|A| \betastar z$ and $|B| \betastar z$.
+    By Lemma~\ref{lem:3:sema_erase_red}: $\sema{A} \betastar \sema{z}$ and $\sema{B} \betastar \sema{z}$.
+    Thus, $\sema{A} \betaconv \sema{B}$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:fomega_eta}
+    If $\Gamma \vdash_\omega t : T$ and $\Gamma \vdash_\omega a : A$ then $\Gamma \vdash (\abs{\lambda}{x}{A}{t})\ a : T$
+\end{lemma}
+\begin{proof}
+    Have $\Gamma \vdash_\omega \abs{\lambda}{x}{A}{t} : A \to T$ because $x$ does not appear free in $t$.
+    Thus, by the \textsc{App} rule $\Gamma \vdash (\abs{\lambda}{x}{A}{t})\ a : T$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:canonical_element}
+    If $\Gamma \vdash_\omega A : T$ and $(\bot : (X : \star) \to X) \in \Gamma$ then $\Gamma \vdash_\omega c^A : A$
+\end{lemma}
+\begin{proof}
+    If $A$ type then the proof is trivial.
+    If $A$ kind then the proof follows by induction on the depth of the function type.
+\end{proof}
+
+\begin{theorem}[Soundness of \text{[}$-$\text{]}]
+    \label{lem:3:soundness}
+    If $\Gamma \vdash_{c_2} t : A$ then $\sema{\Gamma} \vdash_\omega [t] : \sema{A}$
+\end{theorem}
+\begin{proof}
+    By induction on $\Gamma \vdash_{c_2} t : A$.
+    The \textsc{PrmFst} case is omitted because it is very similar to \textsc{PrmSnd}.
+    Likewise, the \textsc{Fst} case is omitted because it is very similar to \textsc{Snd}.
+    The cases \textsc{Ax}, \textsc{Var}, \textsc{Pi}, \textsc{Lam}, and \textsc{App} are the same as the translation from CC to F$^\omega$.
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [A] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma, x_\tau : A} \vdash_\omega [B] : 0$
+        \end{enumerate}
+        Note that $\sema{\Gamma} \vdash_\omega 0 \to 0 \to 0 : \star$.
+        Thus, $\sema{\Gamma} \vdash_\omega c^{0 \to 0 \to 0} : 0 \to 0 \to 0$.
+        By $\D{1}$ it is the case that $A$ type, thus $\sema{\Gamma, x_\tau : A} = \sema{\Gamma}, x : \sema{A}$.
+        Using Lemma~\ref{lem:3:soundness_of_sema} on $\D{1}$ gives $\sema{\Gamma} \vdash_\omega \sema{A} : \star$.
+        The substitution lemma yields $\sema{\Gamma} \vdash_\omega [x := c^{\sema{A}}][B] : 0$.
+        Now applying the \textsc{App} rule two times concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [(x : A) \cap B] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [t] : \sema{A}$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [s] : \sema{[x := t]B}$
+        \end{enumerate}
+        By Lemma~\ref{lem:3:sema_subst}: $\sema{[x := t]B} = [x := \sema{t}]\sema{B}$.
+        However, $A$ is a type by $\D{1}$ and thus $x \notin FV(\sema{B})$, hence $[x := \sema{t}]\sema{B} = \sema{B}$.
+        Now $\sema{\Gamma} \vdash_\omega ([t_1], [t_2]) : \sema{A} \times \sema{B}$ by the \textsc{Pair} rule.
+        Applying \ref{lem:3:fomega_eta} concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{1}$ that $A$ is a type, thus $x \notin FV(\sema{B})$.
+        By Lemma~\ref{lem:3:sema_subst}: $\sema{[x := t.1]B} = [x := \sema{t.1}]\sema{B} = \sema{B}$.
+        Applying the IH to $\D{1}$ gives $\sema{\Gamma} \vdash_\omega [t] : \sema{A} \times \sema{B}$.
+        The \textsc{Snd} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [A] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [a] : \sema{A}$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [b] : \sema{A}$
+        \end{enumerate}
+        Note that $\sema{\Gamma} \vdash_\omega 0 \to \sema{A} \to \sema{A} \to 0 : \star$.
+        Thus, $\sema{\Gamma} \vdash_\omega c^{0 \to \sema{A} \to \sema{A} \to 0} : 0 \to \sema{A} \to \sema{A} \to 0$.
+        Now applying the \textsc{App} rule three times concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [A] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [t] : \sema{A}$
+        \end{enumerate}
+        Of course, $\sema{\Gamma} \vdash_\omega \fpid : \fpId$.
+        Thus, applying Lemma~\ref{lem:3:fomega_eta} twice concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        Note that by classification and $\D{1}$ it is that case that $A$ type.
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [A] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [e] : \fpId$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [P] : \sema{A} \to \fpId \to 0$
+        \end{enumerate}
+        Now $\sema{\Gamma} \vdash_\omega [e]\ \sema{P} : \sema{P} \to \sema{P}$.
+        Note also that $\sema{\apptwo{P}{\tau}{a}{\tau}{\text{refl}(a;A)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}} = \sema{P} \to \sema{P}$ because $\apptwo{P}{\tau}{a}{\tau}{\text{refl}(a;A)}$ is a type by $\D{3}$ and $a, b, e, \text{refl}(a;A)$ are all terms.
+        Applying Lemma~\ref{lem:3:fomega_eta} twice concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [(x : A) \cap B] : 0$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [a] : \sema{A} \times \sema{B}$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [b] : \sema{A} \times \sema{B}$
+            \item[$\D{4}.$] $\sema{\Gamma} \vdash_\omega [e] : \fpId$
+        \end{enumerate}
+        Applying Lemma~\ref{lem:3:fomega_eta} three times concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{2}$ it is clear that $A$ is a type.
+        Applying the IH to subderivations:
+        \begin{enumerate}
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [T] : 0$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [f] : \sema{T}$
+            \item[$\D{4}.$] $\sema{\Gamma} \vdash_\omega [e] : (a : \sema{A}) \to \fpId$
+        \end{enumerate}
+        Deconstructing $\sema{\Gamma} \vdash_\omega [T] : 0$ gives $\sema{\Gamma} \vdash_\omega [A] : 0$.
+        By Lemma~\ref{lem:3:canonical_element}: $\sema{\Gamma} \vdash_\omega c^{\sema{T}} : \sema{T}$.
+        Applying Lemma~\ref{lem:3:fomega_eta} four times concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        By computation $[\delta(e)] = (\abs{\lambda}{x}{\mathcal{I}([e]_\Gamma)}{\bot})\ [e]_\Gamma$ and $\sema{(X : \star) \to_0 X} = (X : \star) \to X$.
+        Note that $\sema{\Gamma} \vdash_\omega \bot : (X : \star) \to X$ and by definition $\sema{\Gamma} \vdash_\omega [e]_\Gamma : \mathcal{I}([e]_\Gamma)$.
+        Thus, by Lemma~\ref{lem:3:fomega_eta}: $\sema{\Gamma} \vdash [\delta(e)] : \sema{(X : \star) \to_0 X}_\Gamma$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
+    \begin{proofcase}
+        By classification, $\D{1}$ and $\D{3}$: $\Gamma \vdash B : K$.
+        Now using Theorem~\ref{lem:3:soundness_of_sema} gives $\sema{\Gamma} \vdash_\omega \sema{A}_\Gamma : \star$ and $\sema{\Gamma} \vdash_\omega \sema{B}_\Gamma : \star$.
+        Note that $A,B\pseobj$ by Lemma~\ref{lem:2:infer_implies_pseobj_type} and $|A| \betaconv |B|$ by Lemma~\ref{thm:2:beta_iff_conv}.
+        By Lemma~\ref{lem:3:sema_conv}: $\sema{A} \betaconv \sema{B}$.
+        Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash_\omega [t] : \sema{B}$.
+        The \textsc{Conv} rule concludes the case.
+    \end{proofcase}
+\end{proof}
+
+\section{Normalization}
+
+With soundness of the model shown the normalization argument follows in the same way as for CC modelled in F$^\omega$.
+That is, proof reduction in $c_2$ is bounded by reduction in F$^\omega$, and thus because F$^\omega$ is strongly normalizing it provides a maximum number of reduction steps for which any proof must normalize in $c_2$.
+Note that some reduction steps are technical, especially $\vartheta_i$, but they are not conceptually difficult.
+
+\begin{lemma}
+    \label{lem:3:canonical_subst}
+    $[x := b]c^A = c^{[x := b]A}$
+\end{lemma}
+\begin{proof}
+    Straightforward by unraveling the definition of canonical elements ($c$) and applying substitution computation rules.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:subst}
+    If $\Gamma \vdash t : A$ and $(x : B) \in \Gamma$ then
+    \begin{enumerate}
+        \item $[[x := b]a] = [x := \sema{b}][w_x := [b]][a]$ if $B$ kind
+        \item $[[x := b]a] = [x := [b]][a]$ if $B$ type
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    By induction on $\Gamma \vdash t : A$.
+    Substitution is structural and with Lemma~\ref{lem:3:sema_subst}, Lemma~\ref{lem:3:v_subst}, and Lemma~\ref{lem:3:canonical_subst} many cases are straightforward by induction.
+    Thus, only the variable cases and the \textsc{Int} case are presented.
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Rename to $y$.
+        Suppose $x \neq y$, then $[[x := b]y_\star] = y$, $[x := \sema{b}][w_x := [b]][y_\star] = y$, and $[x := [b]][y_\star] = y$.
+        When $y_\square$ the situation is the same.
+        Suppose $x = y$ and that $B$ kind.
+        If $B$ is kind, then it must be the case that $y_\square$.
+        Now $[[x := b]y_\square] = [b]$ and  $[x := \sema{b}][w_x := [b]][y_\square] = [x := \sema{b}][w_x := [b]]w_y = [b]$.
+        Suppose instead that $B$ type, then $[[x := b]y_\star] = [b]$ and $[x := [b]][y_\star] = [x := [b]]y = [b]$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose wlog that $B$ is a kind.
+        Then $[[x := b](y : A) \cap B] = [(y : [x := b]A) \cap [x := b]B] = c^{0 \to 0 \to 0}[[x := b]A] ([y := c^{\sema{[x := b]A}}][[x := b]B])$.
+        Now by the IH, Lemma~\ref{lem:3:sema_subst}, and the fact that $w_x \notin FV(\sema{A})$ the right-hand side is equal to $c^{0 \to 0 \to 0}[x := \sema{b}][w_x := [b]][A] ([y := c^{[x := \sema{b}][w_x := [b]]\sema{A}}][x := \sema{b}][w_x := [b]][B])$.
+        Consider $[x := \sema{b}][w_x := [b]][(y : A) \cap B] = [x := \sema{b}][w_x := [b]]c^{0 \to 0 \to 0}[A] ([y := c^{\sema{A}}][B])$.
+        Note that $x, w_x \notin FV(0 \to 0 \to 0)$, thus by Lemma~\ref{lem:2:subst_commute}, Lemma~\ref{lem:3:canonical_subst}, and computation rules of substitution this matches the previous right-hand side.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:3:reduction_bounded}
+    If $\Gamma \vdash s : T$ and $s \betared t$ then $[s] \betastar_{\neq 0} [t]$
+\end{lemma}
+\begin{proof}
+    By induction on $s \betared t$.
+    The first projection case is very similar to the second projection case.
+    The first promotion case is very similar to the second promotion case.
+    Note by a simple observation that $[-]$ replicates every subexpression on the left-hand side with a matching invocation of $[-]$ on the right-hand side.
+    Thus, if there is a reduction inside a subexpression it will always be tracked in the corresponding $[-]$ invocation via the inductive hypothesis.
+    For this reason the structural reduction cases are omitted.
+
+    $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+    \begin{proofcase}
+        Note by $\Gamma \vdash s : T$ that $A$ is either a kind or a type.
+        Suppose $A$ is a kind and note that makes $t$ a type.
+        Then $[\app{(\abs{\lambda_m}{x}{A}{b})}{m}{t}] = (\abs{\lambda}{y}{0}{\abs{\lambda}{x}{V(A)}{\abs{\lambda}{w_x}{\sema{A}}{[b]}}}) \ [A]\ \sema{t}\ [t]$.
+        The variable $y$ is fresh thus after one $\beta$-reduction $(\abs{\lambda}{x}{V(A)}{\abs{\lambda}{w_x}{\sema{A}}{[b]}})\ \sema{t}\ [t]$.
+        Now applying two more $\beta$-reductions yields $[x := \sema{t}][w_x := [t]][b]$.
+        Note that $[[x := t]b] = [x := \sema{t}][w_x := [t]][b]$ by Lemma~\ref{lem:3:subst}.
+        Thus, $[s] \betastar_{=3} [t]$, i.e. $[s]$ reduces to $[t]$ in three steps.
+        \\ \\
+        Suppose $A$ is a type and note that makes $t$ a term.
+        Then $[\app{(\abs{\lambda_m}{x}{A}{b})}{m}{t}] = (\abs{\lambda}{y}{0}{\abs{\lambda}{w_x}{\sema{A}}{[b]}}) \ [A]\ [t]$.
+        The variable $y$ is fresh thus after one $\beta$-reduction $(\abs{\lambda}{w_x}{\sema{A}}{[b]})\ [t]$.
+        Applying one more $\beta$-reduction yields $[x := [t]][b]$.
+        Note that $[[x := t]b] = [x := [t]][b]$ by Lemma~\ref{lem:3:subst}.
+        Thus, $[s] \betastar_{=2} [t]$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+    \begin{proofcase}
+        Have $[[t_1, t_2; A].2] = ((\abs{\lambda}{y}{0}{([t_1], [t_2])})\ [A]).2$.
+        Note that the variable $y$ is fresh and thus not in $FV([t_1])$ or $FV([t_2])$.
+        A second projection and one $\beta$-reduction yields $[t_2]$.
+        Thus, $[s] \betastar_{=2} [t_2]$.
+    \end{proofcase}
+    
+    $\text{Case: }\begin{array}{c} \app{\psi(\text{refl}(t; A_1); A_2, P)}{\omega}{t} \betared t \end{array}$
+    \begin{proofcase}
+        Note that $t$ is a term by inversion on $\Gamma \vdash s : T$.
+        Have $[\app{\psi(\text{refl}(t; A_1); A_2, P)}{\omega}{t}] =
+            (\abs{\lambda}{y_1}{0}{
+                \abs{\lambda}{y_2}{\sema{A_2} \to \fpId \to 0}{
+                    [\text{refl}(t; A_1)]\ \sema{P}
+                }
+            })\ [A_2]\ [P]\ [t]$.
+        Applying two $\beta$-reductions yields $[\text{refl}(t; A_1)]\ \sema{P}\ [t]$.
+        Now $[\text{refl}(t; A_1)] =
+            (\abs{\lambda}{y_1}{0}{
+                \abs{\lambda}{y_2}{\sema{A_1}}{\fpid}
+            })\ [A_1]\ [t]$.
+        Applying two more $\beta$-reductions gives $\fpid\ \sema{P}\ [t]$.
+        Finally, applying two remaining $\beta$-reductions yields $[t]$.
+        Thus, $[s] \betastar_{=6} [t]$.
+    \end{proofcase}
+    
+    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t; A), a, b; T) \betared \text{refl}(a; T) \end{array}$
+    \begin{proofcase}
+        Have $[\vartheta_2(\text{refl}(t; A), a, b; T)] = (\abs{\lambda}{y_1}{\sema{T}}{
+                \abs{\lambda}{y_2}{0} {
+                    \abs{\lambda}{y_3}{\sema{T}}{
+                        ((\abs{\lambda}{y_1}{0}{
+                            \abs{\lambda}{y_2}{\sema{A}}{\fpid}
+                        })\ [A]\ [t])
+                    }
+                }
+            })\ [b]\ [T]\ [a]$.
+        Note that all $y_i$ are fresh and thus not in the free variables of any subexpressions.
+        Performing two $\beta$-reductions on the interior (the result of $[\text{refl}(t_1;A)]$) and the outermost $\beta$-reduction yields:
+            $(\abs{\lambda}{y_2}{0} {
+                \abs{\lambda}{y_3}{\sema{T}}{
+                    \fpid
+                }
+            })\ [T]\ [a]$.
+        Now $[\text{refl}(a; T)] = (\abs{\lambda}{y_2}{0} {
+                \abs{\lambda}{y_3}{\sema{T}}{
+                    \fpid
+                }
+            })\ [T]\ [a]$.
+        Thus, $[s] \betastar_{=3} [t]$.
+    \end{proofcase}
+\end{proof}
+
+\begin{theorem}[Proof Normalization]
+    \label{lem:3:proof_normalization}
+    If $\Gamma \vdash t : A$ then $t$ is strongly normalizing and there exists a unique value $t_n$ such that $t \betastar t_n$
+\end{theorem}
+\begin{proof}
+    Using Lemma~\ref{lem:3:soundness_of_sema} gives $\sema{\Gamma} \vdash_\omega [t] : \sema{A}$.
+    Note that F$^\omega$ with pairs is strongly normalizing with a unique normal form (because it is also confluent).
+    Thus, \textit{all} possible reduction paths to the normal form are terminating.
+    Let $\partial([t])$ be the \textit{maximum} number of reduction steps $[t]$ could take to reach a normal form.
+    Note that this value is computable by brute force search.
+    Pick any sequence of reductions in $t$ bounded by $\partial([t])$.
+    If this sequence concludes in a value then $t$ is strongly normalizing, because the sequence is arbitrary.
+    If $t$ is not a value then $t \betastar_{>\partial[t]} t^\prime$, but this is impossible by Lemma~\ref{lem:3:reduction_bounded}.
+    Now by confluence of reduction, all values reached from any arbitrary reduction path must be joinable at a single value.
+    Thus, $t \betastar t_n$ where $t_n$ is a unique value.
+\end{proof}

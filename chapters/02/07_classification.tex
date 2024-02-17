@@ -1,0 +1,91 @@
+
+\input{figures/02/classify.tex}
+
+\begin{theorem}[Soundness of $\mathcal{C}(-)$]
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t : A$ and $A = \kind$ then $\mathcal{C}(t, \Gamma) = \pkind$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \kind$ then $\mathcal{C}(t, \Gamma) = \ptype$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \star$ then $\mathcal{C}(t, \Gamma) = \pterm$
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    By induction on $\Gamma \vdash t : A$.
+    The \textsc{Eq} case is very similar to the \text{Int} case.
+    The \textsc{PrmFst} and \text{PrmFst} cases are very similar to \textsc{Refl}.
+    \textsc{Fst} rule is very similar to the \textsc{Snd} rule.
+    Likewise, \textsc{Cast} is very similar to \textsc{Subst}.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Have $A = \kind$ and $\mathcal{C}(\star, \Gamma) = \pkind$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $\Gamma \vdash A : K$ because $\vdash \Gamma$ is assumed and $(x_m : A) \in \Gamma$.
+        If $K = \kind$ then by the IH $\mathcal{C}(A, \Gamma) = \pkind$ and thus $\mathcal{C}(x, \Gamma) = \ptype$.
+        If $K = \star$ then by the IH $\mathcal{C}(A, \Gamma) = \ptype$ and thus $\mathcal{C}(x, \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $m = \tau$ then $\pcodom(m) = \kind$ and $\mathcal{C}((x : A) \to_\tau B, \Gamma) = \pkind$.
+        Otherwise, $m = \omega$ or $m = 0$ then $\pcodom(m) = \star$ and $\mathcal{C}((x : A) \to_m B, \Gamma) = \ptype$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $m = \tau$ then $\pcodom(m) = \kind$, $\Gamma \vdash (x : A) \to_\tau B : \kind$ and $\mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}, \Gamma) = \ptype$.
+        Otherwise, $m = \omega$ or $m = 0$ then $\pcodom(m) = \star$, $\Gamma \vdash (x : A) \to_\tau B : \star$ and $\mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}, \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        By classification applied to $\D{1}$: $\Gamma \vdash (x : A) \to_m B : K$.
+        Suppose $K = \kind$ then $m = \tau$.
+        Deconstruction and the substitution lemma gives $\Gamma \vdash [x := a]B : \kind$ and $\mathcal{C}(\app{f}{\tau}{a}, \Gamma) = \ptype$.
+        Otherwise, $K = \star$ and then $m = \omega$ or $m = 0$.
+        Again, deconstructing and substitution lemma yields $\Gamma \vdash [x := a]B : \star$ and $\mathcal{C}(\app{f}{m}{a}, \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Have $\Gamma \vdash \star : \kind$ and $\mathcal{C}((x : A) \cap B, \Gamma) = \ptype$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Have $\mathcal{C}([t, s; (x : A) \cap B], \Gamma) = \pterm$ and $\D{1}$ concludes.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By classification with $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
+        Note the other possibilities are impossible by inversion.
+        Deconstructing and using the substitution lemma gives $\Gamma \vdash [x := t.1]B : \star$.
+        Finally, $\mathcal{C}(t.2, \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        By classification an \text{eq} must be a type and by computation $\mathcal{C}(\text{refl}(t), \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        By classification a $\Pi_\omega$ must be a type and by computation $\mathcal{C}(\psi(e, P), \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        By a short sequence of rules $\Gamma \vdash (X : \star) \to_0 X : \star$.
+        Finally, $\mathcal{C}(\delta(e), \Gamma) = \pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
+    \begin{proofcase}
+        Classification, $\D{1}$ and $\D{3}$ give $\Gamma \vdash B : K$.
+        Applying the IH to $\D{2}$ concludes the case.
+    \end{proofcase}
+\end{proof}
