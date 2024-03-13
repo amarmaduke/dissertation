@@ -20,17 +20,17 @@
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
             |\!\diamond\!| &= \diamond \\
-            |[t_1, t_2; t_3]| &= |t_1| \\
+            |[t_1, t_2; A]| &= |t_1| \\
             |t.1| &= |t| \\
             |t.2| &= |t| \\
             |x =_A y| &= |x| =_{|A|} |y| \\
-            |\text{refl}(t)| &= \abs{\lambda_\omega}{x}{\diamond}{x} \\
+            |\text{refl}(t; A)| &= \abs{\lambda_\omega}{x}{\diamond}{x_\star} \\
             %|J(A, P, x, y, e, w)| &= \app{|e|}{\omega}{|w|} \\
-            |\psi(e, P)| &= |e| \\
-            |\vartheta_1(e, t_1, t_2)| &= |e| \\
-            |\vartheta_2(e, t_1, t_2)| &= |e| \\
+            |\psi(e, a, b; A, P)| &= |e| \\
+            |\vartheta_1(e, a, b; T)| &= |e| \\
+            |\vartheta_2(e, a, b; T)| &= |e| \\
             |\delta(e)| &= |e| \\
-            |\varphi(f,e)| &= \abs{\lambda_\omega}{x}{\diamond}{x}
+            |\varphi(f, e; A, T)| &= \abs{\lambda_\omega}{x}{\diamond}{x_\star}
         \end{align*}
     \end{minipage}
     \caption{Erasure of syntax, for type-like and kind-like syntax erasure is homomorphic, for term-like syntax erasure reduces to the untyped lambda calculus.}

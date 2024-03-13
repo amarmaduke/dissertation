@@ -66,11 +66,13 @@
         [\text{refl}(t; A)] &= (\abs{\lambda}{y_1}{0}{
                 \abs{\lambda}{y_2}{\sema{A}}{\fpid}
             })\ [A]\ [t] \\
-        [\psi(e; A, P)] &= (\abs{\lambda}{y_1}{0}{
-                \abs{\lambda}{y_2}{\sema{A} \to \fpId \to 0}{
-                    [e]\ \sema{P}
+        [\psi(e, a, b; A, P)] &= (\abs{\lambda}{y_1}{0}{
+                \abs{\lambda}{y_2\ y_3}{\sema{A}}{
+                    \abs{\lambda}{y_2}{\sema{A} \to \fpId \to 0}{
+                        [e]\ \sema{P}
+                    }
                 }
-            })\ [A]\ [P] \\
+            })\ [A]\ [a]\ [b]\ [P] \\
         [\vartheta_i(e, a, b; T)] &= (\abs{\lambda}{y_1}{\sema{T}}{
             \abs{\lambda}{y_2}{0} {
                 \abs{\lambda}{y_3}{\sema{T}}{
@@ -78,12 +80,10 @@
                 }
             }
         })\ [b]\ [T]\ [a] \\
-        [\varphi(f, e; A, T)] &= (\abs{\lambda}{y_1}{0}{
-            \abs{\lambda}{y_2}{0}{
-                \abs{\lambda}{y_3}{\sema{T}}{
-                    \abs{\lambda}{y_4}{\sema{A} \to \fpId}{
-                        c^{\sema{T}}
-                    }
+        [\varphi(f, e; A, T)] &= (\abs{\lambda}{y_1\ y_2}{0}{
+            \abs{\lambda}{y_3}{\sema{T}}{
+                \abs{\lambda}{y_4}{\sema{A} \to \fpId}{
+                    c^{\sema{T}}
                 }
             }
         })\ [A]\ [T]\ [f]\ [e] \\

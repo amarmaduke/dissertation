@@ -7,6 +7,10 @@
 %\newcommand{\cinfrbar}{\raisebox{0.075ex}{$\shortmid$}}
 %\newcommand{\cinfr}{\mkern+5mu\cinfrbar\mkern-6mu\vartriangleright}
 
+\mathchardef\edash="2D
+
+\newcommand{\eto}{\Rightarrow}
+
 \newcommand{\cinfr}{\blacktriangleright}
 \newcommand{\infr}{\vartriangleright}
 \newcommand{\chck}{\vartriangleleft}
@@ -21,10 +25,10 @@
 \newcommand{\betastar}{\leadsto^*}
 \newcommand{\betaconv}{\rightleftharpoons}
 \newcommand{\kind}{\raisebox{-1pt}{$\square$}}
-\newcommand{\pseobj}{~\mbox{\normalfont pseobj}}
-\newcommand{\psetype}{~\mbox{\normalfont psetype}}
-\newcommand{\psekind}{~\mbox{\normalfont psekind}}
-\newcommand{\pseterm}{~\mbox{\normalfont pseterm}}
+\newcommand{\pseobj}{~\textnormal{pseobj}}
+\newcommand{\psetype}{~\textnormal{psetype}}
+\newcommand{\psekind}{~\textnormal{psekind}}
+\newcommand{\pseterm}{~\textnormal{pseterm}}
 
 \newcommand{\ptrunc}[1]{\lfloor #1 \rfloor}
 \newcommand{\sema}[1]{\llbracket #1 \rrbracket}
@@ -37,12 +41,20 @@
 \newcommand{\der}[2]{#2}
 \newcommand{\inferlabel}[1]{\textsc{#1}}
 
-\newcommand{\pdom}{\mbox{\normalfont dom}_\Pi}
-\newcommand{\pcodom}{\mbox{\normalfont codom}_\Pi}
+\newcommand{\oldced}{\textnormal{\c{c}}_1}
+\newcommand{\ced}{\textnormal{\c{c}}_2}
 
-\newcommand{\pkind}{\mbox{\normalfont kind}}
-\newcommand{\ptype}{\mbox{\normalfont type}}
-\newcommand{\pterm}{\mbox{\normalfont term}}
+\newcommand{\pdom}{\textnormal{dom}_\Pi}
+\newcommand{\pcodom}{\textnormal{codom}_\Pi}
+
+\newcommand{\pkind}{~\textnormal{kind}}
+\newcommand{\ptype}{~\textnormal{type}}
+\newcommand{\pterm}{~\textnormal{term}}
+
+\newcommand{\prefl}{\textnormal{refl}}
+\newcommand{\ptt}{\textnormal{ctt}}
+\newcommand{\pff}{\mbox{\normalfont cff}}
+\newcommand{\pBool}{\textnormal{cBool}}
 
 \newcommand{\fpId}{\text{Id}}
 \newcommand{\fpid}{\text{id}}

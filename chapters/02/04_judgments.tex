@@ -142,8 +142,8 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 \end{proof}
 
 \begin{lemma}[Weakening]
-    If $\Gamma, \Delta \vdash t : A$ and $\Gamma \vdash B : K$ then $\Gamma, x_m : B, \Delta \vdash t : A$ for $x$ fresh
     \label{lem:2:weakening}
+    If $\Gamma, \Delta \vdash t : A$ and $\Gamma \vdash B : K$ then $\Gamma, x_m : B, \Delta \vdash t : A$ for $x$ fresh
 \end{lemma}
 \begin{proof}
     By induction.
@@ -168,12 +168,12 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 \end{proof}
 
 \begin{lemma}[Substitution]
+    \label{lem:2:subst}
     Suppose $\Gamma \vdash b : B$.
     \begin{enumerate}
         \item If $\Gamma, x : B, \Delta \vdash t : A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t : [x := b]A$
         \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
     \end{enumerate}
-    \label{lem:2:substitution}
 \end{lemma}
 \begin{proof}
     By mutual recursion.

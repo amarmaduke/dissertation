@@ -1,4 +1,741 @@
 \chapter{Consistency and Relationship to CDLE}
+\input{figures/04/type_typing_macros.tex}
+\input{figures/04/term_typing_macros.tex}
+\input{figures/04/cong_macros.tex}
 
+\newcommand{\cBool}{\textnormal{Bool}}
+\newcommand{\ctt}{\textnormal{tt}}
+\newcommand{\cff}{\textnormal{ff}}
 
+\newcommand{\cId}{\textnormal{Id}}
+\newcommand{\crefl}{\textnormal{refl}}
+\newcommand{\cthetaone}{\textnormal{theta$_1$}}
+\newcommand{\cthetatwo}{\textnormal{theta$_2$}}
+\newcommand{\csubst}{\textnormal{subst}}
+\newcommand{\cdelta}{\textnormal{delta}}
+\newcommand{\cirrel}{\textnormal{irrel}}
 
+\input{figures/04/infer1.tex}
+\input{figures/04/infer2.tex}
+\input{figures/04/cong.tex}
+\input{figures/04/erasure.tex}
+
+\input{figures/04/model.tex}
+
+\begin{align*}
+    \cBool &:= \abs{\forall}{X}{\star}{X \to X \to X} \\
+    \ctt &:= \chi\ \cBool\ - \absu{\Lambda}{X}{
+        \absu{\lambda}{x\ y}{x}
+    } \\
+    \cff &:= \chi\ \cBool\ - \absu{\Lambda}{X}{
+        \absu{\lambda}{x\ y}{y}
+    } \\
+    \cId &:= \abs{\lambda}{A}{\star}{
+        \abs{\lambda}{a\ b}{A}{
+            \abs{\iota}{e}{\{ a \simeq b \}}{
+                \abs{\iota}{y}{\{ (\absu{\lambda}{x}{x}) \simeq e \}}{
+                    \abs{\forall}{X}{\star}{
+                        X \to X
+                    }
+                }
+            }
+        }
+    } \\
+    \crefl &:= \chi\ \abs{\forall}{A}{\star}{
+            \abs{\forall}{a}{A}{
+                \cId \cdot A\ a\ a
+            }
+        }\ -
+        \\ &\absu{\Lambda}{A\ a}{
+        [\beta\{ \absu{\lambda}{x}{x} \}, [\beta\{ \absu{\lambda}{x}{x} \}, \absu{\Lambda}{X}{\absu{\lambda}{x}{x}}]]
+    } \\
+    \cdelta &:= \chi\ \cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X}\ -
+        \\ &\absu{\lambda}{e}{
+        (\delta - e.1) \cdot (\cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X})\ e
+    } \\
+    \cirrel &:= \chi\ \abs{\forall}{A}{\star}{
+            \abs{\forall}{a\ b}{A}{
+                \cId \cdot A\ a\ b \eto \cId \cdot A\ a\ b
+            }
+        }\ -
+        \\& \absu{\Lambda}{A\ a\ b\ e}{
+        \\& [\rho\ e.1\ @\ x\ \langle b \rangle.\ \{ x \simeq b \}\ -\ \beta\{ \absu{\lambda}{x}{x} \}),
+            \\& [\beta\{ \absu{\lambda}{x}{x} \}, \absu{\Lambda}{X}{\absu{\lambda}{x}{x}}]]
+    }
+\end{align*}
+\begin{align*}
+    \cthetaone &:= \chi\ 
+        \abs{\forall}{A}{\star}{
+            \abs{\forall}{B}{A \to \star}{
+                \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B\ x})}{
+                    \\ &\cId \cdot A\ a.1\ b.1 \to \cId \cdot (\abs{\iota}{x}{A}{B\ x})\ a\ b
+                }
+            }
+        }\ -
+        \\ &\absu{\Lambda}{A\ B\ a\ b}{
+            \absu{\lambda}{e}{
+                \\ &\varphi\ (\rho\ e.2.1\ @\ x\ \langle e \rangle.\ \{ x \cong e \}\ -\ \beta\{ \absu{\lambda}{x}{x} \})\ -
+                \\ &(\rho\ e.1\ @\ x\ \langle b \rangle.\ \cId \cdot (\abs{\iota}{x}{A}{B\ x}))\ x\ b\ -\ \crefl \cdot (\abs{\iota}{x}{A}{B\ x})\ \edash b)
+                \\ &\{ e \} 
+            }
+        }
+    \\
+    \cthetatwo &:= \chi\
+        \abs{\forall}{A\ B}{\star}{
+            \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
+                \\ &\cId \cdot A\ a.2\ b.2 \to \cId \cdot (\abs{\iota}{x}{A}{B})\ a\ b
+            }
+        }\ -
+        \\ &\absu{\Lambda}{A\ B\ a\ b}{
+            \absu{\lambda}{e}{
+                \\ &\varphi\ (\rho\ e.2.1\ @\ x\ \langle e \rangle.\ \{ x \cong e \}\ -\ \beta\{ \absu{\lambda}{x}{x} \})\ -
+                \\ &(\rho\ e.1\ @\ x\ \langle b \rangle.\ \cId \cdot (\abs{\iota}{x}{A}{B}))\ x\ b\ -\ \crefl \cdot (\abs{\iota}{x}{A}{B})\ \edash b)
+                \\ &\{ e \} 
+            }
+        }
+    \\
+    \csubst &:= \chi\ 
+        \abs{\forall}{A}{\star}{
+            \abs{\forall}{a\ b}{A}{
+                \abs{\forall}{P}{ (\abs{\Pi}{y}{A}{\cId \cdot A\ a\ y \to \star}) }{
+                    \\ &\abs{\Pi}{e}{\cId \cdot A\ a\ b}{
+                        P\ a\ (\crefl \cdot A\ \edash a) \to P\ b\ e
+                    }
+                }
+            }
+        }\ -
+        \\ &\absu{\Lambda}{A\ a\ b\ P}{
+            \absu{\lambda}{e}{
+                \\ &\rho\ e.2.1\ @\ x\ \langle e \rangle.\ P\ a\ x \to P\ b\ e\ -\
+                \\ &\rho\ e.1\ @\ x\ \langle b \rangle.\ P\ x\ e \to P\ b\ e\ -\
+                \\ &e.2.2 \cdot (P\ b\ e)
+            }
+    }
+\end{align*}
+
+\begin{align*}
+    |\ctt| &= \absu{\lambda}{x\ y}{x} \\
+    |\cff| &= \absu{\lambda}{x\ y}{y} \\
+    |\crefl \cdot A\ \edash a| &= \absu{\lambda}{x}{x} \\
+    |\cdelta\ e| &= |e| \\
+    |\cirrel \cdot A\ \edash a\ \edash b\ \edash e| &= \absu{\lambda}{x}{x} \\
+    |\cthetaone \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\ 
+    |\cthetatwo \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\
+    |\csubst \cdot A\ \edash a\ \edash b \cdot P\ e| &= |e|
+\end{align*}
+
+\begin{lemma}
+    \label{lem:4:c1_stuff}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item $\vdash_{\oldced} \cBool \infr \star$
+        \item $\vdash_{\oldced} \ctt \infr \cBool$
+        \item $\vdash_{\oldced} \cff \infr \cBool$
+        \item $\vdash_{\oldced} \cId \infr \abs{\Pi}{A}{\star}{A \to A \to \star}$
+        \item {
+            $
+                \vdash_{\oldced} \crefl \infr \abs{\forall}{A}{\star}{
+                    \abs{\forall}{a}{A}{
+                        \cId \cdot A\ a\ a
+                    }
+                }
+            $
+        }
+        \item $\vdash_{\oldced} \cdelta \infr \cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X}$
+        \item {
+            $
+                \vdash_{\oldced} \cirrel \infr \abs{\forall}{A}{\star}{
+                    \abs{\forall}{a\ b}{A}{
+                        \cId \cdot A\ a\ b \eto \cId \cdot A\ a\ b
+                    }
+                }
+            $
+        }
+        \item {
+            $
+            \begin{aligned}
+                \vdash_{\oldced} \cthetaone &\infr \abs{\forall}{A}{\star}{
+                    \abs{\forall}{B}{A \to \star}{
+                        \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B\ x})}{
+                            \\ &\cId \cdot A\ a.1\ b.1 \to \cId \cdot (\abs{\iota}{x}{A}{B\ x})\ a\ b
+                        }
+                    }
+                }
+            \end{aligned}
+            $
+        }
+        \item {
+            $
+            \begin{aligned}
+                \vdash_{\oldced} \cthetatwo &\infr \abs{\forall}{A\ B}{\star}{
+                    \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
+                        \\ &\cId \cdot A\ a.2\ b.2 \to \cId \cdot (\abs{\iota}{x}{A}{B})\ a\ b
+                    }
+                }
+            \end{aligned}
+            $
+        }
+        \item {
+            $
+            \begin{aligned}
+                \vdash_{\oldced} \csubst &\infr \abs{\forall}{A}{\star}{
+                    \abs{\forall}{a\ b}{A}{
+                        \abs{\forall}{P}{ (\abs{\Pi}{y}{A}{\cId \cdot A\ a\ y \to \star}) }{
+                            \\ &\abs{\Pi}{e}{\cId \cdot A\ a\ b}{
+                                P\ a\ (\crefl \cdot A\ \edash a) \to P\ b\ e
+                            }
+                        }
+                    }
+                }
+            \end{aligned}
+            $
+        }
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Straightforward by applying a short sequence of $c_1$ rules in each case.
+    These inferences are trivially formalized in the Cedille tool.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:c1_weakening}
+    Suppose $\Gamma \vdash_{c_1} T \infr K$ and $x$ fresh
+    \begin{enumerate}
+        \item If $t$ is a kind and $\Gamma, \Delta \vdash_{c_1} t$ then $\Gamma, x : T, \Delta \vdash_{c_1} t$
+        \item If $t$ is a type and $\Gamma, \Delta \vdash_{c_1} t \infr K$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \infr K$
+        \item If $t$ is a term and $\Gamma, \Delta \vdash_{c_1} t \infr A$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \infr A$
+        \item If $t$ is a term and $\Gamma, \Delta \vdash_{c_1} t \chck A$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \chck A$
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Straightforward by mutual recursion on the associated judgments.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:c1_sym}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $a, b$ are terms and $|a| \betaconv_\eta |b|$ then $|b| \betaconv_\eta |a|$
+        \item If $A, B$ are types and values and $A \cong^t B$ then $B \cong^t A$
+        \item If $A, B$ are types and $A \cong B$ then $B \cong A$
+        \item If $A, B$ are kinds and $A \cong B$ then $B \cong A$
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Note that \textit{1.} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms.
+    For \textit{2.} through \textit{4.} mutual recursion and pattern match on $A$ is sufficient.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:c1_trans}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $a, b, c$ are terms, $|a| \betaconv_\eta |b|$, and $|b| \betaconv_\eta |c|$ then $|a| \betaconv_\eta |c|$
+        \item If $A, B, C$ are types and values, $A \cong^t B$, and $B \cong^t C$ then $A \cong^t C$
+        \item If $A, B, C$ are types, $A \cong B$, and $B \cong C$ then $A \cong C$
+        \item If $A, B, C$ are kinds, $A \cong B$, and $B \cong C$ then $A \cong C$
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Note that \textit{1.} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms and reduction is confluent.
+    The remainder are proved by mutual recursion.
+    Note that in \textit{3.} the types $A, B$, and $C$ are reduced using call-name to a weak-head normal form.
+    In particular, this reduction strategy is deterministic, thus $B \betastar_n B^\prime$ for a unique $B^\prime$.
+    This combined with using \textit{2.} is sufficient for the \textit{3.} case.
+    The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_erasure}
+    If $t\pterm$ then $\sema{|t|} = |\sema{t}|$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $t\pterm$.
+    The case of first projection is omitted.
+
+    $\text{Case: }t = x_\star$
+    \begin{proofcase}
+        Have $\sema{|x_\star|} = \sema{x_\star} = x$ and $|\sema{x_\star}| = |x| = x$, hence trivial.
+    \end{proofcase}
+
+    $\text{Case: }t = \abs{\lambda_0}{x}{A}{b}$
+    \begin{proofcase}
+        Have $\sema{|\abs{\lambda_0}{x}{A}{b}|} = \sema{|b|}$ and $|\sema{\abs{\lambda_0}{x}{A}{b}}| = |\absu{\Lambda}{x}{\sema{b}}| = |\sema{b}|$.
+        Note that $b\pterm$, hence by the IH $\sema{|b|} = |\sema{b}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \abs{\lambda_\omega}{x}{A}{b}$
+    \begin{proofcase}
+        Have $\sema{|\abs{\lambda_\omega}{x}{A}{b}|} = \absu{\lambda}{x}{\sema{|b|}}$ and $|\sema{\abs{\lambda_\omega}{x}{A}{b}}| = |\absu{\lambda}{x}{\sema{b}}| = \absu{\lambda}{x}{|\sema{b}|}$.
+        Note that $b\pterm$, hence by the IH $\sema{|b|} = |\sema{b}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \app{f}{0}{a}$
+    \begin{proofcase}
+        Have $\sema{|\app{f}{0}{a}|} = \sema{|f|}$ and $|\sema{\app{f}{0}{a}}| = |\sema{f}\ \edash \sema{a}| = |\sema{f}|$.
+        Given $\app{f}{0}{a}\pterm$ it is always the case that $f\pterm$.
+        Thus, by the IH $\sema{|f|} = |\sema{f}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \app{f}{\omega}{a}$
+    \begin{proofcase}
+        Have $\sema{|\app{f}{\omega}{a}|} = \sema{|f|}\ \sema{|a|}$ and $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}|$.
+        Note that $f, a\pterm$ because the mode is $\omega$ there is no possibility of $a\ptype$.
+        Hence, by the IH $\sema{|f|} = |\sema{f}|$ and $\sema{|a|} = |\sema{a}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = [t_1, t_2; A]$
+    \begin{proofcase}
+        Have $\sema{|[t_1, t_2; A]|} = \sema{|t_1|}$ and $|\sema{[t_1, t_2; A]}| = |[\sema{t_1}, \sema{t_2}]| = |\sema{t_1}|$.
+        By the IH applied to $t_1\pterm$: $\sema{|t_1|} = |\sema{t_1}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = t.2$
+    \begin{proofcase}
+        Have $\sema{|t.2|} = \sema{|t|}$ and $|\sema{t.2}| = |\sema{t}.2| = |\sema{t}|$.
+        By the IH applied to $t\pterm$: $\sema{|t|} = |\sema{t}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \prefl(a; A)$
+    \begin{proofcase}
+        Have $\sema{|\prefl(a; A)|} = \sema{\abs{\lambda}{x}{\diamond}{x_\star}} = \absu{\lambda}{x}{x}$ and $|\sema{\prefl(a; A)}| = |\crefl \cdot \sema{A}\ \edash \sema{a}| = \absu{\lambda}{x}{x}$.
+    \end{proofcase}
+
+    $\text{Case: }t = \vartheta_i(e, a, b; T)$
+    \begin{proofcase}
+        Have $\sema{|\vartheta_i(e, a, b; T)|} = \sema{|e|}$ and $|\sema{\vartheta_i(e, a, b; T)}| = |\sema{e}|$.
+        By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \psi(e, a, b; A, P)$
+    \begin{proofcase}
+        Have $\sema{|\psi(e, a, b; A, P)|} = \sema{|e|}$ and $|\sema{\psi(e, a, b; A, P)}| = |\csubst \cdot \sema{A}\ \edash \sema{a}\ \edash \sema{b} \cdot \sema{P}\ \sema{e}| = |\sema{e}|$.
+        By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
+    \end{proofcase}
+
+    $\text{Case: }t = \varphi(f, e; A, T)$
+    \begin{proofcase}
+        Have $\sema{|\varphi(f, e; A, T)|} = \sema{\abs{\lambda}{x}{\diamond}{x_\star}} = \absu{\lambda}{x}{x}$ and $|\sema{\varphi(f, e; A, T)}| = |\absu{\lambda}{\varphi (\sema{e}\ x).1 - (\sema{f}\ x) \{ x\}}| = \absu{\lambda}{x}{x}$.
+    \end{proofcase}
+
+    $\text{Case: }t = \delta(e)$
+    \begin{proofcase}
+        Have $\sema{|\delta(e)|} = \sema{|e|}$ and $|\sema{\delta(e)}| = |\cdelta\ \sema{e}| = |\sema{e}|$.
+        By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_subst}
+    $\sema{[x := b]t} = [x := \sema{b}]\sema{t}$
+\end{lemma}
+\begin{proof}
+    Straightforward by induction on $t$, substitution is structural with the only exception being variables, but $\sema{x_K} = x$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_term_step}
+    If $t\pterm$ and $|t| \betared t^\prime$ then $|\sema{t}| \betared \sema{t^\prime}$
+\end{lemma}
+\begin{proof}
+    By induction on $t$ and inversion on $t\pterm$.
+    The cases: erased lambda, pair, first projection, second projection, promotion ($\vartheta_i$), substitution ($\psi$), and separation ($\delta$) all erase to a subexpression that is a term.
+    Hence, these cases are very similar to the erased application case and omitted.
+    The erasure of the variable, reflexivity, and cast cases are values and thus do not reduce.
+
+    $\text{Case: }t = \abs{\lambda_\omega}{x}{A}{b}$
+    \begin{proofcase}
+        Have $|\abs{\lambda_\omega}{x}{A}{b}| = \abs{\lambda_\omega}{x}{\diamond}{|b|}$ which means $\abs{\lambda_\omega}{x}{\diamond}{|b|} \betared \abs{\lambda_\omega}{x}{\diamond}{b^\prime}$.
+        Now $b\pterm$ and $|b| \betared b^\prime$, applying the IH gives $|\sema{b}| \betared \sema{b^\prime}$.
+        Note that $|\sema{\abs{\lambda_\omega}{x}{A}{b}}| = \absu{\lambda}{x}{|\sema{b}|} \betared \absu{\lambda}{x}{|\sema{b^\prime}|}$.
+        By Lemma~\ref{lem:4:sema_subst}: $|\sema{b^\prime}| = \sema{|b^\prime|}$.
+        However, $b^\prime$ is the result of a contracted redex in an already erased term, hence $|b^\prime| = b^\prime$.
+        Thus, $|\sema{\abs{\lambda_\omega}{x}{A}{b}}| \betared \sema{\abs{\lambda_\omega}{x}{\diamond}{b^\prime}}$.
+    \end{proofcase}
+
+    $\text{Case: }t = \app{f}{0}{a}$
+    \begin{proofcase}
+        Have $|\app{f}{0}{a}| = |f|$, thus $|f| \betared t^\prime$.
+        Applying the IH gives $|\sema{f}| \betared \sema{t^\prime}$.
+        Note that $|\sema{\app{f}{0}{a}}| = |\sema{f}\ \edash \sema{a}| = |\sema{f}|$.
+        Thus, $|\sema{\app{f}{0}{a}}| \betared \sema{t^\prime}$.
+    \end{proofcase}
+
+    $\text{Case: }t = \app{f}{\omega}{a}$
+    \begin{proofcase}
+        Have $|\app{f}{\omega}{a}| = \app{|f|}{\omega}{|a|}$.
+        Suppose $|f| = \abs{\lambda_\omega}{x}{\diamond}{b}$ and $\app{|f|}{\omega}{|a|} \betared [x := |a|]b$.
+        Now $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}|$.
+        By Lemma~\ref{lem:4:sema_erasure}: $|\sema{f}| = \sema{|f|} = \absu{\lambda}{x}{\sema{b}}$.
+        Thus, $(\absu{\lambda}{x}{\sema{b}})\ |\sema{a}| \betared [x := |\sema{a}|]\sema{b}$.
+        Using Lemma~\ref{lem:4:sema_erasure} and Lemma~\ref{lem:4:sema_subst} gives $[x := |\sema{a}|]\sema{b} = \sema{[x := |a|]b}$.
+        \\ \\
+        Suppose wlog that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
+        Note that $f\pterm$, applying the IH gives $|\sema{f}| \betared \sema{f^\prime}$.
+        Now $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}| \betared \sema{f^\prime}\ |\sema{a}| = \sema{\app{f^\prime}{\omega}{|a|}}$.
+        The final equality uses Lemma~\ref{lem:4:sema_erasure}.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_term_multistep}
+    If $t\pterm$ and $|t| \betastar t^\prime$ then $|\sema{t}| \betastar \sema{t^\prime}$
+\end{lemma}
+\begin{proof}
+    By induction on $|t| \betastar t^\prime$ using Lemma~\ref{lem:4:sema_term_step}, Lemma~\ref{lem:2:classify_preservation}, and Lemma~\ref{lem:2:classify_erase}.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_term_conv}
+    If $a, b\pterm$ and $|a| \betaconv |b|$ then $|\sema{a}| \betaconv |\sema{b}|$
+\end{lemma}
+\begin{proof}
+    Deconstructing $|a| \betaconv |b|$ gives $|a| \betastar z$ and $|b| \betastar z$.
+    Applying Lemma~\ref{lem:4:sema_term_multistep} gives $|\sema{a}| \betastar \sema{z}$ and $|\sema{b}| \betastar \sema{z}$.
+    Thus, $|\sema{a}| \betaconv |\sema{b}|$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_type_step}
+    If $s\ptype$ and $s \betared_n t$ then $\sema{s} \betared_n \sema{t}$
+\end{lemma}
+\begin{proof}
+    By induction on $s$ and inversion on $s\ptype$.
+    Note that only the case where $s$ is a redex is important as all other cases are in weak-head normal form.
+    Thus, suppose $s = \app{f}{\tau}{a}$,  $f = \abs{\lambda_\tau}{x}{A}{b}$, and $\app{f}{\tau}{a} \betared_n [x := a]b$.
+    Suppose wlog that $a\pterm$.
+    Now $\sema{\app{f}{\tau}{a}} = \sema{f}\ \sema{a} = (\abs{\lambda}{x}{\sema{A}}{\sema{b}})\ \sema{a} \betared [x := \sema{a}]\sema{b}$.
+    Using Lemma~\ref{lem:4:sema_subst} gives $[x := \sema{a}]\sema{b} = \sema{[x := a]b}$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_type_multistep}
+    If $s\ptype$ and $s \betastar_n t$ then $\sema{s} \betastar_n \sema{t}$
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar_n t$ using Lemma~\ref{lem:4:sema_type_step} and Lemma~\ref{lem:2:classify_preservation}.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:4:sema_type_conv}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $A, B\ptype$, $A\ B$ are values, and $A \equiv B$ then $\sema{A} \cong^t \sema{B}$
+        \item If $A, B\ptype$ and $A \equiv B$ then $\sema{A} \cong \sema{B}$
+        \item If $A, B\pkind$ and $A \equiv B$ then $\sema{A} \cong \sema{B}$
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    By mutual recursion.
+
+    \noindent \textbf{1.}
+    By induction on $A$ and inversion on $A$ being a value and $A \equiv B$ (hence $B$ must match $A$).
+    Conversion in $c_1$ is structural over weak-head normal forms and in this case $A$ and $B$ must be weak-head normal.
+    Thus, a combination of \textit{1.}, \textit{2.}, \textit{3.}, and Lemma~\ref{lem:4:sema_term_conv} on subexpressions in each case is sufficient.
+
+    \noindent \textbf{2.}
+    By Theorem~\ref{lem:3:proof_normalization}, $\exists\ A^\prime, B^\prime$ such that $A \betastar A^\prime$, $B \betastar B^\prime$ and $A^\prime, B^\prime$ are values.
+    Lemma~\ref{lem:2:classify_preservation} gives that $A^\prime, B^\prime\ptype$.
+    Lemma~\ref{lem:2:conv_red_f} gives that $A^\prime \equiv B^\prime$.
+    Thus, applying \textit{1.} concludes.
+
+    \noindent \textbf{3.}
+    By induction on $A$ and inversion on $A \equiv B$.
+    Again, conversion of kinds is structural in $c_1$.
+    Thus, a combination of \textit{2.} and \textit{3.} on subexpressions in each case is sufficient.
+
+\end{proof}
+
+\begin{theorem}[Soundness of $\sema{-}$]
+    \label{lem:4:soudness}
+    Suppose $\Gamma \vdash_{\ced} t : A$
+    \begin{enumerate}
+        \item if $A = \kind$ then $\sema{\Gamma} \vdash_{\oldced} \sema{t}$
+        \item if $\Gamma \vdash_{\ced} A : \kind$ then $\sema{\Gamma} \vdash_{\oldced} \sema{t} \infr T$ and $T \cong \sema{A}$
+        \item if $\Gamma \vdash_{\ced} A : \star$ then $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \sema{A}$
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    By induction on $\Gamma \vdash_{\ced} t : A$.
+    Note that each case is mutually exclusive by classification.
+
+    $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
+    \begin{proofcase}
+        Have $A = \kind$ and $\Gamma \vdash_{\oldced} \star$, hence trivial.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Let $\Gamma = \Gamma_1; x : A; \Gamma_2$.
+        Have $(x : \sema{A}) \in \sema{\Gamma}$.
+        Now $\sema{\Gamma_1} \vdash_{\oldced} x \infr \sema{A}$ by the IH and $\sema{\Gamma} \vdash_{\oldced} x \infr \sema{A}$ by Lemma~\ref{lem:4:c1_weakening}.
+        Suppose $K = \kind$ then $\sema{A} \cong \sema{A}$ and $\sema{\Gamma} \vdash_{\oldced} x \infr \sema{A}$.
+        Suppose $K = \star$ then $\sema{\Gamma} \vdash_{\oldced} x \chck \sema{A}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $m = \tau$, then $\pdom(m, K) = K$ and $\pcodom(m) = \kind$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A}$ if $K = \kind$
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$ if $K = \star$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B}$
+        \end{enumerate}
+        The corresponding $\Pi$ rule for the two possibilities of $K$ concludes the case.
+        \\ \\
+        Suppose $m = 0$, then $\pdom(m, K) = K$ and $\pcodom(m) = \star$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A}$ if $K = \kind$
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$ if $K = \star$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$
+        \end{enumerate}
+        The corresponding $\forall$ rule for the two possibilities of $K$ concludes the case.
+        \\ \\
+        Suppose $m = \omega$, then $\pdom(m, K) = \star$ and $\pcodom(m) = \star$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$
+        \end{enumerate}
+        The corresponding $\Pi$ rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $m = \tau$, then $\pcodom(m) = \kind$.
+        Note that this means that $t\ptype$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\Pi}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{t} \infr T$ and $T \cong \sema{B}$
+        \end{enumerate}
+        Suppose $\sema{\Gamma} \vdash_{\oldced} \sema{A}$, then $\sema{\Gamma} \vdash_{\oldced} \abs{\lambda}{x}{\sema{A}}{\sema{t}} \infr \abs{\Pi}{x}{\sema{A}}{T}$.
+        By rules of conversion for kinds yields $\abs{\Pi}{x}{\sema{A}}{T} \cong \abs{\Pi}{x}{\sema{A}}{\sema{B}}$.
+        The case where $\sema{A}$ is a type instead of a kind is similar.
+        \\ \\
+        Suppose $m = 0$, then $\pcodom(m) = \star$.
+        Note that this means $t\pterm$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\Pi}{x}{\sema{A}}{\sema{B}} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{t} \chck \sema{B}$
+        \end{enumerate}
+        Note that $FV(|\sema{t}|) \subseteq FV(|t|)$, thus $x \notin FV(|\sema{t}|)$.
+        Using the corresponding $\Lambda$ rule based on the classification of $\sema{A}$ concludes the case.
+        \\ \\
+        Suppose $m = \omega$, then $\pcodom(m) = \star$.
+        This case is omitted because the previous case is a more general version of it.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $m = \tau$.
+        Classification forces $f\ptype$, but $a$ is either a term or a type.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{f} \infr T$ with $T \cong \abs{\Pi}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \infr T_2$ with $T_2 \cong \sema{A}$ if $a\ptype$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$ if $a\pterm$
+        \end{enumerate}
+        Note that because kinds cannot reduce, it must be the case that $\exists\ C, D$ such that $T = \abs{\Pi}{x}{C}{D}$.
+        Moreover, $C \cong \sema{A}$ and $D \cong \sema{B}$ by the conversion rules.
+        Suppose $a\ptype$ then using the associated rule yields $\sema{\Gamma} \vdash_{\oldced} \sema{f} \cdot \sema{a} \infr [x := \sema{a}]D$.
+        Now, $[x := \sema{a}]D \cong [x := \sema{a}]\sema{B}$ and the case is concluded.
+        Suppose $a\pterm$ then using the associated rule yields $\sema{\Gamma} \vdash_{\oldced} \sema{f}\ \sema{a} \infr [x := \chi\ C - \sema{a}]D$.
+        Again, $[x := \chi\ C - \sema{a}]D \cong [x := \chi\ C - \sema{a}]\sema{B}$ and the case is concluded.
+        Note that $[x := \chi\ C - \sema{a}]\sema{B} \cong [x := \sema{a}]\sema{B}$ because the $\chi$ is only well-typed in term positions, where it is promptly erased during conversion checking.
+        \\ \\
+        Suppose $m = 0$.
+        Classification forces $f\pterm$, but $a$ is either a term or a type.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{f} \chck \abs{\forall}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \infr T_2$ with $T_2 \cong \sema{A}$ if $a\ptype$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$ if $a\pterm$
+        \end{enumerate}
+        Deconstructing the checking judgment for $\sema{f}$ yields $\exists\ C, D$ such that $\sema{\Gamma} \vdash_{\oldced} \sema{f} \cinfr \abs{\forall}{x}{C}{D}$ and $C \cong \sema{A}$ and $D \cong \sema{B}$.
+        Suppose $a\ptype$ then the associated judgment gives $\sema{\Gamma} \vdash_{\oldced} \sema{f} \cdot \sema{a} \infr [x := \sema{a}]D$.
+        Now, $[x := \sema{a}]D \cong [x := \sema{a}]\sema{B}$ and the case is concluded.
+        Suppose $a\pterm$ then the associated judgment gives $\sema{\Gamma} \vdash_{\oldced} \sema{f}\ \edash \sema{a} \infr [x := \chi\ C - \sema{a}]D$.
+        Again, $[x := \chi\ C - \sema{a}]D \cong [x := \chi\ C - \sema{a}]\sema{B}$ and the case is concluded.
+        \\ \\
+        Suppose $m = \omega$
+        Classification forces $f, a\pterm$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{f} \chck \abs{\Pi}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$ if $a\pterm$
+        \end{enumerate}
+        As with the previous case, $\exists\ C, D$ such that $\sema{\Gamma} \vdash_{\oldced} \sema{f} \cinfr \abs{\Pi}{x}{C}{D}$ and $C \cong \sema{A}$ and $D \cong \sema{B}$.
+        Applying the associated rule yields $\sema{\Gamma} \vdash_{\oldced} \sema{f}\ \sema{a} \infr [x := \chi\ C - \sema{a}]D$.
+        Now, $[x := \chi\ C - \sema{a}]D \cong [x := \chi\ C - \sema{a}]\sema{B}$ and the case is concluded.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$
+        \end{enumerate}
+        Thus, $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$ as required.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
+    \begin{proofcase}
+        Note by classification and $\D{1}$: $\Gamma \vdash A : \star$ and $\Gamma, x : A \vdash B : \star$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \sema{A}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{s} \chck [x := \sema{t}]\sema{B}$
+        \end{enumerate}
+        Note that $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \sema{A}$ so clearly $\sema{\Gamma} \vdash_{\oldced} \sema{s} \chck [x := \chi\ \sema{A}\ -\ \sema{t}]\sema{B}$ as the $\chi$ merely adds extra typing information.
+        Lemma~\ref{lem:4:sema_term_conv} applied to $\D{4}$ and using the fact that $t, s\pterm$ gives $|\sema{t}| \betaconv |\sema{s}|$.
+        Combining this information yields $\sema{\Gamma} \vdash \sema{[t, s; A]} \chck \sema{(x : A) \cap B}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \FirstRule[*] \end{array}$
+    \begin{proofcase}
+        By classification $t\pterm$.
+        Applying the IH to $\D{1}$ gives $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        Deconstruct this checking rule and notice that either the inferred type is already an intersection or it must reduce to an intersection.
+        Thus, $\exists\ C\ D$ such that $\sema{\Gamma} \vdash_{\oldced} \sema{t} \cinfr \abs{\iota}{x}{\sema{C}}{\sema{D}}$ and $\abs{\iota}{x}{\sema{C}}{\sema{D}} \cong \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        Deconstructing the congruence yields $\sema{C} \cong \sema{A}$.
+        Thus, $\sema{\Gamma} \vdash_{\oldced} \sema{t}.1 \chck \sema{A}$
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By classification $t\pterm$.
+        Applying the IH to $\D{1}$ gives $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        Deconstruct this checking rule and notice that either the inferred type is already an intersection or it must reduce to an intersection.
+        Thus, $\exists\ C\ D$ such that $\sema{\Gamma} \vdash_{\oldced} \sema{t} \cinfr \abs{\iota}{x}{\sema{C}}{\sema{D}}$ and $\abs{\iota}{x}{\sema{C}}{\sema{D}} \cong \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        Deconstructing the congruence yields $\sema{D} \cong \sema{B}$ and thus $[x := \sema{t}.1]\sema{D} \cong [x := \sema{t}.1]\sema{B}$.
+        Now $\sema{\Gamma} \vdash_{\oldced} \sema{t}.2 \infr [x := \sema{t}.1]\sema{D}$.
+        Thus, $\sema{\Gamma} \vdash_{\oldced} \sema{t}.2 \chck [x := \sema{t}.1]\sema{B}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $a, b\pterm$ by $\D{1}$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \sema{A}$
+        \end{enumerate}
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$: $\sema{\Gamma} \vdash_{\oldced} \cId \cdot \sema{A}\ \sema{a}\ \sema{b} \infr \star$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
+    \begin{proofcase}
+        Note that $t\pterm$ by $\D{1}$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{t} \chck \sema{A}$
+        \end{enumerate}
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$: $\sema{\Gamma} \vdash_{\oldced} \crefl \cdot \sema{A}\ \edash \sema{t} \infr \cId \cdot \sema{A}\ \sema{t}\ \sema{t}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{1}$ that $a, b\pterm$ and by classification $e\pterm$ with $A, P\ptype$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \sema{A}$
+            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}$
+            \item[$\D{5}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{P} \infr T$ and $T \cong \abs{\forall}{y}{\sema{A}}{\cId \cdot \sema{A}\ \sema{a}\ \sema{y} \to \star}$
+        \end{enumerate}
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
+            $\sema{\Gamma} \vdash_{\oldced} \csubst \cdot \sema{A}\ \edash \sema{a}\ \edash \sema{b} \cdot \sema{P}\ \sema{e} \infr \sema{P}\ \sema{a}\ (\crefl \cdot \sema{A}\ \edash \sema{a}) \to \sema{P}\ \sema{b}\ \sema{e}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{1}$ that $a, b\pterm$ and by classification $e\pterm$ with $(x : A) \cap B\ptype$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}.1\ \sema{b}.1$
+        \end{enumerate}
+        Note that $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$ which means $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr A \to \star$.
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
+            $\sema{\Gamma} \vdash_{\oldced} \cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{1}$ and $\D{2}$ that $a, b\pterm$ and by classification $e\pterm$ with $A, B\ptype$.
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr \star$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{5}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}.2\ \sema{b}.2$
+        \end{enumerate}
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
+            $\sema{\Gamma} \vdash_{\oldced} \cthetatwo \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Note by $\D{1}$ that $f\pterm$ and by classification $e\pterm$ with $T\ptype$
+        Applying the IH gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\sema{T} = \sema{A} \to \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{T} \infr \star$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{f} \chck \sema{T}$
+            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \abs{\Pi}{a}{\sema{A}}{\cId \cdot \sema{A}\ a\ (\sema{f}\ \sema{a}).1}$
+        \end{enumerate}
+        Note that $\sema{\varphi(f, e; A, T)} = \absu{\lambda}{x}{\cdots}$ and thus by the lambda rule of $\oldced$ the goal is to show $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \varphi\ \text{\c{c}}\ (\sema{e}\ x).1 - (\sema{f}\ x)\ \{ x \} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        By the application and first projection rule and some maneuvering of type conversion: $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} (\sema{e}\ x).1 \chck \{ a \cong (f\ a).1 \}$.
+        Using the same manipulations, except now for $f$, gives $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} (\sema{f}\ x).1 \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
+        Note that obviously $FV(x) \subseteq dom(\Gamma, x : \sema{A})$.
+        Thus, the goal is obtained by the  $\simeq$ symmetry and $\varphi$ rule of $\oldced$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ yields $\sema{\Gamma} \vdash_{\oldced} \cId \cBool \ctt \cff$.
+        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
+            $\sema{\Gamma} \vdash_{\oldced} \cdelta\ \sema{e} \infr \abs{\forall}{X}{\star}{X}$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
+    \begin{proofcase}
+        Suppose $K = \kind$.
+        Then by classification and $\D{3}$: $\Gamma \vdash B : \kind$.
+        Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash \sema{t} \infr T$ with $T \cong \sema{B}$.
+        By Lemma~\ref{lem:4:sema_type_conv}: $\sema{A} \cong \sema{B}$.
+        Now by Lemma~\ref{lem:4:c1_trans} and Lemma~\ref{lem:4:c1_sym}: $T \cong \sema{B}$.
+        \\ \\
+        Suppose $K = \star$.
+        Then by classification and $\D{3}$: $\Gamma \vdash B : \star$.
+        Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash \sema{t} \infr \sema{B}$.
+        By Lemma~\ref{lem:4:sema_type_conv} and Lemma~\ref{lem:4:c1_sym}: $\sema{B} \cong \sema{A}$.
+        Applying the checking rule of $\oldced$ yields $\sema{\Gamma} \vdash \sema{t} \chck \sema{A}$.
+    \end{proofcase}
+\end{proof}
+
+\begin{theorem}[Logical Consistency]
+    $\neg (\vdash_{c_2} t : (X : \star) \to_0 X_\square)$
+\end{theorem}
+\begin{proof}
+    Proceed using proof by negation.
+    Suppose $\vdash_{c_2} t : (X : \star) \to_0 X_\square$.
+    By Theorem~\ref{lem:4:soudness}: $\vdash_{\oldced} \sema{t} \chck \abs{\forall}{X}{\star}{X}$.
+    However, this is impossible by consistency of $\oldced$.
+\end{proof}
+
+\begin{corollary}[Equational Consistency]
+    $\neg (\vdash_{c_2} t : \ptt =_{\pBool} \pff)$
+\end{corollary}

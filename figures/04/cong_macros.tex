@@ -1,0 +1,111 @@
+
+\Rule{\CedTypeCongRedRule}
+    {
+        \der{\D{1}}{A \betastar_n A^\prime \not\betared_n}
+        \\ \der{\D{2}}{B \betastar_n B^\prime \not\betared_n}
+        \\ \der{\D{2}}{A^\prime \cong^t B^\prime}
+    }
+    {A \cong B}
+    {}
+
+\Rule{\CedTypeCongVarRule}
+    {
+        \textcolor{white}{\_}
+    }
+    {x \cong^t x}
+    {}
+
+\Rule{\CedTypeCongTypeForallRule}
+    {
+        \der{\D{1}}{A_1 \cong A_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\forall}{x}{A_1}{B_1} \cong^t \abs{\forall}{x}{A_2}{B_2}}
+    {}
+
+\Rule{\CedTypeCongTypeLambdaRule}
+    {
+        \der{\D{1}}{A_1 \cong A_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\lambda}{x}{A_1}{B_1} \cong^t \abs{\lambda}{x}{A_2}{B_2}}
+    {}
+
+\Rule{\CedTypeCongIotaRule}
+    {
+        \der{\D{1}}{A_1 \cong A_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\iota}{x}{A_1}{B_1} \cong^t \abs{\iota}{x}{A_2}{B_2}}
+    {}
+
+\Rule{\CedTypeCongTypeApplyRule}
+    {
+        \der{\D{1}}{A_1 \cong^t A_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {A_1 \cdot B_1 \cong^t A_2 \cdot B_2}
+    {}
+
+\Rule{\CedTypeCongKindForallRule}
+    {
+        \der{\D{1}}{\kappa_1 \cong \kappa_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\forall}{x}{\kappa_1}{B_1} \cong^t \abs{\forall}{x}{\kappa_2}{B_2}}
+    {}
+
+\Rule{\CedTypeCongPiRule}
+    {
+        \der{\D{1}}{A_1 \cong A_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\Pi}{x}{A_1}{B_1} \cong^t \abs{\Pi}{x}{A_2}{B_2}}
+    {}
+    
+\Rule{\CedTypeCongKindLambdaRule}
+    {
+        \der{\D{1}}{\kappa_1 \cong \kappa_2}
+        \\ \der{\D{2}}{B_1 \cong B_2}
+    }
+    {\abs{\lambda}{x}{\kappa_1}{B_1} \cong^t \abs{\lambda}{x}{\kappa_2}{B_2}}
+    {}
+
+\Rule{\CedTypeCongTermApplyRule}
+    {
+        \der{\D{1}}{A_1 \cong^t A_2}
+        \\ \der{\D{2}}{|b_1| \betaconv_\eta |b_2|}
+    }
+    {A_1\ b_1 \cong^t A_2\ b_2}
+    {}
+
+\Rule{\CedTypeCongEqRule}
+    {
+        \der{\D{1}}{|a_1| \betaconv_\eta |a_2|}
+        \\ \der{\D{2}}{|b_1| \betaconv_\eta |b_2|}
+    }
+    {\{ a_1 \simeq b_1 \} \cong^t \{ a_2 \simeq b_2 \}}
+    {}
+
+\Rule{\CedKindCongAxiomRule}
+    {
+        \textcolor{white}{\_}
+    }
+    {\star \cong \star}
+    {}
+
+\Rule{\CedKindCongTypePiRule}
+    {
+        \der{\D{1}}{A_1 \cong A_2}
+        \\ \der{\D{2}}{\kappa_1 \cong \kappa_2}
+    }
+    {\abs{\Pi}{x}{A_1}{\kappa_1} \cong \abs{\Pi}{x}{A_2}{\kappa_2}}
+    {}
+
+\Rule{\CedKindCongKindPiRule}
+    {
+        \der{\D{1}}{\kappa^\prime_1 \cong \kappa^\prime_2}
+        \\ \der{\D{2}}{\kappa_1 \cong \kappa_2}
+    }
+    {\abs{\Pi}{x}{\kappa^\prime_1}{\kappa_1} \cong \abs{\Pi}{x}{\kappa^\prime_2}{\kappa_2}}
+    {}

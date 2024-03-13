@@ -1,0 +1,102 @@
+
+\Rule{\CedAxiomRule}
+    {
+        \textcolor{white}{\_}
+    }
+    {\Gamma \vdash \star}
+    {}
+
+\Rule{\CedTypeVarRule}
+    {
+        \der{\D{1}}{(x : \kappa) \in \Gamma}
+    }
+    {\Gamma \vdash x \infr \kappa}
+    {}
+
+\Rule{\CedTypeKindPiRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash \kappa}
+    }
+    {\Gamma \vdash \abs{\Pi}{x}{A}{\kappa}}
+    {}
+
+\Rule{\CedKindKindPiRule}
+    {
+        \der{\D{1}}{\Gamma \vdash \kappa^\prime}
+        \\ \der{\D{2}}{\Gamma; x : \kappa^\prime \vdash \kappa}
+    }
+    {\Gamma \vdash \abs{\Pi}{x}{\kappa^\prime}{\kappa}}
+    {}
+
+\Rule{\CedTypeTypePiRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash B \infr \star}
+    }
+    {\Gamma \vdash \abs{\Pi}{x}{A}{B} \infr \star}
+    {}
+
+\Rule{\CedKindForallRule}
+    {
+        \der{\D{1}}{\Gamma \vdash \kappa}
+        \\ \der{\D{2}}{\Gamma; x : \kappa \vdash B \infr \star}
+    }
+    {\Gamma \vdash \abs{\forall}{x}{\kappa}{B} \infr \star}
+    {}
+
+\Rule{\CedTypeForallRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash B \infr \star}
+    }
+    {\Gamma \vdash \abs{\forall}{x}{A}{B} \infr \star}
+    {}
+
+\Rule{\CedKindTypeLambdaRule}
+    {
+        \der{\D{1}}{\Gamma \vdash \kappa^\prime}
+        \\ \der{\D{2}}{\Gamma; x : \kappa^\prime \vdash t \infr \kappa}
+    }
+    {\Gamma \vdash \abs{\lambda}{x}{\kappa^\prime}{t} \infr \abs{\Pi}{x}{\kappa^\prime}{\kappa}}
+    {}
+
+\Rule{\CedTypeTypeLambdaRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash t \infr \kappa}
+    }
+    {\Gamma \vdash \abs{\lambda}{x}{A}{t} \infr \abs{\Pi}{x}{A}{\kappa}}
+    {}
+
+\Rule{\CedTypeTypeApplyRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \infr \abs{\Pi}{x}{\kappa_1}{\kappa_2}}
+        \\ \der{\D{2}}{\Gamma \vdash a \infr \kappa_1^\prime}
+        \\ \der{\D{3}}{\kappa_1 \cong \kappa_1^\prime}
+    }
+    {\Gamma \vdash f \cdot a \infr [x := a]\kappa_2}
+    {}
+
+\Rule{\CedTermTypeApplyRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \infr \abs{\Pi}{x}{A}{\kappa}}
+        \\ \der{\D{2}}{\Gamma \vdash a \chck A}
+    }
+    {\Gamma \vdash f\ a \infr [x := \chi\ A - a]\kappa}
+    {}
+
+\Rule{\CedIotaRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash B \infr \star}
+    }
+    {\Gamma \vdash \abs{\iota}{x}{A}{B} \infr \star}
+    {}
+
+\Rule{\CedEqRule}
+    {
+        \der{\D{1}}{FV(a\ b) \subseteq dom(\Gamma)}
+    }
+    {\Gamma \vdash \{ a \simeq b \} \infr \star}
+    {}

@@ -3,36 +3,59 @@
     \centering
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
-            \mathcal{C}(x_\star) &= \pterm \\
-            \mathcal{C}(\star) &= \pkind \\
-            \mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}) &= \ptype \\
-            \mathcal{C}(\abs{\lambda_\omega}{x}{A}{t}) &= \pterm \\
-            \mathcal{C}((x : A) \to_\tau B) &= \pkind \\
-            \mathcal{C}((x : A) \to_\omega B) &= \ptype \\
-            \mathcal{C}((x : A) \to_0 B) &= \ptype
+            \ptrunc{\!\!\pterm} &= x_\star \\
+            \ptrunc{\!\!\ptype} &= x_\square
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
-            \mathcal{C}(x_\square) &= \ptype \\
-            \mathcal{C}(\app{f}{\tau}{a}) &= \ptype \\
-            \mathcal{C}(\app{f}{\omega}{a}) &= \pterm \\
-            \mathcal{C}((x : A) \cap B) &= \ptype \\
-            \mathcal{C}(a =_A b) &= \ptype \\
-            \mathcal{C}(\text{refl}(t)) &= \pterm \\
-            \mathcal{C}(\varphi(f, e)) &= \pterm
+            \ptrunc{\!\!\pkind} &= \star \\
+            \ptrunc{\text{undefined}} &= \diamond
         \end{align*}
     \end{minipage}
+    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
+\end{figure}
+
+\begin{figure}
+    \centering
     \begin{align*}
-        \mathcal{C}(\abs{\lambda_0}{x}{A}{t}) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
-        \mathcal{C}(\app{f}{0}{a}) &= \pterm &\text{if }& \mathcal{C}(f) = \pterm\\
-        \mathcal{C}([t_1, t_2; A]) &= \pterm &\text{if }& \mathcal{C}(t_1) = \pterm\\
-        \mathcal{C}(t.1) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
-        \mathcal{C}(t.2) &= \pterm &\text{if }& \mathcal{C}(t) = \pterm\\
-        \mathcal{C}(\psi(e, P)) &= \pterm &\text{if }& \mathcal{C}(e) =\pterm\\
-        \mathcal{C}(\vartheta_i(e, a, b)) &= \pterm &\text{if }& \mathcal{C}(e) = \pterm\\
-        \mathcal{C}(\delta(e)) &= \pterm &\text{if }& \mathcal{C}(e) = \pterm \\
+        \mathcal{C}(x_\square) &=\!\! \ptype \\
+        \mathcal{C}(x_\star) &=\!\! \pterm \\
+        \mathcal{C}(\star) &=\!\! \pkind \\
+        \mathcal{C}(\diamond) &=\!\! \ptype \\
+        \mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}) &=\!\! \ptype &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } t\ptype \\
+        \mathcal{C}(\abs{\lambda_0}{x}{A}{t}) &=\!\! \pterm &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } t\pterm \\
+        \mathcal{C}(\abs{\lambda_\omega}{x}{A}{t}) &=\!\! \pterm &\text{if }& A\ptype \text{ and } t\pterm \\
+        \mathcal{C}((x : A) \to_\tau B) &=\!\! \pkind &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } B\pkind \\
+        \mathcal{C}((x : A) \to_0 B) &=\!\! \ptype &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } B\ptype \\
+        \mathcal{C}((x : A) \to_\omega B) &=\!\! \ptype &\text{if }& A\ptype \text{ and } B\ptype \\
+        \mathcal{C}(\app{(\abs{\lambda_\tau}{x}{A}{t})}{\tau}{a}) &=\!\! \ptype &\text{if }& (A\pkind \text{ and } a\ptype) \text{ or } (A\ptype \text{ and } a\pterm) \\
+            &&&\text{and } t\ptype \text{ and } [x := \ptrunc{\mathcal{C}(a)}]t\ptype \\
+        \mathcal{C}(\app{f}{\tau}{a}) &=\!\! \ptype &\text{if }& (a\ptype \text{ or } a\pterm) \text{ and } f\ptype \\
+        \mathcal{C}(\app{(\abs{\lambda_0}{x}{A}{t})}{0}{a}) &=\!\! \pterm &\text{if }& (A\pkind \text{ and } a\ptype) \text{ or } (A\ptype \text{ and } a\pterm) \\
+            &&&\text{and } t\pterm \text{ and } [x := \ptrunc{\mathcal{C}(a)}]t\pterm \\
+        \mathcal{C}(\app{f}{0}{a}) &=\!\! \pterm &\text{if }& (a\ptype \text{ or } a\pterm) \text{ and } f\pterm \\
+        \mathcal{C}(\app{(\abs{\lambda_\omega}{x}{A}{t})}{\omega}{a}) &=\!\! \pterm &\text{if }& A\ptype \text{ and } a, t\pterm \text{ and } [x := \ptrunc{\mathcal{C}(a)}]t\pterm \\
+        \mathcal{C}(\app{f}{\omega}{a}) &=\!\! \pterm &\text{if }& a\pterm \text{ and } f\pterm
+    \end{align*}
+    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{align*}
+        \mathcal{C}((x : A) \cap B) &=\!\! \ptype &\text{if }& A\ptype \text{ and } B\ptype \\
+        \mathcal{C}([t_1, t_2; A]) &=\!\! \pterm &\text{if }& t_1, t_2\pterm \text{ and } A\ptype \\
+        \mathcal{C}(t.1) &=\!\! \pterm &\text{if }& t\pterm \\
+        \mathcal{C}(t.2) &=\!\! \pterm &\text{if }& t\pterm \\
+        \mathcal{C}(a =_A b) &=\!\! \ptype &\text{if }& a, b\pterm \text{ and } A\ptype \\
+        \mathcal{C}(\prefl(t; A)) &=\!\! \pterm &\text{if }& t\pterm \text{ and } A\ptype \\
+        \mathcal{C}(\vartheta_i(e, a, b; T)) &=\!\! \pterm &\text{if }& e, a, b\pterm \text{ and } T\ptype \\
+        \mathcal{C}(\psi(e, a, b; A, P)) &=\!\! \pterm &\text{if }& e, a, b\pterm \text{ and } A, P\ptype \\
+        \mathcal{C}(\varphi(f, e; A, T)) &=\!\! \pterm &\text{if }& f, e\pterm \text{ and } A, T\ptype \\
+        \mathcal{C}(\delta(e)) &=\!\! \pterm &\text{if }& e\pterm \\
         \mathcal{C}(t) &= \text{undefined} &&\text{otherwise}
     \end{align*}
     \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
 \end{figure}
+

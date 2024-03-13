@@ -1,0 +1,57 @@
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \sema{(x : A) \to_\tau B} &= \abs{\Pi}{x}{\sema{A}}{\sema{B}} \\
+            \sema{(x : A) \to_\omega B} &= \abs{\Pi}{x}{\sema{A}}{\sema{B}} \\
+            \sema{(x : A) \to_0 B} &= \abs{\forall}{x}{\sema{A}}{\sema{B}} \\
+            \sema{\abs{\lambda_\tau}{x}{A}{t}} &= \abs{\lambda}{x}{\sema{A}}{\sema{t}} \\
+            \sema{\abs{\lambda_\omega}{x}{A}{t}} &= \absu{\lambda}{x}{\sema{t}}\\
+            \sema{\abs{\lambda_0}{x}{A}{t}} &= \absu{\Lambda}{x}{\sema{t}}
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \sema{\star} &= \star \\
+            \sema{x_K} &= x \\
+            \sema{\app{f}{\tau}{a}} &= \sema{f}\ \sema{a} \quad&\text{if }& a\pterm \\
+            \sema{\app{f}{\tau}{a}} &= \sema{f} \cdot \sema{a} \quad&\text{if }& a\ptype \\
+            \sema{\app{f}{\omega}{a}} &= \sema{f}\ \sema{a} \\
+            \sema{\app{f}{0}{a}} &= \sema{f}\ \edash \sema{a} \quad&\text{if }& a\pterm \\
+            \sema{\app{f}{0}{a}} &= \sema{f} \cdot \sema{a} \quad&\text{if }& a\ptype
+        \end{align*}
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \sema{(x : A) \cap B} &= \abs{\iota}{x}{\sema{A}}{\sema{B}} \\
+            \sema{[t_1, t_2, A]} &= [\sema{t_1}, \sema{t_2}]
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            \sema{t.1} &= \sema{t}.1 \\
+            \sema{t.2} &= \sema{t}.2
+        \end{align*}
+    \end{minipage}
+    \begin{align*}
+        \sema{a =_A b} &= \cId \cdot \sema{A}\ \sema{a}\ \sema{b} \\
+        \sema{\text{refl}(t; A)} &= \crefl \cdot \sema{A}\ \edash \sema{t} \\
+        \sema{\vartheta_1(e, a, b; (x : A) \cap B)} &= \cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \\
+        \sema{\vartheta_1(e, a, b; T)} &= \sema{e} \\
+        \sema{\vartheta_2(e, a, b; (x : A) \cap B)} &= \cthetatwo \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \\
+        \sema{\vartheta_2(e, a, b; T)} &= \sema{e} \\
+        \sema{\psi(e, a, b; A, P)} &= \csubst  \cdot \sema{A}\ \edash \sema{a}\ \edash \sema{b} \cdot \sema{P}\ \sema{e} \\
+        \sema{\varphi(f, e; A, T)} &= \absu{\lambda}{x}{\varphi\ \text{\c{c}}\ (\sema{e}\ x).1 - (\sema{f}\ x)\ \{ x \} } \\
+        \sema{\delta(e)} &= \cdelta\ \sema{e}
+    \end{align*}
+    \begin{align*}
+        \sema{\varepsilon} &= \varepsilon \\
+        \sema{\Gamma, x : A} &= \sema{\Gamma}, x : \sema{A}
+    \end{align*}
+    \caption{
+        The model.
+    }
+    \label{fig:4:model}
+\end{figure}
+

@@ -103,10 +103,12 @@
 \Rule{\SubstRule}
     {
         \der{\D{1}}{\Gamma \vdash A : \star} \\
-        \der{\D{2}}{\Gamma \vdash e : a =_A b} \\
-        \der{\D{3}}{\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star}
+        \der{\D{2}}{\Gamma \vdash a : A} \\
+        \der{\D{3}}{\Gamma \vdash b : A} \\
+        \der{\D{4}}{\Gamma \vdash e : a =_A b} \\
+        \der{\D{5}}{\Gamma \vdash P : (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star}
     }
-    {\Gamma \vdash \psi(e; A, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a; A)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
+    {\Gamma \vdash \psi(e, a, b; A, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a; A)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
     {Subst}
 
 \Rule{\PromoteFstRule}
@@ -121,10 +123,11 @@
 
 \Rule{\PromoteSndRule}
     {
-        \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
-        \der{\D{2}}{\Gamma \vdash a : (x:A) \cap B} \\
-        \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
-        \der{\D{4}}{\Gamma \vdash e : a.2 =_{[x := a.1]B} b.2} \\
+        \der{\D{1}}{\Gamma \vdash A : \star} \\
+        \der{\D{2}}{\Gamma \vdash B : \star} \\
+        \der{\D{3}}{\Gamma \vdash a : (x:A) \cap B} \\
+        \der{\D{4}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{5}}{\Gamma \vdash e : a.2 =_B b.2} \\
     }
     {\Gamma \vdash \vartheta_2(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
     {PrmSnd}

@@ -1,91 +1,232 @@
 
 \input{figures/02/classify.tex}
 
-\begin{theorem}[Soundness of $\mathcal{C}(-)$]
+Note that the condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it are necessary.
+Take for example $\abs{\lambda_\tau}{x}{\star}{x_\star}$.
+This is not well-typed and hence not a proof, but it also should not be a kind, type, or term because it will prevent preservation of classification.
+If $a\pterm$ then the application will correctly produce a term, but if $a\ptype$ then an application will reduce to a type.
+
+\begin{lemma}
+    The definition of $\mathcal{C}(-)$ is terminating
+\end{lemma}
+\begin{proof}
+    The definition is structural except application cases.
+    In particular, application cases require evaluating $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ for some subexpressions $a$ and $t$.
+    Note that computing $\mathcal{C}(-)$ on subxpressions is of course terminating, but moreover $\ptrunc{-}$ is a constant function returning a constant syntactic form.
+    Thus, the size of $\ptrunc{\mathcal{C}(a)}$ is zero (or one depending on how one wants to define it).
+    Substitution of syntactic forms of zero size do not change the size of the resulting term, therefore $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ is a terminating invocation.
+\end{proof}
+
+\begin{definition}
     \textcolor{white}{\_}
     \begin{enumerate}
-        \item If $\Gamma \vdash t : A$ and $A = \kind$ then $\mathcal{C}(t, \Gamma) = \pkind$
-        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \kind$ then $\mathcal{C}(t, \Gamma) = \ptype$
-        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \star$ then $\mathcal{C}(t, \Gamma) = \pterm$
+        \item $t\pterm$ iff $\mathcal{C}(t) =\!\!\pterm$
+        \item $t\ptype$ iff $\mathcal{C}(t) =\!\!\ptype$
+        \item $t\pkind$ iff $\mathcal{C}(t) =\!\!\pkind$
+    \end{enumerate}
+\end{definition}
+
+\begin{lemma}
+    \label{lem:2:classify_erase}
+    If $\mathcal{C}(t)$ is defined then $\mathcal{C}(t) = \mathcal{C}(|t|)$
+\end{lemma}
+\begin{proof}
+    By induction on $t$.
+    Type-like syntax is homomorphic and thus the equation holds by the IH.
+    Term-like syntax eliminates most of the extra structure leaving behind only another term-like syntax.
+    A few cases are presented to illuminate both situations.
+
+    $\text{Case: }t = a =_A b$
+    \begin{proofcase}
+        Have $|a =_A b| = |a| =_{|A|} |b|$, and because $\mathcal{C}(a =_A b)$ is defined it must be the case that $a, b\pterm$ and $A\ptype$.
+        Applying the IH gives $\mathcal{C}(a) = \mathcal{C}(|a|)$, $\mathcal{C}(b) = \mathcal{C}(|b|)$, and $\mathcal{C}(A) = \mathcal{C}(|A|)$.
+        Thus, $|a| =_{|A|} |b|\ptype$.
+    \end{proofcase}
+
+    $\text{Case: }t = \app{(\abs{\lambda_0}{x}{A}{t})}{0}{a}$
+    \begin{proofcase}
+        Have $|\app{(\abs{\lambda_0}{x}{A}{t})}{0}{a}| = |t|$ and $t\pterm$.
+        Thus, by the IH $|t|\pterm$.
+    \end{proofcase}
+    
+    $\text{Case: }t = \prefl(t; A)$
+    \begin{proofcase}
+        Have $|\prefl(t; A)| = \abs{\lambda}{x}{\diamond}{x}$, and by computation $\abs{\lambda_\omega}{x}{\diamond}{x_\star}\pterm$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:2:classify_subst}
+    If $\mathcal{C}(t)$ and $\mathcal{C}(b)$ are defined then $$\mathcal{C}([x := t]b) = \mathcal{C}([x := \ptrunc{\mathcal{C}(t)}]b)$$
+\end{lemma}
+\begin{proof}
+    If $\mathcal{C}(t)$ is defined then clearly $\mathcal{C}(t) = \ptrunc{\mathcal{C}(t)}$ by definition.
+    The lemma is then shown by a straightforward induction on $b$.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:2:classify_preservation_step}
+    If $\mathcal{C}(s)$ is defined and $s \betared t$ then $\mathcal{C}(s) = \mathcal{C}(t)$
+\end{lemma}
+\begin{proof}
+    By induction on $s \betared t$, note that $\mathcal{C}(-)$ is structural making the inductive cases trivial.
+    The $\vartheta_1$ case is very similar to the $\vartheta_2$ case and thus omitted.
+    Likewise, the first projection case is omitted.
+
+    $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
+    \begin{proofcase}
+        Suppose wlog that $m = \tau$, then $(\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t})\ptype$.
+        Note that $t\ptype$ or $t\pterm$ by unraveling the previous definition.
+        Now $[x := \ptrunc{\mathcal{C}(t)}]b\ptype$.
+        By Lemma~\ref{lem:2:classify_subst} and the above observation: $[x := t]b\ptype$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+    \begin{proofcase}
+        Have $[t_1, t_2; A]\pterm$ and by deconstructing the definition $t_2\pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \app{\psi(\text{refl}(z; Z), a, b; A, P)}{\omega}{t} \betared t \end{array}$
+    \begin{proofcase}
+        Have $(\app{\psi(\text{refl}(z; Z), a, b; A, P)}{\omega}{t})\pterm$ and by deconstruction the definition $t\pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(z; Z), a, b; T) \betared \text{refl}(a; T) \end{array}$
+    \begin{proofcase}
+        Have $\vartheta_2(\text{refl}(z; Z), a, b; T)\pterm$ and by deconstruction the definition $a\pterm$ and $T\ptype$.
+        Thus, $\text{refl}(a; T)\pterm$.
+    \end{proofcase}
+\end{proof}
+
+\begin{lemma}
+    \label{lem:2:classify_preservation}
+    If $\mathcal{C}(s)$ is defined and $s \betastar t$ then $\mathcal{C}(s) = \mathcal{C}(t)$
+\end{lemma}
+\begin{proof}
+    By induction on $s \betastar t$ and Lemma~\ref{lem:2:classify_preservation_step}.
+\end{proof}
+
+\begin{theorem}[Soundness of $\mathcal{C}(-)$]
+    \label{lem:2:classify_soundness}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item If $\Gamma \vdash t : A$ and $A = \kind$ then $t\pkind$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \kind$ then $t\ptype$
+        \item If $\Gamma \vdash t : A$ and $\Gamma \vdash A : \star$ then $t\pterm$
     \end{enumerate}
 \end{theorem}
 \begin{proof}
     By induction on $\Gamma \vdash t : A$.
-    The \textsc{Eq} case is very similar to the \text{Int} case.
-    The \textsc{PrmFst} and \text{PrmFst} cases are very similar to \textsc{Refl}.
-    \textsc{Fst} rule is very similar to the \textsc{Snd} rule.
-    Likewise, \textsc{Cast} is very similar to \textsc{Subst}.
+    The \textsc{Fst} amd \textsc{PrmFst} rules are omitted.
 
     $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
     \begin{proofcase}
-        Have $A = \kind$ and $\mathcal{C}(\star, \Gamma) = \pkind$.
+        Have $\star\pkind$ and $A = \kind$, hence trivial.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Note that $\Gamma \vdash A : K$ because $\vdash \Gamma$ is assumed and $(x_m : A) \in \Gamma$.
-        If $K = \kind$ then by the IH $\mathcal{C}(A, \Gamma) = \pkind$ and thus $\mathcal{C}(x, \Gamma) = \ptype$.
-        If $K = \star$ then by the IH $\mathcal{C}(A, \Gamma) = \ptype$ and thus $\mathcal{C}(x, \Gamma) = \pterm$.
+        If $K = \kind$ then $x_\square\ptype$ and $\Gamma \vdash A : \kind$.
+        Otherwise, $K = \star$ and then $x_\star\pterm$ with $\Gamma \vdash A : \star$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $m = \tau$ then $\pcodom(m) = \kind$ and $\mathcal{C}((x : A) \to_\tau B, \Gamma) = \pkind$.
-        Otherwise, $m = \omega$ or $m = 0$ then $\pcodom(m) = \star$ and $\mathcal{C}((x : A) \to_m B, \Gamma) = \ptype$.
+        Suppose wlog that $m = \tau$, now by the IH applied to $\D{1}$: $A\pkind$ or $A\ptype$.
+        Applying the IH to $\D{2}$ gives $B\pkind$.
+        Thus, $(x : A) \to_\tau B\pkind$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $m = \tau$ then $\pcodom(m) = \kind$, $\Gamma \vdash (x : A) \to_\tau B : \kind$ and $\mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}, \Gamma) = \ptype$.
-        Otherwise, $m = \omega$ or $m = 0$ then $\pcodom(m) = \star$, $\Gamma \vdash (x : A) \to_\tau B : \star$ and $\mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}, \Gamma) = \pterm$.
+        Suppose wlog that $m = \tau$.
+        Applying the IH to $\D{1}$ gives $A\pkind$ or $A\ptype$.
+        Note by $\D{2}$ that $\Gamma, x_\tau : A \vdash B : \kind$.
+        Thus, applying the IH to $\D{2}$ yields $t\ptype$.
+        Hence, $\abs{\lambda_\tau}{x}{A}{t}\ptype$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        By classification applied to $\D{1}$: $\Gamma \vdash (x : A) \to_m B : K$.
-        Suppose $K = \kind$ then $m = \tau$.
-        Deconstruction and the substitution lemma gives $\Gamma \vdash [x := a]B : \kind$ and $\mathcal{C}(\app{f}{\tau}{a}, \Gamma) = \ptype$.
-        Otherwise, $K = \star$ and then $m = \omega$ or $m = 0$.
-        Again, deconstructing and substitution lemma yields $\Gamma \vdash [x := a]B : \star$ and $\mathcal{C}(\app{f}{m}{a}, \Gamma) = \pterm$.
+        Suppose wlog that $m = \tau$.
+        By classification and inversion with $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
+        Deconstructing this judgment yields $\Gamma \vdash A : K$.
+        Applying the IH to $\D{2}$ gives $a\ptype$ or $a\pterm$.
+        Applying the IH to $\D{1}$ yields $f\ptype$.
+        If $f$ is not an abstraction then the proof is done, thus suppose $f = \abs{\lambda}{x}{A}{t}$.
+        Have $A\pkind$ or $A\ptype$, but note that $\Gamma \vdash A : K$ thus the classification of $a$ and $A$ must agree.
+        Moreover, $t\pterm$.
+        Suppose wlog that $a\ptype$ then $\ptrunc{\mathcal{C}(a)} = x_\square$.
+        However, this means that $\Gamma \vdash A : \kind$ and that $\Gamma, x_\tau : A \vdash t : B$.
+        Thus, the occurrences of $x$ in $t$ must be annotated as $x_\square$ otherwise the \textsc{Var} rule for $x$ would fail.
+        Hence, $[x := x_\square]t = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
     \begin{proofcase}
-        Have $\Gamma \vdash \star : \kind$ and $\mathcal{C}((x : A) \cap B, \Gamma) = \ptype$.
+        Applying the IH to $\D{1}$ and $\D{2}$ gives $A, B\ptype$.
+        Hence, $(x : A) \cap B\ptype$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Have $\mathcal{C}([t, s; (x : A) \cap B], \Gamma) = \pterm$ and $\D{1}$ concludes.
+        Deconstructing $\D{1}$ gives $\Gamma \vdash A : \star$ and $\Gamma, x : A \vdash B : \star$.
+        Lemma~\ref{lem:2:subst} gives $\Gamma \vdash [x := t]B : \star$.
+        Using the IH on $\D{1}$, $\D{2}$, and $\D{3}$ yields $(x : A) \cap B\ptype$ and $t, s\pterm$.
+        Thus, $[t, s; (x : A) \cap B]\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
     \begin{proofcase}
-        By classification with $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
-        Note the other possibilities are impossible by inversion.
-        Deconstructing and using the substitution lemma gives $\Gamma \vdash [x := t.1]B : \star$.
-        Finally, $\mathcal{C}(t.2, \Gamma) = \pterm$.
+        By classification and inversion on $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
+        Using the IH on $\D{1}$ gives $t\pterm$.
+        Hence, $t.2\pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \EqualityRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$, $\D{2}$, and $\D{3}$ yields $A\ptype$ and $a, b\pterm$.
+        Hence, $a =_A b\ptype$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
     \begin{proofcase}
-        By classification an \text{eq} must be a type and by computation $\mathcal{C}(\text{refl}(t), \Gamma) = \pterm$.
+        Applying the IH to $\D{1}$ and $\D{2}$ gives $A\ptype$ and $t\pterm$.
+        Hence, $\prefl(t; A)\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
     \begin{proofcase}
-        By classification a $\Pi_\omega$ must be a type and by computation $\mathcal{C}(\psi(e, P), \Gamma) = \pterm$.
+        Classification and inversion on $\D{2}$ gives $\Gamma \vdash a =_A b : \star$.
+        Likewise, $\Gamma \vdash (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star : \kind$.
+        Applying the IH to all subderivations yields $A, P\ptype$ and $a, b, e\pterm$.
+        Hence, $\psi(e, a, b; A, P)\pterm$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    \begin{proofcase}
+        By classification, inversion and the IH used with $\D{4}$: $e\pterm$.
+        The IH applied to $\D{1}$, $\D{2}$ and $\D{3}$ yields $a, b\pterm$ and $(x : A) \cap B\ptype$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        Classification, inversion, and the IH used with $\D{4}$ yields $e\pterm$.
+        Applying the IH to $\D{2}$ and $\D{3}$ gives $f\pterm$ and $T\ptype$.
+        By $\D{1}$ and the definition of $\mathcal{C}$: $A\ptype$.
+        Hence, $\varphi(f, e; A, T)\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
     \begin{proofcase}
-        By a short sequence of rules $\Gamma \vdash (X : \star) \to_0 X : \star$.
-        Finally, $\mathcal{C}(\delta(e), \Gamma) = \pterm$.
+        Classification, inversion, and the IH applied to $\D{1}$ gives $e\pterm$.
+        Hence, $\delta(e)\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
     \begin{proofcase}
-        Classification, $\D{1}$ and $\D{3}$ give $\Gamma \vdash B : K$.
-        Applying the IH to $\D{2}$ concludes the case.
+        Classification, inversion, $\D{1}$ and $\D{3}$ yield $\Gamma \vdash B : K$.
+        Suppose wlog that $K = \star$.
+        Applying the IH to $\D{2}$ gives $t\pterm$.
     \end{proofcase}
 \end{proof}

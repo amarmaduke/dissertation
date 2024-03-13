@@ -5,39 +5,48 @@
         t &::= x_K\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
         \kappa_1 &::= \lambda_m\ |\ \Pi_m\ |\ \cap \\
         \kappa_2 &::=\diamond\ |\ \star\ |\ \kind\ | \bullet_m |\ \text{pair}\ |\ \text{proj}_1\ |\ \text{proj}_2\ |\ \text{eq}\ |\ \text{refl}\ |\ \psi\ |\ \vartheta_1\ |\ \vartheta_2\ |\ \delta\ |\ \varphi  \\
-        m &::= \omega\ |\ 0\ |\ \tau \\
-        &\mathfrak{a}(\diamond) = \mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
-        &\mathfrak{a}(\text{proj}_1) = \mathfrak{a}(\text{proj}_2) = \mathfrak{a}(\text{refl}) = \mathfrak{a}(\delta) = 1 \\
-        &\mathfrak{a}(\bullet_m) = \mathfrak{a}(\psi) = \mathfrak{a}(\varphi) = 2 \\
-        &\mathfrak{a}(\text{pair}) = \mathfrak{a}(\text{eq}) = \mathfrak{a}(\vartheta_1) = \mathfrak{a}(\vartheta_2) = 3
+        m &::= \omega\ |\ 0\ |\ \tau
     \end{align*}
-    \vspace{-.4in}
+    \vspace{-.3in}
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            &\mathfrak{a}(\diamond) = \mathfrak{a}(\star) = \mathfrak{a}(\kind) = 0 \\
+            &\mathfrak{a}(\text{proj}_1) = \mathfrak{a}(\text{proj}_2) = \mathfrak{a}(\delta) = 1 \\
+            &\mathfrak{a}(\bullet_m) = \mathfrak{a}(\text{refl}) = 2
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \begin{align*}
+            &\mathfrak{a}(\text{pair}) = \mathfrak{a}(\text{eq}) = 3 \\
+            &\mathfrak{a}(\vartheta_1) = \mathfrak{a}(\vartheta_2) = \mathfrak{a}(\varphi) = 4 \\
+            &\mathfrak{a}(\psi) = 5
+        \end{align*}
+    \end{minipage}
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
             \diamond &:= \mathfrak{c}(\diamond) \\
             \star &:= \mathfrak{c}(\star) \\
             \kind &:= \mathfrak{c}(\kind) \\
-            \abs{\lambda_m}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda_m, x : t_1, t_2) \\
-            (x : t_1) \to_m t_2 &:= \mathfrak{b}(\Pi_m, x : t_1, t_2) \\
-            (x : t_1) \cap t_2 &:= \mathfrak{b}(\cap, x : t_1, t_2) \\
-            t_1 \bullet_m t_2 &:= \mathfrak{c}(\bullet_m, t_1, t_2) \\
-            \varphi(t_1, t_2) &:= \mathfrak{c}(\varphi, t_1, t_2) \\
-            \psi(t_1, t_2) &:= \mathfrak{c}(\psi, t_1, t_2)
+            \abs{\lambda_m}{x}{A}{t} &:= \mathfrak{b}(\lambda_m, x : A, t) \\
+            (x : A) \to_m B &:= \mathfrak{b}(\Pi_m, x : A, B) \\
+            (x : A) \cap B &:= \mathfrak{b}(\cap, x : A, B) \\
+            f \bullet_m a &:= \mathfrak{c}(\bullet_m, f, a) \\
+            \varphi(f, e; A, T) &:= \mathfrak{c}(\varphi, f, e, A, T) \\
+            \psi(e, a, b; A, P) &:= \mathfrak{c}(\psi, e, a, b, A, P)
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
-            [t_1, t_2; t_3] &:= \mathfrak{c}(\text{pair}, t_1, t_2, t_3) \\
+            [t_1, t_2; A] &:= \mathfrak{c}(\text{pair}, t_1, t_2, A) \\
             t.1 &:= \mathfrak{c}(\text{proj}_1, t) \\
             t.2 &:= \mathfrak{c}(\text{proj}_2, t) \\
-            t_1 =_{t_2} t_3 &:= \mathfrak{c}(\text{eq}, t_1, t_2, t_3) \\
-            \text{refl}(t) &:= \mathfrak{c}(\text{refl}, t) \\
-            \vartheta_1(t_1, t_2, t_3) &:= \mathfrak{c}(\vartheta_1, t_1, t_2, t_3) \\
-            \vartheta_2(t_1, t_2, t_3) &:= \mathfrak{c}(\vartheta_2, t_1, t_2, t_3) \\
-            \delta(t) &:= \mathfrak{c}(\delta, t)
+            a =_{A} b &:= \mathfrak{c}(\text{eq}, a, A, b) \\
+            \text{refl}(t; A) &:= \mathfrak{c}(\text{refl}, t, A) \\
+            \vartheta_1(e, a, b; T) &:= \mathfrak{c}(\vartheta_1, e, a, b, T) \\
+            \vartheta_2(e, a, b; T) &:= \mathfrak{c}(\vartheta_2, e, a, b, T) \\
+            \delta(e) &:= \mathfrak{c}(\delta, e)
         \end{align*}
     \end{minipage}
-    \vspace{-.05in}
     %$$J(t_1, t_2, t_3, t_4, t_5, t_6) := \mathfrak{c}(J, t_1, t_2, t_3, t_4, t_5, t_6)$$
     \caption{Generic syntax, there are three constructors, variables, a generic binder, and a generic non-binder. Each are parameterized with a constant tag to specialize to a particular syntactic consruct. The non-binder constructor has a vector of subterms determined by an arity function computed on tags. Standard syntactic constructors are defined in terms of the generic forms.}
     \label{fig:syntax}

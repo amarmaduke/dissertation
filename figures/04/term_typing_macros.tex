@@ -1,0 +1,151 @@
+
+\Rule{\CedTermVarRule}
+    {
+        \der{\D{1}}{(x : A) \in \Gamma}
+    }
+    {\Gamma \vdash x \infr A}
+    {}
+
+\Rule{\CedTypeTermLambdaRule}
+    {
+        \der{\D{1}}{T \betastar_n \abs{\Pi}{x}{A}{B}}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash t \chck B}
+    }
+    {\Gamma \vdash \absu{\lambda}{x}{t} \chck T}
+    {}
+
+\Rule{\CedKindTermLambdaRule}
+    {
+        \der{\D{1}}{T \betastar_n \abs{\forall}{x}{\kappa}{B}}
+        \\ \der{\D{2}}{\Gamma; x : \kappa \vdash t \chck B}
+    }
+    {\Gamma \vdash \absu{\Lambda}{x}{t} \chck T}
+    {}
+
+\Rule{\CedErasedLambdaRule}
+    {
+        \der{\D{1}}{T \betastar_n \abs{\forall}{x}{A}{B}}
+        \\ \der{\D{2}}{\Gamma; x : A \vdash t \chck B}
+        \\ \der{\D{3}}{x \notin FV(|t|)}
+    }
+    {\Gamma \vdash \absu{\Lambda}{x}{t} \chck T}
+    {}
+
+\Rule{\CedPairRule}
+    {
+        \der{\D{1}}{T \betastar_n \abs{\iota}{x}{A}{B}}
+        \\ \der{\D{2}}{\Gamma \vdash t_1 \chck A}
+        \\ \der{\D{3}}{\Gamma \vdash t_2 \chck [x := \chi\ A - t_1]B}
+        \\ \der{\D{4}}{|t_1| \betaconv_\eta |t_2|}
+    }
+    {\Gamma \vdash [t_1, t_2] \chck T}
+    {}
+
+\Rule{\CedSecondProjectRule}
+    {
+        \der{\D{1}}{\Gamma \vdash t \cinfr \abs{\iota}{x}{A}{B}}
+    }
+    {\Gamma \vdash t.2 \infr [x := t.1]B}
+    {}
+
+\Rule{\CedDeltaRule}
+    {
+        \der{\D{1}}{\Gamma \vdash t \infr A}
+        \\ \der{\D{2}}{A \cong \{ \absu{\lambda}{x\ y}{x} \simeq \absu{\lambda}{x\ y}{y} \}}
+    }
+    {\Gamma \vdash \delta - t \chck T}
+    {}
+
+\Rule{\CedChiRule}
+    {
+        \der{\D{1}}{\Gamma \vdash A \infr \star}
+        \\ \der{\D{2}}{\Gamma \vdash t \chck A}
+    }
+    {\Gamma \vdash \chi\ A - t \infr A}
+    {}
+
+\Rule{\CedCheckRule}
+    {
+        \der{\D{1}}{\Gamma \vdash t \infr A}
+        \\ \der{\D{2}}{A \cong B}
+    }
+    {\Gamma \vdash t \chck B}
+    {}
+
+\Rule{\CedTermTermApplyRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \cinfr \abs{\Pi}{x}{A}{B}}
+        \\ \der{\D{2}}{\Gamma \vdash a \chck A}
+    }
+    {\Gamma \vdash f\ a \chck [x := \chi\ A - a]B}
+    {}
+
+\Rule{\CedTypeTermApplyRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \cinfr \abs{\Pi}{x}{\kappa_1}{B}}
+        \\ \der{\D{2}}{\Gamma \vdash a \infr \kappa_2}
+        \\ \der{\D{3}}{\kappa_1 \cong \kappa_2}
+    }
+    {\Gamma \vdash f \cdot a \chck [x := a]B}
+    {}
+
+\Rule{\CedErasedApplyRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \cinfr \abs{\forall}{x}{A}{B}}
+        \\ \der{\D{2}}{\Gamma \vdash a \chck A}
+    }
+    {\Gamma \vdash f\ \edash a \chck [x := \chi\ A - a]B}
+    {}
+
+\Rule{\CedFirstProjectRule}
+    {
+        \der{\D{1}}{\Gamma \vdash f \cinfr \abs{\iota}{x}{A}{B}}
+    }
+    {\Gamma \vdash t.1 \infr A}
+    {}
+
+\Rule{\CedBetaRule}
+    {
+        \der{\D{1}}{T \betastar_n \{ a \simeq b \}}
+        \\ \der{\D{2}}{FV(t) \subseteq dom(\Gamma)}
+        \\ \der{\D{3}}{|a| \betaconv_\eta |b|}
+    }
+    {\Gamma \vdash \beta \{ t \} \chck T}
+    {}
+
+\Rule{\CedRewriteRule}
+    {
+        \der{\D{1}}{\Gamma \vdash e \cinfr \{ a \simeq b^\prime \}}
+        \\ \der{\D{2}}{FV(b^\prime) \subseteq dom(\Gamma)}
+        \\ \der{\D{3}}{|b^\prime| \betaconv_\eta |b|}
+        \\ \der{\D{4}}{\Gamma \vdash [x := b]A \infr \star}
+        \\ \der{\D{5}}{\Gamma \vdash t \chck [x := b]A }
+        \\ \der{\D{6}}{[x := a]A \cong T}
+    }
+    {\Gamma \vdash \rho\ e\ @\ x\ \langle b \rangle.\ A - t \chck T}
+    {}
+
+\Rule{\CedPhiInferRule}
+    {
+        \der{\D{1}}{e \chck \{ a \simeq b \}}
+        \\ \der{\D{2}}{\Gamma \vdash a \infr A}
+        \\ \der{\D{3}}{FV(b) \subseteq dom(\Gamma)}
+    }
+    {\Gamma \vdash \varphi\ e - a\ \{ b \} \infr A}
+    {}
+
+\Rule{\CedPhiCheckRule}
+    {
+        \der{\D{1}}{e \chck \{ a \simeq b \}}
+        \\ \der{\D{2}}{\Gamma \vdash a \chck A}
+        \\ \der{\D{3}}{FV(b) \subseteq dom(\Gamma)}
+    }
+    {\Gamma \vdash \varphi\ e - a\ \{ b \} \chck A}
+    {}
+
+\Rule{\CedSymRule}
+    {
+        \der{\D{1}}{\Gamma \vdash e \cinfr \{ a \simeq b \}}
+    }
+    {\Gamma \vdash \text{\c{c}}\ e \infr \{ b \simeq a \}}
+    {}

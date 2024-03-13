@@ -1,0 +1,31 @@
+
+\begin{figure}
+    \centering
+    $$\Gamma \vdash t \cinfr A \text{ iff } \exists\ T.\ (\Gamma \vdash t \infr T) \wedge (T \betastar_n A)$$
+    \begin{minipage}{0.5\textwidth}
+        $$\CedTermVarRule$$
+        $$\CedTypeTermLambdaRule$$
+        $$\CedKindTermLambdaRule$$
+        $$\CedErasedLambdaRule$$
+        $$\CedPairRule$$
+        $$\CedSecondProjectRule$$
+        $$\CedDeltaRule$$
+        $$\CedChiRule$$
+        $$\CedSymRule$$
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        $$\CedCheckRule$$
+        $$\CedTermTermApplyRule$$
+        $$\CedTypeTermApplyRule$$
+        $$\CedErasedApplyRule$$
+        $$\CedFirstProjectRule$$
+        $$\CedBetaRule$$
+        $$\CedRewriteRule$$
+        $$\CedPhiInferRule$$
+        $$\CedPhiCheckRule$$
+    \end{minipage}%
+    \caption{
+        TODO
+    }
+    \label{fig:4:term}
+\end{figure}
