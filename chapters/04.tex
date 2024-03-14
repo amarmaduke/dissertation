@@ -15,13 +15,70 @@
 \newcommand{\cdelta}{\textnormal{delta}}
 \newcommand{\cirrel}{\textnormal{irrel}}
 
+The Calculus of Dependent Lambda Eliminations (CDLE) was first introduced in 2017 \cite{stump2017_cdle} as the core system for the in progress Cedille tool.
+At that time, CDLE included complicated machinery for lifting lambda terms to the type-level enabling some large eliminations.
+Over the years, the core system for the Cedille tool was still referred to as CDLE as it evolved culminating in the current core system used in Cedille version 1.1.2 \cite{stump2021_cedillecore}.
+The ideas leading to CDLE, of course, grew over time with work on efficient lambda encodings in total theories \cite{stump2016_encodings}; self-types for encodings \cite{fu2014self}; and experiments involving irrelevance \cite{sjoberg2012irrelevance,sjoberg2011equality}.
+Ultimately, the modern version of CDLE, as presented in this chapter, is the culmination of these efforts.
+
+CDLE is an affirmative answer to the question: is lambda-encoded data enough for a proof assistant?
+While there may be other philosophical objections the system Mendler-style encodings have been shown to be efficient and enable course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
+Moreover, the edition of the $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, yields efficient data reuse via casts \cite{diehl2018_generic_reuse}.
+However, the success of CDLE does not stop there.
+The successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone_recursive_types}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
+
+CDLE commits to impredicative (i.e. parametric in sense of $F^\omega$) quantification.
+With that in mind the well-studied reader may not be surprised at the power and versatility of CDLE.
+However, taming impredicative quantification without losing logical consistency is a difficult task.
+Indeed, this is precisely why several proof assistants have discarded impredicative quantification or relegated it into a universe of propositions.
+A core philosophy behind both Cedille and Cedille2 is to walk a different road and embrace impredicative quantification.
+To achieve that goal a realizability model was developed for CDLE to demonstrate logical consistency \cite{stump2021_cedillecore}.
+This chapter will describe a model of $\ced$ in CDLE to prove consistency.
+
+\section{Calculus of Dependent Lambda Eliminations}
+
+CDLE is described using an intrinsic style where syntax is presented directly with the typing derivation.
+However, erasure it still a crucial part of CDLE which gives it an extrinsic philosophy.
+Whether a system is intrinsic or extrinsic is perhaps not a terribly interesting distinction.
+Technically, $\ced$ is described extrinsically because syntax is defined independently of the typing relation, but there is no essential reason for this choice.
+Moreover, any intrinsic system necessarily admits a projection of its raw syntax, which would enable an extrinsic presentation.
+It is better to think about these details via their philosophical import.
+An intrinsic system wishes to say that raw syntax has no meaning, or at the very least no meaning that anyone should care about.
+Alternatively, an extrinsic system wishes to say that types are in some sense only annotations, and it is the raw syntax that is primary.
+
 \input{figures/04/infer1.tex}
 \input{figures/04/infer2.tex}
+
+As one might guess these philosophical positions are not entirely black and white.
+For example, Pfenning demonstrates how both methods can be combined \cite{pfenning2008church}.
+Cedille has been historically described as an extrinsic system.
+With Cedille2 it is more correct to be called a \textit{combined} system, both intrinsic and extrinsic.
+That is, a \textit{proof} has no meaning as just syntax, but an \textit{object} discards the extra information as mere annotations.
+
+The kind formation rules as presented in Figure~\ref{fig:4:kind}, type formation rules in Figure~\ref{fig:4:type}, and term annotation rules in Figure~\ref{fig:4:term}.
+Lowercase letters are used to refer to metavariables of terms, uppercase letters for metavariables of types, and variations of $\kappa$ for metavariables of kinds.
+Call-by-name reduction of the $\lambda$-calculus fragment is used in the rules for types and is written $A \betared_n B$.
+The purpose of this relation is only to reveal a constructor for a type, thus weak-head normal form is sufficient.
+Conversion for types is presented in Figure~\ref{fig:4:type_cong} and kind conversion in Figure~\ref{fig:4:kind_cong}.
+Note that these conversion relations correspond to $\beta$-conversion for types and kinds.
+Finally, erasure of terms (and only terms) is presented in Figure~\ref{fig:4:erasure}.
+Erasure is only meaningful with terms in CDLE unlike in $\ced$ where it is defined for all raw syntax.
+
+The presentation in this work deviates from other descriptions of CDLE by adding a symmetry rule for equality (\c{c}).
+This rule is admissible using the rewrite rule ($\rho$), but it is convenient to have available for the model.
+Otherwise, the presentation is identical to the one by Stump and Jenkins \cite{stump2021_cedillecore}.
+
 \input{figures/04/cong.tex}
 \input{figures/04/erasure.tex}
 
-\input{figures/04/model.tex}
-
+A few useful facts about CDLE are needed before defining the model.
+First, some helpful terms are defined below.
+Note that an annotation rule ($\chi$) is added to some terms in order to guarantee that each definition always infers a type, as opposed to checks against a type.
+The $\cBool$ definition is a standard Church encoding boolean type, with its two associated values ($\ctt$ and $\cff$).
+An identity type, $\cId$, is defined as a desired output of the model for the equality of $\ced$.
+Indeed, CDLEs equality is very flexible in comparison to $\ced$.
+Not only is it untyped, but it allows for any well-scoped term to serve as the erasure (or object) of a reflexivity proof.
+The $\cirrel$ definition will not be used in the model and is instead used after to demonstrate that an irrelevance axiom may be added to $\ced$ while still preserving consistency.
 \begin{align*}
     \cBool &:= \abs{\forall}{X}{\star}{X \to X \to X} \\
     \ctt &:= \chi\ \cBool\ - \absu{\Lambda}{X}{
@@ -63,6 +120,8 @@
             \\& [\beta\{ \absu{\lambda}{x}{x} \}, \absu{\Lambda}{X}{\absu{\lambda}{x}{x}}]]
     }
 \end{align*}
+Aside from the previous terms it is also useful to have terms representing the target output of the substitution and promotion rules of $\ced$.
+All of these terms are constructed to obtain specific erasures.
 \begin{align*}
     \cthetaone &:= \chi\ 
         \abs{\forall}{A}{\star}{
@@ -112,7 +171,9 @@
             }
     }
 \end{align*}
-
+The erasure of each term is designed to match with the erasure of the associated construct in $\ced$.
+While this might not be strictly necessary to obtain a model of $\ced$ inside CDLE it makes the process easier.
+Moreover, carefully crafting terms with specific erasures is a trivial matter in CDLE because of the $\varphi$ rule.
 \begin{align*}
     |\ctt| &= \absu{\lambda}{x\ y}{x} \\
     |\cff| &= \absu{\lambda}{x\ y}{y} \\
@@ -123,7 +184,10 @@
     |\cthetatwo \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\
     |\csubst \cdot A\ \edash a\ \edash b \cdot P\ e| &= |e|
 \end{align*}
-
+Finally, each of these terms is shown to infer the desired type.
+Note that for syntax that is type-like, such as $\cId$ and $\cBool$, there is no type-checking rule, only an inference judgment.
+Moreover, the $\chi$ rule only works with term-like syntax.
+Thus, for these definitions more care is needed to infer the correct kind, but because the definitions are simple there is no real difficulty.
 \begin{lemma}
     \label{lem:4:c1_stuff}
     \textcolor{white}{\_}
@@ -152,9 +216,9 @@
             $
         }
         \item {
-            $
+            $\vdash_{\oldced} \cthetaone \infr
             \begin{aligned}
-                \vdash_{\oldced} \cthetaone &\infr \abs{\forall}{A}{\star}{
+                 &\abs{\forall}{A}{\star}{
                     \abs{\forall}{B}{A \to \star}{
                         \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B\ x})}{
                             \\ &\cId \cdot A\ a.1\ b.1 \to \cId \cdot (\abs{\iota}{x}{A}{B\ x})\ a\ b
@@ -165,9 +229,9 @@
             $
         }
         \item {
-            $
+            $\vdash_{\oldced} \cthetatwo \infr 
             \begin{aligned}
-                \vdash_{\oldced} \cthetatwo &\infr \abs{\forall}{A\ B}{\star}{
+                &\abs{\forall}{A\ B}{\star}{
                     \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
                         \\ &\cId \cdot A\ a.2\ b.2 \to \cId \cdot (\abs{\iota}{x}{A}{B})\ a\ b
                     }
@@ -176,9 +240,9 @@
             $
         }
         \item {
-            $
+            $\vdash_{\oldced} \csubst \infr 
             \begin{aligned}
-                \vdash_{\oldced} \csubst &\infr \abs{\forall}{A}{\star}{
+                &\abs{\forall}{A}{\star}{
                     \abs{\forall}{a\ b}{A}{
                         \abs{\forall}{P}{ (\abs{\Pi}{y}{A}{\cId \cdot A\ a\ y \to \star}) }{
                             \\ &\abs{\Pi}{e}{\cId \cdot A\ a\ b}{
@@ -193,18 +257,22 @@
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-    Straightforward by applying a short sequence of $c_1$ rules in each case.
+    Straightforward by applying a short sequence of $\oldced$ rules in each case.
     These inferences are trivially formalized in the Cedille tool.
 \end{proof}
 
+A small collection of additional lemmas about CDLE is needed to prove soundness of the model and presented now.
+These lemmas are standard, weakening, symmetry of conversion, and transitivity of conversion.
+The only real difficulty is the bidirectional presentation which requires stating the desired lemma for each variation of judgment.
+
 \begin{lemma}
     \label{lem:4:c1_weakening}
-    Suppose $\Gamma \vdash_{c_1} T \infr K$ and $x$ fresh
+    Suppose $\Gamma \vdash_{\oldced} T \infr K$ and $x$ fresh
     \begin{enumerate}
-        \item If $t$ is a kind and $\Gamma, \Delta \vdash_{c_1} t$ then $\Gamma, x : T, \Delta \vdash_{c_1} t$
-        \item If $t$ is a type and $\Gamma, \Delta \vdash_{c_1} t \infr K$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \infr K$
-        \item If $t$ is a term and $\Gamma, \Delta \vdash_{c_1} t \infr A$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \infr A$
-        \item If $t$ is a term and $\Gamma, \Delta \vdash_{c_1} t \chck A$ then $\Gamma, x : T, \Delta \vdash_{c_1} t \chck A$
+        \item If $t$ is a kind and $\Gamma, \Delta \vdash_{\oldced} t$ then $\Gamma, x : T, \Delta \vdash_{\oldced} t$
+        \item If $t$ is a type and $\Gamma, \Delta \vdash_{\oldced} t \infr K$ then $\Gamma, x : T, \Delta \vdash_{\oldced} t \infr K$
+        \item If $t$ is a term and $\Gamma, \Delta \vdash_{\oldced} t \infr A$ then $\Gamma, x : T, \Delta \vdash_{\oldced} t \infr A$
+        \item If $t$ is a term and $\Gamma, \Delta \vdash_{\oldced} t \chck A$ then $\Gamma, x : T, \Delta \vdash_{\oldced} t \chck A$
     \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -245,13 +313,26 @@
     The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
 \end{proof}
 
+\section{Model}
+
+Figure~\ref{fig:4:model} describes the model of $\ced$ in CDLE.
+Note that this model is straightforward: abstractions to abstractions, applications to applications, pairs to pairs, etc.
+The complicated part is the equality type and its constructs, however all the necessary work to find suitable terms for these constructs was already completed above.
+There is one hiccup involving the $\vartheta_i$ constructs.
+In order to have a fully applied $\cthetaone$ it must be the case that the annotation for $\vartheta_1$ is an intersection type.
+For proofs this will always be the case, but for arbitrary syntax it is not necessarily true.
+To work around this a catch-all case is also provided where the model only interprets the equality proof $e$.
+This choice is largely arbitrary, but it is picked to make sure that one critical property is preserved: erasure.
+
+\input{figures/04/model.tex}
+
 \begin{lemma}
     \label{lem:4:sema_erasure}
     If $t\pterm$ then $\sema{|t|} = |\sema{t}|$
 \end{lemma}
 \begin{proof}
     By induction on $t$ and inversion on $t\pterm$.
-    The case of first projection is omitted.
+    The case of first projection and first equality promotion cases are omitted.
 
     $\text{Case: }t = x_\star$
     \begin{proofcase}
@@ -301,9 +382,11 @@
         Have $\sema{|\prefl(a; A)|} = \sema{\abs{\lambda}{x}{\diamond}{x_\star}} = \absu{\lambda}{x}{x}$ and $|\sema{\prefl(a; A)}| = |\crefl \cdot \sema{A}\ \edash \sema{a}| = \absu{\lambda}{x}{x}$.
     \end{proofcase}
 
-    $\text{Case: }t = \vartheta_i(e, a, b; T)$
+    $\text{Case: }t = \vartheta_2(e, a, b; T)$
     \begin{proofcase}
-        Have $\sema{|\vartheta_i(e, a, b; T)|} = \sema{|e|}$ and $|\sema{\vartheta_i(e, a, b; T)}| = |\sema{e}|$.
+        Have $\sema{|\vartheta_2(e, a, b; T)|} = \sema{|e|}$.
+        Suppose $T = (x : A) \cap B$ then $|\sema{\vartheta_2(e, a, b; (x : A) \cap B)}| = |\cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e}| = |\sema{e}|$.
+        Otherwise, $|\sema{\vartheta_2(e, a, b; T)}| = |\sema{e}|$.
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
     \end{proofcase}
 
@@ -324,6 +407,9 @@
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
     \end{proofcase}
 \end{proof}
+
+To obtain soundness we first need to know that conversion is preserved for the terms, types, and kinds.
+Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involving reduction can be precise.
 
 \begin{lemma}
     \label{lem:4:sema_subst}
@@ -430,7 +516,7 @@
 
     \noindent \textbf{1.}
     By induction on $A$ and inversion on $A$ being a value and $A \equiv B$ (hence $B$ must match $A$).
-    Conversion in $c_1$ is structural over weak-head normal forms and in this case $A$ and $B$ must be weak-head normal.
+    Conversion in $\oldced$ is structural over weak-head normal forms and in this case $A$ and $B$ must be weak-head normal.
     Thus, a combination of \textit{1.}, \textit{2.}, \textit{3.}, and Lemma~\ref{lem:4:sema_term_conv} on subexpressions in each case is sufficient.
 
     \noindent \textbf{2.}
@@ -441,9 +527,8 @@
 
     \noindent \textbf{3.}
     By induction on $A$ and inversion on $A \equiv B$.
-    Again, conversion of kinds is structural in $c_1$.
+    Again, conversion of kinds is structural in $\oldced$.
     Thus, a combination of \textit{2.} and \textit{3.} on subexpressions in each case is sufficient.
-
 \end{proof}
 
 \begin{theorem}[Soundness of $\sema{-}$]
@@ -739,3 +824,34 @@
 \begin{corollary}[Equational Consistency]
     $\neg (\vdash_{c_2} t : \ptt =_{\pBool} \pff)$
 \end{corollary}
+
+\section{Irrelevance Axiom}
+
+The $\cirrel$ definition communicates that the axiom $i : (A : \star) \to_0 (a\ b : A) \to_0 a =_A b \to_0 a =_A b$ with the erasure $|i| = \absu{\lambda}{x}{x}$ may be added to $\ced$ without breaking consistency.
+Indeed, this axiom would not introduce any proof reduction steps and thus proofs would still normalize.
+The model could then be trivially extended to interpret $i$ as $\sema{i} = \cirrel$.
+This irrelevance axiom enables an unrestricted $\varphi$ rule:
+
+\begin{minipage}{0.5\textwidth}
+    \begin{align*}
+        \text{cast}& : (A : \star) \to_0 (B : A_\square \to_\tau \star) \\
+            &\to_0 (f : A_\square \to_\omega (x : A_\square) \cap \app{B_\square}{\tau}{x_\star}) \\
+            &\to_0 (e : (a : A_\square) \to_\omega a_\star =_{A_\square} (\app{f_\star}{\omega}{a_\star}).1) \\
+            &\to_0 A_\square \to_\omega (x : A_\square) \cap \app{B_\square}{\tau}{x_\star}
+    \end{align*}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+    \begin{align*}
+        \text{cast}&\ A\ B\ f\ e = \varphi(f, \\
+            &\abs{\lambda}{a}{A}{ \\
+                &\app{\appthr{i}{0}{A}{0}{a}{0}{(\app{f}{\omega}{a_\star}).1}}{0}{(\app{e}{\omega}{a_\star})}
+            }; \\
+            &A, A \to_\omega (x : A) \cap \app{B}{\tau}{x_\star})
+    \end{align*}
+\end{minipage}
+\vspace{.15in}
+
+Note that cast is well-typed because the erasure of $i$ discards all the used subexpressions: $A$, $B$, $f$, and $e$.
+Thus, $FV(|\app{\appthr{i}{0}{A}{0}{a}{0}{(\app{f}{\omega}{a_\star}).1}}{0}{(\app{e}{\omega}{a_\star})}|)$ is empty.
+However, because this axiom side-steps the free variable condition it can be used to produce proofs whose objects are not normalizing.
+Indeed, as Abel and Coquand remark: normalization is lost when irrelevance of equality evidence is combined with impredicative quantification \cite{abel2020}.
