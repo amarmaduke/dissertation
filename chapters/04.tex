@@ -122,6 +122,7 @@ The $\cirrel$ definition will not be used in the model and is instead used after
 \end{align*}
 Aside from the previous terms it is also useful to have terms representing the target output of the substitution and promotion rules of $\ced$.
 All of these terms are constructed to obtain specific erasures.
+
 \begin{align*}
     \cthetaone &:= \chi\ 
         \abs{\forall}{A}{\star}{
@@ -138,7 +139,8 @@ All of these terms are constructed to obtain specific erasures.
                 \\ &\{ e \} 
             }
         }
-    \\
+\end{align*}
+\begin{align*}
     \cthetatwo &:= \chi\
         \abs{\forall}{A\ B}{\star}{
             \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
@@ -152,7 +154,8 @@ All of these terms are constructed to obtain specific erasures.
                 \\ &\{ e \} 
             }
         }
-    \\
+\end{align*}
+\begin{align*}
     \csubst &:= \chi\ 
         \abs{\forall}{A}{\star}{
             \abs{\forall}{a\ b}{A}{
@@ -812,6 +815,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 \end{proof}
 
 \begin{theorem}[Logical Consistency]
+    \label{lem:4:logical_consistency}
     $\neg (\vdash_{c_2} t : (X : \star) \to_0 X_\square)$
 \end{theorem}
 \begin{proof}
@@ -822,6 +826,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 \end{proof}
 
 \begin{corollary}[Equational Consistency]
+    \label{lem:4:eq_consistency}
     $\neg (\vdash_{c_2} t : \ptt =_{\pBool} \pff)$
 \end{corollary}
 
