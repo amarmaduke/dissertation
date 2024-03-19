@@ -1,15 +1,34 @@
 \chapter{Object Normalization}
 
+Consistency guarantees that the logic and equational theory of $\ced$ is non-trivial.
+Proof normalization guarantees that, at least, inference for kinds and types is decidable.
+Neither of these properties are strong enough on their own to guarantee decidability of type checking.
+To obtain decidability of type checking it must be the case that objects are normalizing.
+However, the technique described below depends on both proof normalization and consistency.
+While this is not the only possible way it is suggestive how difficult a property object normalization is to prove.
+
+The technique for proving object normalization proceeds in two parts.
+First, a notion of strict syntax is defined where $\varphi$ forms are eliminated.
+Proofs will yield strict proofs and utilizing both proof normalization and consistency one can show that proof reduction bounds strict object reduction.
+Hence, strict objects will be strongly normalizing.
+Second, a notion of well-typed observational equivalence where the only observation of interest is divergence of objects is defined.
+Then it is demonstrated that proofs are observational equivalent to their strict version.
+Thus, because strict objects are normalizing, it must be the case that objects are normalizing.
+
 \section{Strict Syntax}
 
-% A $\varphi_i$-proof is a proof that allows $i$ nested $\varphi$ syntactic constructs.
-% For example, a $\varphi_0$-proof allows no $\varphi$ subterms, a $\varphi_1$-proof allows $\varphi$ subterms but no nested $\varphi$ subterms, and a $\varphi_2$-proof allows $\varphi_1$ subterms.
-% Defined inductively, a $\varphi_0$-proof is a proof with no $\varphi$ syntactic constructs and a $\varphi_{i+1}$-proof is a proof with $\varphi_i$-proof subterms.
-
-% For any $\varphi_i$-proof $p$ there is a strictification $s(p)$ that is a $\varphi_0$-proof in Figure~\ref{fig:strictification}.
+An important observation to make about $\varphi$ forms is that they do not expand the logical theory.
+Meaning, it is not possible to prove \textit{new} propositions or inhabit \textit{new} types.
+Instead, the $\varphi$ form is meant primarily as a means of obtaining efficient objects for an already proven property.
+To that end a strict variation of syntax is easily defined on arbitrary syntax by replacing any $\varphi$ form with its internal proof witness.
+Figure~\ref{fig:strict} describes strictification of syntax.
+Notice that $\mathfrak{s}(t)$ is structural on all syntax forms \textit{except} the $\varphi$ form where everything but the internal proof witness is discarded.
 
 \input{figures/05/strict.tex}
 
+An immediate consequence of this definition is that strict proofs remain proofs of the original type.
+Note, however, that the type itself is not made strict.
+Strictification of the type would not hold because $\varphi$ constructs inside the type may be compared via the conversion relation and strict objects are not equal to the corresponding object.
 \begin{lemma}
     \label{lem:5:strict_proof}
     If $\Gamma \vdash t : A$ then $\Gamma \vdash \mathfrak{s}(t) : A$
@@ -22,7 +41,8 @@
         Immediate by IH applied to $\D{3}$.
     \end{proofcase}
 \end{proof}
-
+Of course, if strict syntax reduces, then the resulting syntax must be strict.
+This is an obvious consequence of the fact that reduction never introduces $\varphi$ forms.
 \begin{lemma}
     \label{lem:5:strict_preservation}
     If $\mathfrak{s}(s) \betared t$ then $t = \mathfrak{s}(t)$
@@ -32,9 +52,14 @@
     Reduction cannot produce $\varphi$ constructs, thus $t$ necessarily does not have $\varphi$ as a subexpression.
     Hence, $\mathfrak{s}(t) = t$.
 \end{proof}
-
-Note that the below lemma hinges on both proof normalization and equational consistency
-
+The core observation is that proof reduction in strict proofs upper-bounds reduction in strict objects.
+Thus, if a strict object steps, and note that this must be a $\beta$-step, then there is some strict proof such that the original strict proof reduces to it and the erasures match.
+There could be many more reductions in the strict proof because syntax forms for equality and intersections are all mostly erased.
+However, none of these forms will block a $\beta$-redex because the proof is well-typed.
+Note that this property hinges on both proof normalization and equational consistency.
+Proof normalization is used to eliminate any extraneous redexes that would otherwise be erased.
+Consistency is used to eliminate the $\delta$ case as it could theoretically generate a $\beta$-redex after erasure if the theory was not consistent.
+Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this is impossible because the syntax under consideration is strict.
 \begin{lemma}
     \label{lem:5:strict_erase_red_step}
     If $\Gamma \vdash s : A$ and $|\mathfrak{s}(s)| \betared t$ then $\exists\ t^\prime$ such that $\mathfrak{s}(s) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$
@@ -144,7 +169,7 @@ Note that the below lemma hinges on both proof normalization and equational cons
 
 \end{proof}
 
-\begin{theorem}
+\begin{theorem}[Strict Object Normalization]
     \label{lem:5:strict_object_sn}
     If $\Gamma \vdash t : A$ then $|\mathfrak{s}(t)|$ is strongly normalizing
 \end{theorem}
@@ -162,16 +187,54 @@ Note that the below lemma hinges on both proof normalization and equational cons
     Therefore, $|\mathfrak{s}(t)|$ is strongly normalizing.
 \end{proof}
 
+Strong normalization of strict objects leads to an interesting observation.
+Recall the definition of conversion: $a \equiv b$ if and only if $\exists\ u, v$ such that $a \betastar u$, $b \betastar v$ and $|u| \betaconv |v|$.
+An observant reader may wonder why reduction is allowed after two candidates objects, $|u|$ and $|v|$ are obtained.
+In other words, why not merely compare for equality: $|u| = |v|$.
+The answer is because $\varphi$ may generate $\beta$-redexes after erasure, and it turns out that it is the only syntax form for which this is possible.
+Thus, if $\varphi$ was removed from the system then conversion \textit{could} be defined using equality of objects instead of reduction convertibility of objects.
+The $\varphi$ form is unique amongst all the other syntax.
+It is both not responsible for any new properties, but also responsible for the only interesting reduction in objects.
+
+Another question that the reader may have is why not represent the reduction of $\varphi$ in the proof system.
+The answer is that there is no obvious way to make the reduction well-typed, thus preservation would be lost.
+Indeed, the proof witness of a $\varphi$ form, $f : (a : A) \to (x : A) \cap B$, is allowed to be as complicated as required to produce a subtype, $(x : A) \cap B$, from the corresponding supertype, $A$.
+However, the object for the $\varphi$ is merely the identity $\lambda$-term ($\abs{\lambda}{x}{\diamond}{x}$).
+To make it possible to type this term in the proof system some notion of subtyping would have to be added directly into the rules.
+It is not immediately clear how to make this move without producing a radically different system.
+Yet, it does hint that the $\varphi$ rule is, in some sense, expanding a semantic subtyping relation that is later realized internally via a notion of casts.
+Indeed, it may be fruitful to view the proof-object distinction as being fundamentally related to subtyping.
+
 \section{Observational Equivalence of Objects}
 
+Unfortunately, the structural relationship between strict objects and regular objects is not easy to exploit, if it can used at all.
+Observational equivalence gives a method of relating regular objects to strict objects.
+Objects being the concept of interest means that contexts need to be well-typed because an object is only the erasure of a proof.
+To make contexts the inductive structure of syntax is reused with a unique fresh free variable, labelled $h$, that represents a hole.
+The variable is unique meaning it occurs only once in the given syntax.
+Context structure could be defined inductively, but this methodology allows reuse of erasure and substitution.
 \begin{definition}
     A \textbf{context} $\gamma : (\Gamma, A) \to (\Delta, B)$ is a syntactic form with a unique free variable $h$ representing a hole such that if $\Gamma \vdash t : A$ then $\Delta \vdash [h := t]\gamma : B$.
 \end{definition}
+
+Observational equivalence is then defined to be equivalence of divergence of the associated objects substituted for $h$ in the given context.
+There are several possible ways to defined observational equivalence including the choice of what counts as an observation.
+For the purposes of this chapter divergence is the only observation of interest.
 
 \begin{definition}
     The syntax $a$ and $b$ are \textbf{observationally equivalent} at $A$ in $\Gamma$ (written: $\Gamma \vdash a \approx_A b$) iff
     for any context $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ with unique fresh variable $h$: $|[h := a]\gamma|$ normalizes iff $|[h := b]\gamma|$ normalizes
 \end{definition}
+
+It is easy to see that observational equivalence forms an equivalence relation relative to the parameters $\Gamma$ and $A$.
+
+\begin{lemma}
+    \label{lem:5:obs_refl}
+    $\Gamma \vdash a \approx_A a$
+\end{lemma}
+\begin{proof}
+    Immediate by definition.
+\end{proof}
 
 \begin{lemma}
     \label{lem:5:obs_sym}
@@ -195,6 +258,8 @@ Note that the below lemma hinges on both proof normalization and equational cons
     Hence, $|[h := a]\gamma|$ normalizes if and only if $|[h := c]\gamma|$ normalizes.
 \end{proof}
 
+Moreover, because observational equivalence only tracks divergence it must be the case that if an object is observationally equivalent to a strongly normalizing object, then it is also strongly normalizing.
+
 \begin{lemma}
     \label{lem:5:obs_implies_sn}
     If $\Gamma \vdash a : A$, $\Gamma \vdash b : A$, $|a|$ is strongly normalizing, and $\Gamma \vdash a \approx_A b$ then $|b|$ is strongly normalizing
@@ -203,6 +268,15 @@ Note that the below lemma hinges on both proof normalization and equational cons
     Immediate by definition of observational equivalence, $|b|$ must be normalizing in any possible context $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$.
     Thus, $|b|$ must be strongly normalizing.
 \end{proof}
+
+Knowing that $\varphi$ objects behave like the identity function is critical.
+Note that the condition $FV(|e|)$ being empty is necessary to ensure the below lemma holds.
+If this condition where dropped than $\app{e}{\omega}{a}$ for when $a$ is a value would say nothing about the reduction behavior of $f$.
+This is because $e$ could be a free variable in $\Gamma$ and thus the equational proof it is evidence for would not be ``actionable'' in some sense.
+It is not clear if this condition is too strict, as one could imagine a more refined or semantic condition that allows rewriting in contexts that are in some sense ordered.
+To that point, the free variable condition is communicating that the computational nature of $|e|$ cannot depend on any hypothetical evidence.
+Thus, the computational nature of $|e|$ is a sort of ground truth.
+Regardless, the condition is one that works and that is not too onerous as to prevent constructions of interest.
 
 \begin{lemma}
     \label{lem:5:phi_obs_id}
@@ -220,18 +294,18 @@ Note that the below lemma hinges on both proof normalization and equational cons
 \begin{proof}
     Suppose $a \betastar a^\prime$ where $FV(|a^\prime|)$ is empty then $\app{e}{\omega}{a}$ must reduce to a value because $FV(|e|)$ is empty.
     Note that theoretically the definition of $e$ could use $\varphi$, but because $e$ is erased and Lemma~\ref{lem:5:strict_proof} shows that $\varphi$ does not enable any new proofs it can be safely assumed that $e = \mathfrak{s}(e)$.
-    In other words, any usage of $\varphi$ that contains a $\varphi$ in $e$ can always be transformed into a usage that does contain $\varphi$ in the definition of $e$ without affecting either the typing relation or object reduction.
+    In other words, any usage of $\varphi$ that contains a $\varphi$ in $e$ can always be transformed into a usage that does not contain $\varphi$ in the definition of $e$ without affecting either the typing relation or object reduction.
     Hence, $\app{e}{\omega}{a} \betastar \prefl(z; Z)$ where $|z|$ is in normal form, $z \equiv a^\prime$, and $z \equiv (\app{f}{\omega}{a^\prime}).1$.
     Thus, $\app{|f|}{\omega}{|a^\prime|} \betastar |z|$ and $|a^\prime| \betastar |z|$.
     Meaning both are normalizing and hence observationally equivalent.
     \\ \\
     Suppose $a$ is neutral, i.e. $FV(|a|)$ is not empty.
-    The same argument as above holds but $\app{e}{\omega}{a}$ does not necessarily reduce to a value because $a$ is neutral.
+    In this case $\app{e}{\omega}{a}$ does not necessarily reduce to a value because $a$ is neutral.
     Let $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ be a context with hole variable $h$.
     It is possible that $a$ reduces to a value after substitution into $h$.
     However, this falls into the purview of the above case, thus suppose wlog that $a$ remains neutral after substitution.
     Let $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ be a context with hole variable $h$.
-    If $|[h := a]\gamma|$ diverges thane clearly $|[h := \app{f}{\omega}{a}.1]\gamma|$ diverges as well.
+    If $|[h := a]\gamma|$ diverges then clearly $|[h := \app{f}{\omega}{a}.1]\gamma|$ diverges as well.
     Thus, suppose $|[h := a]\gamma|$ normalizes.
     There are two possibilities to consider:
     \begin{enumerate}
@@ -253,6 +327,11 @@ Note that the below lemma hinges on both proof normalization and equational cons
         }
     \end{enumerate}
 \end{proof}
+
+The key theorem is that regular proofs are observationally equivalent to their strictification.
+The only way this theorem could fail is because of $\varphi$ subexpressions.
+However, Lemma~\ref{lem:5:phi_obs_id} conveys that $\varphi$ proofs are observationally equivalent to an identity function.
+Indeed, the previous lemma does all the heavy lifting in making this theorem go through.
 
 \begin{theorem}
     \label{lem:5:strict_obs_regular}
@@ -362,7 +441,7 @@ Note that the below lemma hinges on both proof normalization and equational cons
     \end{proofcase}
 \end{proof}
 
-\begin{theorem}
+\begin{theorem}[Object Normalization]
     \label{lem:5:object_normalization}
     If $\Gamma \vdash t : A$ then $|t|$ is strongly normalizing
 \end{theorem}
