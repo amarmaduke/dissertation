@@ -4,7 +4,7 @@
 
 The inference judgment, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
 As stated previously, the erasure of a proof is an \textit{object}.
-Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ it's object.
+Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ its object.
 The judgment follows a standard PTS style, but the rules are carefully chosen so that an inference algorithm is possible.
 Judgments of the form $\Gamma \vdash t : A$ should be read $t$ infers $A$ in $\Gamma$.
 
@@ -26,7 +26,7 @@ Instead of being part of either a type or kind universe, the respective universe
 If the mode is $\tau$ then the domain can be either a type or a kind, but the codomain must be a kind.
 If the mode is $\omega$ then the domain and codomain both must be types.
 Otherwise, the mode is $0$ and the domain may be either a type or kind, but the codomain must be a type.
-Note that this means polymorphic functions of data are not allowed to use their type argument computational in the object of a proof.
+Note that this means polymorphic functions of data are not allowed to use their type argument computationally in the object of a proof.
 
 $\LambdaRule$ The function formation rule is again similar to the rule for CC.
 Unlike the standard PTS CC rule, the codomain of the inferred function type is again restricted to $\pcodom(m)$.
@@ -58,33 +58,31 @@ $\ReflRule$ The reflexivity rule is the only value for equality types.
 It is the standard inductive formulation of the equality type.
 
 $\SubstRule$ The substitution rule is a dependent variation of the Leibniz's Law.
-It is a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
+It is also a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
 
-$\PromoteFstRule$ The first and second promotion rules enable equational reasoning about intersections.
+$\PromoteRule$ The promotion rule enables equational reasoning about intersections.
 Indeed, because intersections are not inductive it is difficult to reason about them without some auxiliary rule.
-The first promotion rule in particular states that two elements of an intersection are equal if their first projections are equal.
-Second projection promotion is very similar except it equates two elements of an intersection if their second projections are equal.
+It states that two elements of an intersection are equal if their first projections are equal.
+Note that this rule is about dependent intersections.
+A non-dependent version involving the second projection is internally derivable in the system.
 
-$\CastRule$ The cast rule asserts that a new function $\varphi(f, e)$ exists at the associate type if there is another function, $f$, that is extensionally the identity in an erased context.
-The requirement on $e$ is of particular interest to understand.
-In general, it states only that $f$ is extensionally the identity function.
-However, the additional restriction that $FV(|e|)$ is empty means that variables from the context may not appear in the object of $e$.
-Thus, computationally, $e$ cannot become stuck at the fault of the context.
-Of course, the input to $e$ may still be a variable and thus prevent reduction.
+$\CastRule$ The cast rule is a typed version of the original cast rule of Cedille.
+Note that this means this rule enables non-termination.
+In Chapter~\ref{chap:5} it is shown that this rule is the only source of non-termination and a precise condition for when it may be used in a terminating way is devised.
+The cast rule is critical to the spirit of Cedille.
+Thus, simply dropping it to obtain a strongly normalizing system is not really a sufficient choice as it throws too much away in its loss.
+An observant reader may notice that there are some redundant type annotations in the rule.
+These annotations are present merely to simplify models developed in Chapter~\ref{chap:3}.
+A more concise version of the system with fewer redundancies is developed in Chapter~\ref{chap:6}.
 
-$\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct proofs.
+$\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct objects.
 
 \input{figures/02/infer3.tex}
 
-The context of a judgment is said to be \textit{well-formed}, written $\vdash \Gamma$, if all variables in $\Gamma$ are distinct and for every $\Gamma, x : A, \Delta$ it is the case that $\Gamma \vdash A : K$.
-In other words, all types in a context must be proofs in the associated context prefix.
-This condition is not automatically met by the judgment, but there are no proofs of interest where this condition fails that will be considered.
-Thus, whenever $\Gamma \vdash t : A$ it is assumed that $\vdash \Gamma$.
-
-An important observation is that proofs and their types are a richer form of pseudo-objects.
-Thus, conversion is an equivalence relation for proofs and their types.
-Other basic lemmas of importance are the admissibility of a weakening rule, and a substitution rule.
+The first critical observation to be made is that the syntax participating in an inference judgment are pseudo-objects.
+Thus, proofs and their types enjoy transitivity of conversion.
+Next three standard lemmas are proved about the type system: weakening, substitution, and a sort-hierarchy classification.
 
 \begin{lemma}
     If $\Gamma \vdash t : A$ then $t\pseobj$
@@ -102,16 +100,13 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 \begin{proof}
     By induction.
     The \textsc{Ax}, \textsc{Pi}, \textsc{Int} and \textsc{Eq} rules are trivial.
-    Rules \textsc{Lam}, \textsc{Pair}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
-    The \textsc{Cast} rule is immediate by applying the IH to a sub-derivation.
+    Rules \textsc{Lam}, \textsc{Pair}, \textsc{Cast}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
     The \textsc{Fst} and \textsc{App} rules are omitted because it is similar to the \textsc{Snd} rule.
-    Likewise, the \textsc{PrmFst} and \textsc{Refl} rules are omitted because it is similar to the \textsc{PrmSnd} rule.
+    Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Note that it is assumed that $\vdash \Gamma$.
-        Thus, there is some prefix of $\Gamma$, call it $\Delta$, such that $\Delta \vdash A : K$.
-        By Lemma~\ref{lem:2:infer_implies_pseobj}: $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_implies_pseobj} applied to $\D{2}$: $A\pseobj$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
@@ -128,7 +123,7 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
         Now building up the subexpressions using pseudo-object rules concludes the proof.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Applying the IH to $\D{1}$ gives that $(x : A) \cap B\pseobj$.
         Now, by Lemma~\ref{lem:2:infer_implies_pseobj}: $a, b\pseobj$.
@@ -137,19 +132,17 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
     \begin{proofcase}
-        Immediate by a short sequence of \pseobj rules.
+        Immediate by a short sequence of pseudo-object rules.
     \end{proofcase}
 \end{proof}
 
 \begin{lemma}[Weakening]
     \label{lem:2:weakening}
-    If $\Gamma, \Delta \vdash t : A$ and $\Gamma \vdash B : K$ then $\Gamma, x_m : B, \Delta \vdash t : A$ for $x$ fresh
+    If $\Gamma; \Delta \vdash t : A$ and $\Gamma \vdash B : K$ then $\Gamma; y_m : B; \Delta \vdash t : A$ for $y$ fresh
 \end{lemma}
 \begin{proof}
     By induction.
     Most cases are a direct consequence of applying the IH to sub-derivations and applying the associated rule.
-    Note that it is assumed that $\vdash \Gamma, \Delta$, and thus $\vdash \Gamma$.
-    Now, because $B$ is a proof it is obvious that $\vdash \Gamma, x_m : B, \Delta$.
 
     $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
     \begin{proofcase}
@@ -158,7 +151,12 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        If $(x_m : A) \in \Gamma, \Delta$ then $(x_m : A) \in \Gamma, y : B, \Delta$.
+        Note that $y$ is fresh thus $x \neq y$.
+        If $y$ is placed after $x$ then the case is trivial because $\Gamma_2$ is only constrained to carry fresh variables.
+        Thus, suppose $y$ is placed before $x$.
+        Let $\Gamma_1 = \Delta_1; \Delta_2$.
+        Applying the IH to $\D{2}$ gives $\Delta_1; y_m : B; \Delta_2 \vdash A : K$.
+        The \textsc{Var} rule concludes.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
@@ -170,69 +168,123 @@ Other basic lemmas of importance are the admissibility of a weakening rule, and 
 \begin{lemma}[Substitution]
     \label{lem:2:subst}
     Suppose $\Gamma \vdash b : B$.
-    \begin{enumerate}
-        \item If $\Gamma, x : B, \Delta \vdash t : A$ then $\Gamma, [x := b]\Delta \vdash [x := b]t : [x := b]A$
-        \item If $\vdash \Gamma, x : B, \Delta$ then $\vdash \Gamma, [x := b]\Delta$
-    \end{enumerate}
+    If $\Gamma, y : B, \Delta \vdash t : A$ then $\Gamma, [y := b]\Delta \vdash [y := b]t : [y := b]A$
 \end{lemma}
 \begin{proof}
-    By mutual recursion.
+    By induction on $\Gamma, y : B, \Delta \vdash t : A$.
     The \textsc{Ax} rule is trivial and omitted.
     The rules \textsc{Lam} and \textsc{Int} are very similar to the \textsc{Pi} rule.
-    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{PrmFst}, \textsc{PrmSnd}, \textsc{Cast} and \textsc{Sep} rules are proven by applying \textit{1.} to sub-derivations and using the associated rule.
+    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{Prm}, \textsc{Cast} and \textsc{Sep} rules are proven by applying \textit{1.} to sub-derivations and using the associated rule.
     Rule \textsc{Snd} is very similar to \textsc{App} and thus omitted.
     Likewise, \textsc{Conv} is very similar to \textsc{Pair} and thus omitted.
-    Note that the context cannot be empty.
-
-    $\text{Case: }\vdash \Gamma, x : B, \Delta^\prime, y : A$
-    \begin{proofcase}
-        Note that $\Delta^\prime$ is a smaller context, thus by \textit{2.} $\vdash [x := b]\Delta^\prime$.
-        Moreover, it is the case that $\Gamma, x : B, \Delta^\prime \vdash A : K$.
-        Now, using \textit{1.} with the previous derivation gives $\Gamma, [x := b]\Delta^\prime \vdash [x := b]A : K$.
-        Thus, the context remains well-formed.
-    \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Rename to $y$.
-        If $y \neq x$ then suppose wlog that $(y : A) \in \Delta$.
-        Then $y : [x := b]A \in [x := b]\Delta$.
-        Thus, $\Gamma, [x := b]\Delta \vdash y : [x := b]A$.
-        Suppose $y = x$, then $[x := b]y = b$.
-        Note that $[x := b]B = B$, because $\vdash \Gamma, x : B, \Delta$ forces $x \notin FV(B)$.
-        Moreover, $A = B$ because $y = x$.
-        Thus, $\Gamma, [x := b]\Delta \vdash [x := b]y : [x := b]A$.
+        Suppose wlog that $y \in \Gamma_1$.
+        Let $\Gamma_1 = \Delta_1; y : B; \Delta_2$.
+        Applying the IH to $\D{1}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
+        Note that $x \notin FV(\Delta_1; [y := b]\Delta_2; [y := b]\Gamma_2)$.
+        Thus by the \textsc{Var} rule: $\Delta_1; [y := b]\Delta_2; x_m : [y := b]A; [y := b]\Gamma_2 \vdash x_K : [y := b]A$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
         Applying \textit{1.} to the sub-derivations gives:
         \begin{enumerate}
-            \item[$\D{1}$.] $\Gamma, [x := b]\Delta \vdash [x := b]A : \pdom(m, K)$
-            \item[$\D{2}$.] $\Gamma, [x := b]\Delta, y_m : [x := b]A \vdash [x := b]B : \pcodom(m)$
+            \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]A : \pdom(m, K)$
+            \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]B : \pcodom(m)$
         \end{enumerate}
-        Thus, $\Gamma, [x := b]\Delta \vdash (y : [x := b]A) \to_m [x := b]B : \pcodom(m)$.
+        Thus, $\Gamma, [y := b]\Delta \vdash (x : [y := b]A) \to_m [y := b]B : \pcodom(m)$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to $\D{1}$ and $\D{2}$ gives $\Gamma, [x := b]\Delta \vdash [x := b]f : (y : [x := b]A) \to_m [x := b]B$ and $\Gamma, [x := b]\Delta, y_m : [x := b]A \vdash [x := b]a : [x := b]A$.
-        By the \textsc{App} rule $\Gamma, [x := b]\Delta \vdash \app{[x := b]f}{m}{[x := b]a} : [y := a][x := b]B$.
-        Note that $y$ is fresh to $\Gamma$, thus $y \notin FV(b)$.
-        By Lemma~\ref{lem:2:subst_commute} $[y := a][x := b]B = [x := b][y := a]B$.
+        Applying \textit{1.} to $\D{1}$ and $\D{2}$ gives:
+        \begin{enumerate}
+            \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]f : (x : [y := b]A) \to_m [y := b]B$
+            \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]a : [y := b]A$
+        \end{enumerate}
+        By the \textsc{App} rule $\Gamma, [y := b]\Delta \vdash \app{[y := b]f}{m}{[y := b]a} : [x := a][y := b]B$.
+        Note that $x$ is fresh to $\Gamma$, thus $x \notin FV(b)$.
+        By Lemma~\ref{lem:2:subst_commute} $[x := a][y := b]B = [y := b][x := a]B$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
         Applying \textit{1.} to the sub-derivations gives:
         \begin{enumerate}
-            \item[$\D{1}$.] $\Gamma, [x := b]\Delta \vdash (y : [x := b]A) \cap [x := b]B : \star$
-            \item[$\D{2}$.] $\Gamma, [x := b]\Delta \vdash [x := b]t : [x := b]A$
-            \item[$\D{3}$.] $\Gamma, [x := b]\Delta \vdash [x := b]s : [x := b][y := t]B$
+            \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash (x : [y := b]A) \cap [y := b]B : \star$
+            \item[$\D{2}$.] $\Gamma, [y := b]\Delta \vdash [y := b]t : [y := b]A$
+            \item[$\D{3}$.] $\Gamma, [y := b]\Delta \vdash [y := b]s : [y := b][x := t]B$
         \end{enumerate}
-        Note that $y$ is locally-bound and thus $y \notin FV(\Gamma)$, thus by Lemma~\ref{lem:2:subst_commute} $$[x := b][y := t]B = [y := [x := b]t][x := b]B$$
-        Now by Lemma~\ref{lem:2:conv_subst}: $[x := b]t \equiv [x := b]s$.
-        Thus, by the \textsc{Pair} rule $\Gamma, [x := b]\Delta \vdash [[x := b]t, [x := b]s] : (y : [x := b]A) \cap [x := b]B$.
+        Note that $x$ is locally-bound and thus $x \notin FV(\Gamma)$, thus by Lemma~\ref{lem:2:subst_commute} $$[y := b][x := t]B = [x := [y := b]t][y := b]B$$
+        Now by Lemma~\ref{lem:2:conv_subst}: $[y := b]t \equiv [y := b]s$.
+        Thus, by the \textsc{Pair} rule $\Gamma, [y := b]\Delta \vdash [[y := b]t, [y := b]s] : (x : [y := b]A) \cap [y := b]B$.
     \end{proofcase}
 \end{proof}
 
+\begin{lemma}
+    \label{lem:2:classification}
+    If $\Gamma \vdash t : A$ then $A = \kind$ or $\Gamma \vdash A : K$
+\end{lemma}
+\begin{proof}
+    By induction.
+    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, \textsc{Cast}, and \textsc{Conv} rules are trivial.
+    The \textsc{Fst} rule is omitted because it is similar to \textsc{Snd} rule.
+    Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
+
+    $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by $\D{2}$ and weakening.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
+    \begin{proofcase}
+        Applying the IH to $\D{1}$ gives $\Gamma \vdash (x : A) \to_m B : K$.
+        Now $\Gamma, x : A \vdash B : K$.
+        Using the substitution lemma gives $\Gamma \vdash [x := a]B : K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{1}$ gives $\Gamma \vdash (x : A )\cap B : K$.
+        Thus, $\Gamma, x : A \vdash B : K$.
+        Applying the substitution lemma gives $\Gamma \vdash [x := t.1]B : K$.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{proofcase}
+        By the \textsc{Refl} rule: $\Gamma \vdash \prefl(a;A) : a =_A a$.
+        Now by the \textsc{App} rule $\Gamma \vdash \apptwo{P}{\tau}{a}{\tau}{\prefl(a;A)} : \star$ and $\Gamma \vdash \apptwo{P}{\tau}{b}{\tau}{e} : \star$.
+        Using weakening gives $\Gamma, x : \apptwo{P}{\tau}{a}{\tau}{\prefl(a;A)} \vdash \apptwo{P}{\tau}{b}{\tau}{e} : \star$.
+        Now the \textsc{Pi} rule concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
+    \begin{proofcase}
+        Immediate by applying the \textsc{Eq} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
+    \begin{proofcase}
+        Have $\Gamma \vdash (X : \star) \to_\omega X : \star$ via short sequence of rules.
+    \end{proofcase}
+\end{proof}
+
+The context of a judgment is, for the moment, unrestrained.
+Indeed, a variable may bind a type represented by arbitrary syntax and as long as that variable is never used in the body of the term there is no issue.
+To remove these considerations contexts should instead be well-formed:
+\begin{definition}
+    A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ the variable $x \notin FV(\Gamma_1;\Gamma_2)$ and $\Gamma_1 \vdash A : K$ for some $K$
+\end{definition}
+It is not difficult to see that an inference judgment with a well-formed context is obtained from any general inference judgment.
+Moving forward it will be assumed that the context is well-formed because an equivalent proof is always obtainable under this assumption and the non-well-founded proofs will not add any value.
+\begin{lemma}
+    If $\Gamma \vdash t : A$ then $\exists\ \Delta$ such that $\Delta \vdash t : A$ and $\vdash \Delta$
+\end{lemma}
+\begin{proof}
+    By Lemma~\ref{lem:2:classification}: $\Gamma \vdash A : K$.
+    Now, the set of free variable $S = FV(t) \cup FV(A)$ determines $\Delta$.
+    Moreover, every occurrence of $x \in S$ in either $t$ or $A$ must be via a \textsc{Var} rule, hence the associated type is a proof.
+    Delete any variables not found in $S$ from $\Gamma$ to form $\Delta$.
+\end{proof}

@@ -10,19 +10,12 @@
     \begin{minipage}{0.5\textwidth}
         \begin{align*}
             \ptrunc{\!\!\pkind} &= \star \\
-            \ptrunc{\text{undefined}} &= \diamond
+            \ptrunc{\text{undefined}} &= \delta(\star)
         \end{align*}
     \end{minipage}
-    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
-\end{figure}
-
-\begin{figure}
-    \centering
     \begin{align*}
-        \mathcal{C}(x_\square) &=\!\! \ptype \\
-        \mathcal{C}(x_\star) &=\!\! \pterm \\
-        \mathcal{C}(\star) &=\!\! \pkind \\
-        \mathcal{C}(\diamond) &=\!\! \ptype \\
+        \mathcal{C}(x_\square) &=\!\! \ptype &\mathcal{C}(\star) &=\!\! \pkind\\
+        \mathcal{C}(x_\star) &=\!\! \pterm &\mathcal{C}(\diamond) &=\!\! \ptype\\
         \mathcal{C}(\abs{\lambda_\tau}{x}{A}{t}) &=\!\! \ptype &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } t\ptype \\
         \mathcal{C}(\abs{\lambda_0}{x}{A}{t}) &=\!\! \pterm &\text{if }& (A\pkind \text{ or } A\ptype) \text{ and } t\pterm \\
         \mathcal{C}(\abs{\lambda_\omega}{x}{A}{t}) &=\!\! \pterm &\text{if }& A\ptype \text{ and } t\pterm \\
@@ -36,26 +29,22 @@
             &&&\text{and } t\pterm \text{ and } [x := \ptrunc{\mathcal{C}(a)}]t\pterm \\
         \mathcal{C}(\app{f}{0}{a}) &=\!\! \pterm &\text{if }& (a\ptype \text{ or } a\pterm) \text{ and } f\pterm \\
         \mathcal{C}(\app{(\abs{\lambda_\omega}{x}{A}{t})}{\omega}{a}) &=\!\! \pterm &\text{if }& A\ptype \text{ and } a, t\pterm \text{ and } [x := \ptrunc{\mathcal{C}(a)}]t\pterm \\
-        \mathcal{C}(\app{f}{\omega}{a}) &=\!\! \pterm &\text{if }& a\pterm \text{ and } f\pterm
-    \end{align*}
-    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \begin{align*}
+        \mathcal{C}(\app{f}{\omega}{a}) &=\!\! \pterm &\text{if }& a\pterm \text{ and } f\pterm \\
         \mathcal{C}((x : A) \cap B) &=\!\! \ptype &\text{if }& A\ptype \text{ and } B\ptype \\
         \mathcal{C}([t_1, t_2; A]) &=\!\! \pterm &\text{if }& t_1, t_2\pterm \text{ and } A\ptype \\
         \mathcal{C}(t.1) &=\!\! \pterm &\text{if }& t\pterm \\
         \mathcal{C}(t.2) &=\!\! \pterm &\text{if }& t\pterm \\
         \mathcal{C}(a =_A b) &=\!\! \ptype &\text{if }& a, b\pterm \text{ and } A\ptype \\
         \mathcal{C}(\prefl(t; A)) &=\!\! \pterm &\text{if }& t\pterm \text{ and } A\ptype \\
-        \mathcal{C}(\vartheta_i(e, a, b; T)) &=\!\! \pterm &\text{if }& e, a, b\pterm \text{ and } T\ptype \\
+        \mathcal{C}(\vartheta(e, a, b; T)) &=\!\! \pterm &\text{if }& e, a, b\pterm \text{ and } T\ptype \\
         \mathcal{C}(\psi(e, a, b; A, P)) &=\!\! \pterm &\text{if }& e, a, b\pterm \text{ and } A, P\ptype \\
-        \mathcal{C}(\varphi(f, e; A, T)) &=\!\! \pterm &\text{if }& f, e\pterm \text{ and } A, T\ptype \\
+        \mathcal{C}(\varphi(a, b, e; A, T)) &=\!\! \pterm &\text{if }& a, b, e\pterm \text{ and } A, T\ptype \\
         \mathcal{C}(\delta(e)) &=\!\! \pterm &\text{if }& e\pterm \\
-        \mathcal{C}(t) &= \text{undefined} &&\text{otherwise}
+        \mathcal{C}(t) &= \text{undefined} &&\!\!\!\!\!\!\text{otherwise}
     \end{align*}
-    \caption{Domain and codomains for function types. The variable $K$ is either $\star$ or $\kind$.}
+    \caption{
+        Classification function for sorting raw syntax into three distinct levels: types, kinds, and terms.
+        If the syntactic form does not adhere to the basic structure needed to be correctly sorted then it is assigned undefined and cannot be a proof.
+    }
+    \label{fig:2:classify}
 \end{figure}
-

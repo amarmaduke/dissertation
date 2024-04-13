@@ -5,7 +5,13 @@
 
 Syntax for the system is defined generically as before.
 See Figure~\ref{fig:syntax} for a complete description.
-For the moment the new syntactic forms are merely raw data with no logical or computational meaning.
+The intended meaning of the syntax is as follows:
+\begin{enumerate}
+    \item tags $\lambda_m$, $\Pi_m$ and $\bullet_m$ (application) represent the function fragment of syntax parameterized by three separates \textit{modes}, $\omega$ (free), $0$ (erased), and $\tau$ (type-level);
+    \item tags $\cap$, pair, proj$_1$, and proj$_2$ represent dependent intersections (i.e. dependent pairs);
+    \item tags eq, refl, $\psi$ (substitution), $\vartheta$ (promotion), $\delta$ (separation), and $\varphi$ (cast) represent equality.
+\end{enumerate}
+At the moment raw syntax has no essential meaning beyond its intended one.
 Nevertheless, a basic fact about substitution on syntax is provable.
 
 \begin{lemma}
@@ -22,7 +28,7 @@ Nevertheless, a basic fact about substitution on syntax is provable.
 \end{proof}
 
 Computational meaning is added via reduction rules described in Figure~\ref{fig:reduction}.
-The new reductions model projection of pairs (e.g. $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g. $\vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2)$) and an elimination form for equality.
+The new reductions model projection of pairs (e.g. $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g. $\vartheta(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A)$) and an elimination form for equality.
 Note that conversion is different from a traditional PTS.
 Convertibility with respect to reduction is written: $t \betaconv s$.
 A detailed discussion of conversion is delayed until Section~\ref{sec:2:erasure}.
@@ -51,6 +57,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{lemma}
 \begin{proof}
     By induction on $a \betared b$.
+    Second projection is the same as first projection case and omitted.
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
@@ -60,27 +67,17 @@ Second, substitution is shown to commute with multistep reduction through a seri
 
     $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
     \begin{proofcase}
-        $[x := t][t_1, t_2, A].1 = [[x := t]t_1, [x := t]t_2, [x := ]A].1 \betared [x := t]t_1$
+        $[x := t][t_1, t_2, A].1 = [[x := t]t_1, [x := t]t_2, [x := t]A].1 \betared [x := t]t_1$
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+    $\text{Case: }\begin{array}{c} \app{\psi(\text{refl}(z; Z), u, v; A, P)}{\omega}{b} \betared b \end{array}$
     \begin{proofcase}
-        $[x := t][t_1, t_2, A].2 = [[x := t]t_1, [x := t]t_2, [x := ]A].2 \betared [x := t]t_2$
+        $[x := t]\app{\psi(\text{refl}(z; Z), u, v; A, P)}{\omega}{b} = \app{\psi(\text{refl}([x := t]z; [x := t]Z), [x := t]u, [x := t]v; [x := t]A, [x := t]P)}{\omega}{[x := t]b} \betared [x := t]b$
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
+    $\text{Case: }\begin{array}{c} \vartheta(\text{refl}(z; Z), u, v; A) \betared \text{refl}(u; A) \end{array}$
     \begin{proofcase}
-        $[x := s]\psi(\text{refl(t)}, P) = \psi(\text{refl}([x := s]t), [x := s]P) \betared \abs{\lambda_\omega}{y}{\apptwo{[x := s]P}{\tau}{[x := s]t}{\tau}{\text{refl}([x := s]t)}}{y} = [x := s](\abs{\lambda_\omega}{y}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{y})$
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
-    \begin{proofcase}
-        $[x := s]\vartheta_1(\text{refl}(t_1), t_2, t_3) = \vartheta_1(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
-    \begin{proofcase}
-        $[x := s]\vartheta_2(\text{refl}(t_1), t_2, t_3) = \vartheta_2(\text{refl}(([x := s]t_1)), [x := s]t_2, [x := s]t_3) \betared \text{refl}([x := s]t_2) = [x := s]\text{refl}(t_2)$
+        $[x := t]\vartheta(\text{refl}(z; Z), u, v; A) = \vartheta(\text{refl}([x := t]z; [x := t]Z), [x := t]u, [x := t]v; [x := t]A) \betared \text{refl}([x := t]u; [x := t]A) = [x := t]\text{refl}(u; A)$
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
@@ -110,7 +107,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
     \begin{proofcase}
         Let $z = t^\prime$.
         By the IH applied to $\D{2}$: $[x := t]z \betastar [x := t]b$.
-        By Lemma~\ref{lem:2:betared_subst} applied to $\D{1}$: $[x := t]a \betared [x := t]b$.
+        By Lemma~\ref{lem:2:betared_subst} applied to $\D{1}$: $[x := t]a \betared [x := t]z$.
         Applying the transitivity rule yields $[x := t]a \betastar [x := t]b$.
     \end{proofcase}
 \end{proof}
@@ -121,6 +118,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{lemma}
 \begin{proof}
     By induction on $a$.
+    The $\mathfrak{c}$ case is omitted because it is similar to the $\mathfrak{b}$ case.
 
     $\text{Case: }\begin{array}{c} x \end{array}$
     \begin{proofcase}
@@ -133,12 +131,6 @@ Second, substitution is shown to commute with multistep reduction through a seri
     $\text{Case: }\begin{array}{c} \mathfrak{b}(\kappa_1, x : t_1, t_2) \end{array}$
     \begin{proofcase}
         By the IH $[x := s]t_1 \betastar [x := t]t_1$ and $[x := s]t_2 \betastar [x := t]t_2$.
-        Lemma~\ref{lem:2:beta_par} concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \end{array}$
-    \begin{proofcase}
-        By the IH $[x := s]t_i \betastar [x := t]t_i$ for all $i$.
         Lemma~\ref{lem:2:beta_par} concludes the case.
     \end{proofcase}
 \end{proof}
@@ -174,44 +166,7 @@ A straightforward consequence is a similar lemma about substitution commuting wi
 
 Transitivity, as before, is a consequence of confluence.
 Confluence is not an obvious property to obtain and can also be an involved property to prove.
-For example, a natural variant for the $\vartheta_1$ reduction rule is $\vartheta_1(\text{refl}(t.1)) \betared \text{refl}(t)$, but this breaks confluence.
-To see why, consider $\vartheta_1(\text{refl}([x, y, z].1))$.
-One choice leads to $\vartheta_1(\text{refl}(x))$, and the other leads to $\text{refl}(x)$.
+For example, a natural variant for the $\vartheta$ reduction rule is $\vartheta(\text{refl}(t.1)) \betared \text{refl}(t)$, but this breaks confluence.
+To see why, consider $\vartheta(\text{refl}([x, y; T].1))$.
+One choice leads to $\vartheta(\text{refl}(x))$, and the other leads to $\text{refl}(x)$.
 However, these terms are not joinable, hence confluence fails.
-The full proof of confluence is relegated to Appendix~\ref{ap:a}, but note that the approach closely follows the PLFA book \cite{plfa22.08}.
-
-\begin{lemma}[Confluence]
-    If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
-\end{lemma}
-\begin{proof}
-    See Appendix~\ref{ap:a}.
-\end{proof}
-
-As with F$^\omega$ the important consequence of confluence is that conversion w.r.t. reduction is an equivalence relation.
-However, this is \textit{not} the conversion relation that will be used in the inference judgment.
-Thus, while important, it is still only a stepping stone to showing judgmental conversion is transitive.
-
-\begin{lemma}
-    For any $s$ and $t$ the relation $s \betaconv t$ is an equivalence.
-    \label{lem:2:beta_conv_equivalence}
-\end{lemma}
-\begin{proof}
-    Reflexivity is immediate because $s \betastar s$.
-    Symmetry is also immediate because if $s \betaconv t$ then $\exists\ z$ such that $s \betastar z$ and $t \betastar z$, but logical conjunction is commutative.
-    Transitivity is a consequence of confluence, see Theorem~\ref{thm:1:trans}.
-\end{proof}
-
-Additionally, there is a final useful fact about convertibility w.r.t. reduction that is occasionally used throughout the rest of this work.
-That is, like reduction, conversion w.r.t. reduction of subexpressions yields conversion of the entire term.
-
-\begin{lemma}
-    If $t_i \betaconv t_i^\prime$ for any $i$ then,
-    \begin{enumerate}
-        \item $\mathfrak{b}(\kappa, (x : t_1), t_2) \betaconv \mathfrak{b}(\kappa, (x : t_1^\prime), t_2^\prime)$
-        \item $\mathfrak{c}(\kappa, t_1,\ldots,t_{\mathfrak{a}(\kappa)}) \betaconv \mathfrak{c}(\kappa, t_1^\prime,\ldots,t_{\mathfrak{a}(\kappa)}^\prime)$
-    \end{enumerate}
-    \label{lem:2:conv_congr}
-\end{lemma}
-\begin{proof}
-    By Lemma~\ref{lem:2:beta_par} applied on both sides.
-\end{proof}

@@ -111,26 +111,26 @@
     {\Gamma \vdash \psi(e, a, b; A, P) : \apptwo{P}{\tau}{a}{\tau}{\text{refl}(a; A)} \to_\omega \apptwo{P}{\tau}{b}{\tau}{e}}
     {Subst}
 
-\Rule{\PromoteFstRule}
+\Rule{\PromoteRule}
     {
         \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
         \der{\D{2}}{\Gamma \vdash a : (x:A) \cap B} \\
         \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
         \der{\D{4}}{\Gamma \vdash e : a.1 =_A b.1} \\
     }
-    {\Gamma \vdash \vartheta_1(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
-    {PrmFst}
+    {\Gamma \vdash \vartheta(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
+    {Prm}
 
-\Rule{\PromoteSndRule}
-    {
-        \der{\D{1}}{\Gamma \vdash A : \star} \\
-        \der{\D{2}}{\Gamma \vdash B : \star} \\
-        \der{\D{3}}{\Gamma \vdash a : (x:A) \cap B} \\
-        \der{\D{4}}{\Gamma \vdash b : (x:A) \cap B} \\
-        \der{\D{5}}{\Gamma \vdash e : a.2 =_B b.2} \\
-    }
-    {\Gamma \vdash \vartheta_2(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
-    {PrmSnd}
+% \Rule{\PromoteSndRule}
+%     {
+%         \der{\D{1}}{\Gamma \vdash A : \star} \\
+%         \der{\D{2}}{\Gamma \vdash B : \star} \\
+%         \der{\D{3}}{\Gamma \vdash a : (x:A) \cap B} \\
+%         \der{\D{4}}{\Gamma \vdash b : (x:A) \cap B} \\
+%         \der{\D{5}}{\Gamma \vdash e : a.2 =_B b.2} \\
+%     }
+%     {\Gamma \vdash \vartheta_2(e, a, b; (x : A) \cap B) : a =_{(x:A) \cap B} b}
+%     {PrmSnd}
 
 % \Rule{\CastRule}
 %     {
@@ -144,13 +144,12 @@
 
 \Rule{\CastRule}
     {
-        \der{\D{1}}{T = (a : A) \to_\omega (x : A) \cap B} \\
-        \der{\D{2}}{\Gamma \vdash T : \star} \\
-        \der{\D{3}}{\Gamma \vdash f : T} \\
-        \der{\D{4}}{\Gamma \vdash e : (a : A) \to_\omega a_\star =_A (\app{f}{\omega}{a_\star}).1} \\
-        \der{\D{5}}{FV(|e|) = \varnothing}
+        \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
+        \der{\D{2}}{\Gamma \vdash a : A} \\
+        \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{4}}{\Gamma \vdash e : a =_A b.1}
     }
-    {\Gamma \vdash \varphi(f, e; A, T) : T}
+    {\Gamma \vdash \varphi(a, b, e; A, (x:A) \cap B) : (x:A) \cap B}
     {Cast}
 
 \Rule{\SeparationRule}

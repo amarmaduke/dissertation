@@ -8,25 +8,23 @@
         $$\ReflRule$$
     \end{minipage}%
     $$\SubstRule$$
-    $$\PromoteFstRule$$
-    $$\PromoteSndRule$$
+    $$\PromoteRule$$
     $$\CastRule$$
     $$\SeparationRule$$
     \caption{
         Inference rules for equality types where
-        $\text{cBool} := (X : \star) \to_0 (x : X) \to_\omega (y : X) \to_\omega X$;
+        $\text{cBool} := (X : \star) \to_0 (x : X_\square) \to_\omega (y : X_\square) \to_\omega X_\square$;
         $\text{ctt} := \abs{\lambda_0}{X}{\star}{
-            \abs{\lambda_\omega}{x}{X}{
-                \abs{\lambda_\omega}{y}{X}{x}
+            \abs{\lambda_\omega}{x}{X_\square}{
+                \abs{\lambda_\omega}{y}{X_\square}{x_\star}
             }
         }$;
         and
         $\text{cff} := \abs{\lambda_0}{X}{\star}{
-            \abs{\lambda_\omega}{x}{X}{
-                \abs{\lambda_\omega}{y}{X}{y}
+            \abs{\lambda_\omega}{x}{X_\square}{
+                \abs{\lambda_\omega}{y}{X_\square}{y_\star}
             }
         }$.
-        Also, $i, j \in \{ 1, 2 \}$
     }
     \label{fig:2:typ3}
 \end{figure}

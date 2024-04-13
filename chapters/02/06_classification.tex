@@ -1,21 +1,14 @@
+\section{Classification}
 
 \input{figures/02/classify.tex}
 
-Note that the condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it are necessary.
-Take for example $\abs{\lambda_\tau}{x}{\star}{x_\star}$.
-This is not well-typed and hence not a proof, but it also should not be a kind, type, or term because it will prevent preservation of classification.
-If $a\pterm$ then the application will correctly produce a term, but if $a\ptype$ then an application will reduce to a type.
-
-\begin{lemma}
-    The definition of $\mathcal{C}(-)$ is terminating
-\end{lemma}
-\begin{proof}
-    The definition is structural except application cases.
-    In particular, application cases require evaluating $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ for some subexpressions $a$ and $t$.
-    Note that computing $\mathcal{C}(-)$ on subxpressions is of course terminating, but moreover $\ptrunc{-}$ is a constant function returning a constant syntactic form.
-    Thus, the size of $\ptrunc{\mathcal{C}(a)}$ is zero (or one depending on how one wants to define it).
-    Substitution of syntactic forms of zero size do not change the size of the resulting term, therefore $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ is a terminating invocation.
-\end{proof}
+Classification is a critical property of a system like CC with unified syntax.
+It allows for the syntax to instead be stratified into levels which would enable an intrinsic presentation of the system.
+For the core theory of Cedille2 there are only two universes like the original CC, thus the stratification places terms into three separate levels.
+A term is either a \textit{kind} (thus $A = \kind$), a \textit{type} (thus $\Gamma \vdash A : \kind$), or a \textit{term} (thus $\Gamma \vdash A : \star$).
+Determining the appropriate level for syntax is also decidable with a classification function defined in Figure~\ref{fig:2:classify}.
+This function is crafted to maintain preservation of classification after both reduction and erasure.
+Note that because the function is defined on syntax it is possible that there is no valid level because the syntax is not a proof, in these cases the syntax is given the classification \textit{undefined}.
 
 \begin{definition}
     \textcolor{white}{\_}
@@ -25,6 +18,22 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
         \item $t\pkind$ iff $\mathcal{C}(t) =\!\!\pkind$
     \end{enumerate}
 \end{definition}
+
+Note that the condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it are necessary.
+Take for example $\abs{\lambda_\tau}{x}{\star}{x_\star}$.
+This is not well-typed and hence not a proof, but it also should not be a kind, type, or term because it will prevent preservation of classification during reduction.
+If $a\pterm$ then the application will correctly produce a term, but if $a\ptype$ then an application will reduce to a type.
+
+\begin{lemma}
+    The definition of $\mathcal{C}(-)$ is terminating
+\end{lemma}
+\begin{proof}
+    The definition is structural except application cases.
+    In particular, application cases require evaluating $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ for some subexpressions $a$ and $t$.
+    Note that computing $\mathcal{C}(-)$ on subxpressions is of course terminating, but moreover $\ptrunc{-}$ is a constant function returning a constant syntactic form.
+    Thus, a measure of size can be constructed such that the size of $\ptrunc{\mathcal{C}(a)}$ is always zero for any $a$.
+    Substitution of syntactic forms of zero size do not change the size of the resulting term, therefore $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ is a terminating invocation.
+\end{proof}
 
 \begin{lemma}
     \label{lem:2:classify_erase}
@@ -51,7 +60,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
     
     $\text{Case: }t = \prefl(t; A)$
     \begin{proofcase}
-        Have $|\prefl(t; A)| = \abs{\lambda}{x}{\diamond}{x}$, and by computation $\abs{\lambda_\omega}{x}{\diamond}{x_\star}\pterm$.
+        Have $|\prefl(t; A)| = \abs{\lambda}{x}{\diamond}{x_\star}$, and by computation $\abs{\lambda_\omega}{x}{\diamond}{x_\star}\pterm$.
     \end{proofcase}
 \end{proof}
 
@@ -60,8 +69,8 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
     If $\mathcal{C}(t)$ and $\mathcal{C}(b)$ are defined then $$\mathcal{C}([x := t]b) = \mathcal{C}([x := \ptrunc{\mathcal{C}(t)}]b)$$
 \end{lemma}
 \begin{proof}
-    If $\mathcal{C}(t)$ is defined then clearly $\mathcal{C}(t) = \ptrunc{\mathcal{C}(t)}$ by definition.
-    The lemma is then shown by a straightforward induction on $b$.
+    If $\mathcal{C}(t)$ is defined then clearly $\mathcal{C}(t) = \mathcal{C}(\ptrunc{\mathcal{C}(t)})$ by definition.
+    The lemma is then shown by induction on $b$.
 \end{proof}
 
 \begin{lemma}
@@ -70,8 +79,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 \end{lemma}
 \begin{proof}
     By induction on $s \betared t$, note that $\mathcal{C}(-)$ is structural making the inductive cases trivial.
-    The $\vartheta_1$ case is very similar to the $\vartheta_2$ case and thus omitted.
-    Likewise, the first projection case is omitted.
+    The first projection case is similar to the second projection case and thus omitted.
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
@@ -91,9 +99,9 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
         Have $(\app{\psi(\text{refl}(z; Z), a, b; A, P)}{\omega}{t})\pterm$ and by deconstruction the definition $t\pterm$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(z; Z), a, b; T) \betared \text{refl}(a; T) \end{array}$
+    $\text{Case: }\begin{array}{c} \vartheta(\text{refl}(z; Z), a, b; T) \betared \text{refl}(a; T) \end{array}$
     \begin{proofcase}
-        Have $\vartheta_2(\text{refl}(z; Z), a, b; T)\pterm$ and by deconstruction the definition $a\pterm$ and $T\ptype$.
+        Have $\vartheta(\text{refl}(z; Z), a, b; T)\pterm$ and by deconstruction the definition $a\pterm$ and $T\ptype$.
         Thus, $\text{refl}(a; T)\pterm$.
     \end{proofcase}
 \end{proof}
@@ -197,13 +205,13 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
     \begin{proofcase}
-        Classification and inversion on $\D{2}$ gives $\Gamma \vdash a =_A b : \star$.
+        Classification and inversion on $\D{4}$ gives $\Gamma \vdash a =_A b : \star$.
         Likewise, $\Gamma \vdash (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star : \kind$.
         Applying the IH to all subderivations yields $A, P\ptype$ and $a, b, e\pterm$.
         Hence, $\psi(e, a, b; A, P)\pterm$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         By classification, inversion and the IH used with $\D{4}$: $e\pterm$.
         The IH applied to $\D{1}$, $\D{2}$ and $\D{3}$ yields $a, b\pterm$ and $(x : A) \cap B\ptype$.
@@ -211,10 +219,8 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        Classification, inversion, and the IH used with $\D{4}$ yields $e\pterm$.
-        Applying the IH to $\D{2}$ and $\D{3}$ gives $f\pterm$ and $T\ptype$.
-        By $\D{1}$ and the definition of $\mathcal{C}$: $A\ptype$.
-        Hence, $\varphi(f, e; A, T)\pterm$.
+        By the IH applied to $\D{1}$: $(x : A) \cap B\ptype$.
+        Thus, by the IH and inversion applied to the remaining derivations: $a, b, e\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$

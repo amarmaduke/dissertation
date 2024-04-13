@@ -8,21 +8,36 @@ Instead, erasure should be thought of as computing the raw syntactic forms of ob
 In Section~\ref{sec:2:judgments} the notion of proof will be defined.
 An object is the erasure of a proof.
 Erasure is defined in Figure~\ref{fig:2:erasure}.
+With erasure the desired conversion relation is also definable.
+This definition will enable equating objects in a dependent quantification instead of proofs.
+
+\begin{definition}
+    \label{def:2:conv}
+    $s_1 \equiv s_2$ iff $\exists\ t_1, t_2.\ s_1 \betastar t_1, s_2 \betastar t_2, \text{ and } |t_1| \betaconv |t_2|$
+\end{definition}
 
 \input{figures/02/erasure.tex}
 
-Note that the only purpose of the syntactic constructor $\diamond$ is to be a placeholder for erased type annotations of $\lambda_m$ syntactic forms.
+Note that the only purpose of the syntactic constructor $\diamond$ is to be a placeholder for erased type annotations of $\lambda_\omega$ syntactic forms.
 However, for $\lambda_\tau$ variants, the annotation is \textit{not} erased.
 This is partly why calling this transformation \textit{erasure} is a slight lie, because it does not always erase.
-Regardless, it is faithful to the interpretation from Cedille when focused on non-type-like syntactic forms.
+Regardless, it is faithful to the interpretation from Cedille when focused on non-type-like syntax.
 Indeed, any form that is not type-like does reduce to the untyped $\lambda$-calculus.
 For type-like syntax, erasure is instead locally homomorphic.
-Erasure of raw syntax does not possess much structure, but it does commute with substitution.
+Erasure of raw syntax does not possess much structure, but it is idempotent and commutes with substitution.
 Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} is possible.
 
 \begin{lemma}
-    $|[x := t]b| = [x := |t|]|b|$
+    \label{lem:2:erasure_idempotent}
+    $||t|| = |t|$
+\end{lemma}
+\begin{proof}
+    By induction on $t$.
+\end{proof}
+
+\begin{lemma}
     \label{lem:2:erase_subst}
+    $|[x := t]b| = [x := |t|]|b|$
 \end{lemma}
 \begin{proof}
     By induction on the size of $b$.
@@ -49,19 +64,18 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
 
     $\text{Case: }\mathfrak{c}(\kappa, t_1, \ldots, t_{\mathfrak{a}(\kappa)})$
     \begin{proofcase}
-        If $\kappa \in \{ \star, \kind \}$ then the equality is trivial.
-
-        If $\kappa \in \{ \bullet_0, \text{pair}, \text{proj}_1, \text{proj}_2, \psi, \vartheta, \delta \}$ then $|\mathfrak{c}(\kappa, t_1, \ldots)| = |t_1|$.
+        If $\kappa \in \{ \diamond, \star, \kind \}$ then the equality is trivial.
+        \\ \\
+        If $\kappa \in \{ \bullet_0, \text{pair}, \text{proj}_1, \text{proj}_2, \psi, \vartheta, \delta, \varphi \}$ then $|\mathfrak{c}(\kappa, t_1, \ldots)| = |t_1|$.
         Moreover, substitution commutes and both sides of the equality are equal.
-
-        If $\kappa \in \{ \text{refl}, \varphi \}$ then the equality is trivial.
-
+        \\ \\
+        If $\kappa \in \{ \text{refl} \}$ then the equality is trivial.
+        \\ \\
         If $\kappa \in \{ \bullet_\omega, \bullet_\tau, \text{eq} \}$ then w.l.o.g. assume $\kappa = \text{eq}$.
         Now $|[x := t](a =_A b)| = |[x := t]a| =_{|[x := t]A|} |[x := t]b|$.
         By the IH this becomes $[x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
         On the right-hand side, $[x := |t|]|a =_A b| = [x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
         Thus, both sides are equal.
-
     \end{proofcase}
 
     $\text{Case: }b \text{ variable}$
@@ -72,17 +86,9 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
     \end{proofcase}
 \end{proof}
 
-\begin{theorem}
-    \label{lem:2:erasure_idempotent}
-    $||t|| = |t|$
-\end{theorem}
-\begin{proof}
-    Trivial by induction on $t$.
-\end{proof}
-
 \begin{lemma}
-    If $|s| \betaconv |t|$ and $|a| \betaconv |b|$ then $|[x := s]a| \betaconv |[x := t]b|$
     \label{lem:2:betaconv_erased_subst}
+    If $|s| \betaconv |t|$ and $|a| \betaconv |b|$ then $|[x := s]a| \betaconv |[x := t]b|$
 \end{lemma}
 \begin{proof}
     By definition $\exists\ z_1, z_2$ such that $|s| \betastar z_1$, $|t| \betastar z_1$, $|a| \betastar z_2$ and $|b| \betastar z_2$.
@@ -106,8 +112,8 @@ The distinction here is subtle, but it enables proving one of the important prop
 To reach that goal requires a series of technical lemmas about pseudo-objects and the concepts introduced so far.
 
 \begin{lemma}
-    If $s\pseobj$ and $s \betared t$ then $|s| \betaconv |t|$
     \label{lem:2:erase_pseobj_red}
+    If $s\pseobj$ and $s \betared t$ then $|s| \betaconv |t|$
 \end{lemma}
 \begin{proof}
     By induction on $s\pseobj$.
@@ -148,19 +154,14 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
             Thus, $|s| = |t_1| \betaconv |t_2|$.
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
+        $\text{Case: }\begin{array}{c} \app{\psi(\text{refl}(z; Z), a, b; A, P)}{\omega}{t} \betared t \end{array}$
         \begin{proofcase}
-            $|\psi(\text{refl}(t),P)| = |\text{refl}(t)| = \absu{\lambda_\omega}{x}{x} = |\abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x}|$
+            $|\app{\psi(\text{refl}(z; Z), a, b; A, P)}{\omega}{t}| = \app{|\text{refl}(z;Z)|}{\omega}{|t|} \betaconv |t|$
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
+        $\text{Case: }\begin{array}{c} \vartheta(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A) \end{array}$
         \begin{proofcase}
-            $|\vartheta_1(\text{refl}(t_1), t_2, t_3)| = |\text{refl}(t_1)| = \absu{\lambda_\omega}{x}{x} = |\text{refl}(t_2)|$
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
-        \begin{proofcase}
-            Same as previous case.
+            $|\vartheta(\text{refl}(z; Z), a, b; A)| = |\text{refl}(z; Z)| = \abs{\lambda_\omega}{x}{\diamond}{x} = |\text{refl}(a; A)|$
         \end{proofcase}
 
         $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
@@ -183,16 +184,16 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 \end{proof}
 
 \begin{lemma}
-    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betared t$ then $|t| \betaconv |b|$
     \label{lem:2:pseobj_red_f_step}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betared t$ then $|t| \betaconv |b|$
 \end{lemma}
 \begin{proof}
-    By Lemma~\ref{lem:2:erase_pseobj_red} $|s| \betaconv |t|$ and by Lemma~\ref{lem:2:beta_conv_equivalence} $|t| \betaconv |b|$.
+    By Lemma~\ref{lem:2:erase_pseobj_red} $|s| \betaconv |t|$ and by Theorem~\ref{lem:2:beta_conv_equivalence} $|t| \betaconv |b|$.
 \end{proof}
 
 \begin{lemma}
-    If $b\pseobj$ and $t\pseobj$ then $[x := t]b\pseobj$
     \label{lem:2:pseobj_subst}
+    If $b\pseobj$ and $t\pseobj$ then $[x := t]b\pseobj$
 \end{lemma}
 \begin{proof}
     By induction on $b\pseobj$. The $\lambda_0$ and pair cases are no different from the respective $\mathfrak{b}$ and $\mathfrak{c}$ cases.
@@ -217,8 +218,8 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 \end{proof}
 
 \begin{lemma}
-    If $s\pseobj$ and $s \betared t$ then $t\pseobj$
     \label{lem:2:pseobj_preservation_step}
+    If $s\pseobj$ and $s \betared t$ then $t\pseobj$
 \end{lemma}
 \begin{proof}
     By induction on $s\pseobj$.
@@ -243,6 +244,7 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
     $\text{Case: }\begin{array}{c} \CtorPseObj[*] \end{array}$
     \begin{proofcase}
         By cases on $s \betared t$.
+        The first and second projection cases are very similar to the substitution case.
 
         $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
         \begin{proofcase}
@@ -250,31 +252,15 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
             By Lemma~\ref{lem:2:pseobj_subst} $[x := t]b\pseobj$.
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} [t_1, t_2; A].1 \betared t_1 \end{array}$
+        $\text{Case: }\begin{array}{c} \app{\psi(\text{refl}(z;Z), a, b; A, P)}{\omega}{t} \betared t \end{array}$
         \begin{proofcase}
-            Observe that $t_1\pseobj$ because it is a subterm of $s$.
+            Immediate by the IH: $t\pseobj$.
         \end{proofcase}
 
-        $\text{Case: }\begin{array}{c} [t_1, t_2; A].2 \betared t_2 \end{array}$
+        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A) \end{array}$
         \begin{proofcase}
-            Observe that $t_2\pseobj$.
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \psi(\text{refl}(t),P) \betared \abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x} \end{array}$
-        \begin{proofcase}
-            Observe that $t\pseobj$ and $P\pseobj$.
-            By application of constructor and binder rules $\abs{\lambda_\omega}{x}{\apptwo{P}{\tau}{t}{\tau}{\text{refl}(t)}}{x}\pseobj$.
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \vartheta_1(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
-        \begin{proofcase}
-            Observe that $t_2\pseobj$.
-            By application of constructor rule $\text{refl}(t_2)\pseobj$.
-        \end{proofcase}
-
-        $\text{Case: }\begin{array}{c} \vartheta_2(\text{refl}(t_1), t_2, t_3) \betared \text{refl}(t_2) \end{array}$
-        \begin{proofcase}
-            Same as previous case.
+            Observe that $a\pseobj$ and $A\pseobj$.
+            By application of constructor rule $\text{refl}(a; A)\pseobj$.
         \end{proofcase}
 
         $\text{Case: }\begin{array}{c} \ConstructorReduction[*] \end{array}$
@@ -282,7 +268,6 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
             By the IH $t_i^\prime\pseobj$.
             By application of the constructor rule the goal is obtained.
         \end{proofcase}
-
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
@@ -303,20 +288,19 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 \end{proof}
 
 \begin{lemma}
-    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betastar t$ then $|t| \betaconv |b|$
     \label{lem:2:pseobj_red_f}
+    If $s\pseobj$, $|s| \betaconv |b|$, and $s \betastar t$ then $|t| \betaconv |b|$
 \end{lemma}
 \begin{proof}
     By induction on $s \betastar t$.
     The reflexivity case is trivial.
-    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_red_f_step} and Lemma~\ref{lem:2:pseobj_preservation_step}
-    and applying the IH.
+    The transitivity case is obtained from Lemma~\ref{lem:2:pseobj_red_f_step}, Lemma~\ref{lem:2:pseobj_preservation_step}, and applying the IH.
 \end{proof}
 
-\begin{theorem}
-    If $s\pseobj$ and $s \betastar t$ then $t\pseobj$
+\begin{lemma}
     \label{lem:2:pseobj_preservation}
-\end{theorem}
+    If $s\pseobj$ and $s \betastar t$ then $t\pseobj$
+\end{lemma}
 \begin{proof}
     By induction on $s \betastar t$.
     The reflexivity case is trivial.
@@ -324,8 +308,8 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 \end{proof}
 
 \begin{lemma}
-    If $s\pseobj$, $|t| \betaconv |b|$, and $s \betastar t$ then $|s| \betaconv |b|$
     \label{lem:2:pseobj_red_b}
+    If $s\pseobj$, $|t| \betaconv |b|$, and $s \betastar t$ then $|s| \betaconv |b|$
 \end{lemma}
 \begin{proof}
     By induction on $s \betastar t$.
@@ -333,8 +317,8 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
 \end{proof}
 
 \begin{lemma}
-    If $s\pseobj$, $s \equiv b$, and $s \betastar t$ then $t \equiv b$
     \label{lem:2:conv_red_f}
+    If $s\pseobj$, $s \equiv b$, and $s \betastar t$ then $t \equiv b$
 \end{lemma}
 \begin{proof}
     Note that $\exists\ z_1, z_2$ such that $s \betastar z_1$, $b \betastar z_2$, and $|z_1| \betaconv |z_2|$.
@@ -344,14 +328,17 @@ To reach that goal requires a series of technical lemmas about pseudo-objects an
     Therefore, $t \equiv b$.
 \end{proof}
 
-Unlike with convertibility w.r.t. reduction, obtaining transitivity of conversion requires the additional assumption that the inner syntax form is a pseudo-object.
+Unlike with convertibility of reduction, obtaining transitivity of conversion requires the additional assumption that the inner syntax is a pseudo-object.
 Indeed, the incorporation of erasure into the definition requires this extra structure, because otherwise reductions on pairs would not agree.
-For example, $|[x, y, t]|$ is not convertible with $|[y, x, t]|$ for variables $x$ and $y$, but this situation is ruled out because $[x, y, t]$ is not a pseudo-object.
+For example, pick $a = [x, y; T].1$, $b = [x, y; T]$, and $c = [y, x; T].2$.
+Notice that $|a| = |b|$ but $|b| \neq |c|$, however, $c \betastar x$, thus $b \equiv c$ and $\neg (b \equiv c)$.
+There is an inconsistency in the definition because $b$ is not a pseudo-object, it is not the case that $|x| \betaconv |y|$.
+Really this is more fundamental than just transitivity as it shows that reduction is not consistent with erasure unless the syntax is a pseudo-object.
 
-\begin{theorem}
+\begin{lemma}
     If $b\pseobj$, $a \equiv b$, and $b \equiv c$ then $a \equiv c$
     \label{thm:2:conv_trans}
-\end{theorem}
+\end{lemma}
 \begin{proof}
     Note that $\exists\ u_1, u_2$ such that $a \betastar u_1$, $b \betastar u_2$, and $|u_1| \betaconv |u_2|$.
     Additionally, $\exists\ v_1, v_2$ such that $b \betastar v_1$, $c \betastar v_2$, and $|v_1| \betaconv |v_2|$.
@@ -364,7 +351,7 @@ For example, $|[x, y, t]|$ is not convertible with $|[y, x, t]|$ for variables $
 Knowing that $|s| \betaconv |t|$ if and only if $s \equiv t$ is critical for maintaining the spirit of Cedille.
 While the core theory of Cedille2 is its own system the purpose is to refine the design of Cedille without losing its essential features.
 A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e. erased terms) not with annotated terms themselves.
-Having Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check conversion w.r.t. reduction of objects.
+Having Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check convertibility of reduction of objects.
 Not only does this maintain the spirit of Cedille, but it also enables optimizations in type checking.
 Indeed, arbitrarily expensive sequences of reductions could potentially be erased when checking $|s| \betaconv |t|$ instead of $s \equiv t$.
 
@@ -381,6 +368,10 @@ Indeed, arbitrarily expensive sequences of reductions could potentially be erase
     Suppose $s \equiv t$, then $\exists\ z_1, z_2$ such that $s \betastar z_1$, $t \betastar z_2$, and $|z_1| \betaconv |z_2|$.
     By two applications of Lemma~\ref{lem:2:pseobj_red_b} $|s| \betaconv |t|$.
 \end{proof}
+
+\begin{corollary}
+    For $s\pseobj$ and $t\pseobj$ the relation $s \equiv t$ is an equivalence.
+\end{corollary}
 
 Finally, a useful lemma about substitution's interaction with conversion is obtained from the effort of pseudo-objects.
 This lemma is necessary to prove metatheoretic results about the system.

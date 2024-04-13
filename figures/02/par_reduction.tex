@@ -41,35 +41,33 @@
     { [t_1, t_2; t_3].2 \parred t_2^\prime }
     {ParSnd}
 
-\Rule{\ParPrmFstReduction}
+\Rule{\ParPrmReduction}
     {
         \der{\D{1}}{t_1 \parred t_1^\prime} \\
         \der{\D{2}}{t_2 \parred t_2^\prime} \\
-        \der{\D{3}}{t_3 \parred t_3^\prime}
+        \der{\D{3}}{t_3 \parred t_3^\prime} \\
+        \der{\D{3}}{t_4 \parred t_4^\prime} \\
+        \der{\D{3}}{t_5 \parred t_5^\prime}
     }
-    { \vartheta_1(\text{refl}(t_1), t_2, t_3) \parred \text{refl}(t_2^\prime) }
-    {ParPrmFst}
-
-\Rule{\ParPrmSndReduction}
-    {
-        \der{\D{1}}{t_1 \parred t_1^\prime} \\
-        \der{\D{2}}{t_2 \parred t_2^\prime} \\
-        \der{\D{3}}{t_3 \parred t_3^\prime}
-    }
-    { \vartheta_2(\text{refl}(t_1), t_2, t_3) \parred \text{refl}(t_2^\prime) }
-    {ParPrmSnd}
+    { \vartheta(\text{refl}(t_1; t_2), t_3, t_4; t_5) \parred \text{refl}(t_3^\prime; t_5^\prime) }
+    {ParPrm}
 
 \Rule{\ParSubstReduction}
     {
         \der{\D{1}}{t_1 \parred t_1^\prime} \\
-        \der{\D{2}}{t_2 \parred t_2^\prime}
+        \der{\D{2}}{t_2 \parred t_2^\prime} \\
+        \der{\D{2}}{t_3 \parred t_3^\prime} \\
+        \der{\D{2}}{t_4 \parred t_4^\prime} \\
+        \der{\D{2}}{t_5 \parred t_5^\prime} \\
+        \der{\D{2}}{t_6 \parred t_6^\prime} \\
+        \der{\D{2}}{t_7 \parred t_7^\prime}
     }
-    { \psi(\text{refl}(t_1), t_2) \parred \abs{\lambda_\omega}{x}{\app{t_2^\prime}{\tau}{t_1^\prime}}{x}}
+    { \app{\psi(\text{refl}(t_1; t_2), t_3, t_4; t_5, t_6)}{\omega}{t_7} \parred t_7^\prime}
     {ParSubst}
 
 \Rule{\ParVarReduction}
     {\color{white}{\_}}
-    { x \parred x}
+    { x_K \parred x_K}
     {ParVar}
 
 \begin{figure}
@@ -81,7 +79,7 @@
     $$\ParSubstReduction$$
     $$\ParFstReduction$$
     $$\ParSndReduction$$
-    $$\ParPrmFstReduction$$
-    $$\ParPrmSndReduction$$
+    $$\ParPrmReduction$$
     \caption{Parallel reduction rules for arbitrary syntax.}
+    \label{fig:par-reduction}
 \end{figure}

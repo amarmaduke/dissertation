@@ -744,7 +744,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
             $\sema{\Gamma} \vdash_{\oldced} \csubst \cdot \sema{A}\ \edash \sema{a}\ \edash \sema{b} \cdot \sema{P}\ \sema{e} \infr \sema{P}\ \sema{a}\ (\crefl \cdot \sema{A}\ \edash \sema{a}) \to \sema{P}\ \sema{b}\ \sema{e}$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Note by $\D{1}$ that $a, b\pterm$ and by classification $e\pterm$ with $(x : A) \cap B\ptype$.
         Applying the IH gives:
@@ -757,21 +757,6 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         Note that $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$ which means $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr A \to \star$.
         By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
             $\sema{\Gamma} \vdash_{\oldced} \cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
-    \begin{proofcase}
-        Note by $\D{1}$ and $\D{2}$ that $a, b\pterm$ and by classification $e\pterm$ with $A, B\ptype$.
-        Applying the IH gives:
-        \begin{enumerate}
-            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{A} \infr \star$
-            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr \star$
-            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
-            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
-            \item[$\D{5}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}.2\ \sema{b}.2$
-        \end{enumerate}
-        By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
-            $\sema{\Gamma} \vdash_{\oldced} \cthetatwo \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$

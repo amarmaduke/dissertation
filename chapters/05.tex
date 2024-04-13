@@ -1,4 +1,5 @@
 \chapter{Object Normalization}
+\label{chap:5}
 
 Consistency guarantees that the logic and equational theory of $\ced$ is non-trivial.
 Proof normalization guarantees that, at least, inference for kinds and types is decidable.
@@ -147,7 +148,7 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
             and $|\psi(t^\prime, \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}(A), \mathfrak{s}(T))| = t$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \PromoteSndRule[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Have $|\mathfrak{s}(\vartheta_2(e, a, b; (x : A) \cap B))| = |\mathfrak{s}(e)|$ and $|\mathfrak{s}(e)| \betared t$.
         Applying the IH to $\D{5}$ gives $\exists\ t^\prime$ where $\mathfrak{s}(e) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
@@ -408,7 +409,7 @@ Indeed, the previous lemma does all the heavy lifting in making this theorem go 
         Applying the IH to $\D{4}$ concludes the case.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \PromoteFstRule[*] \end{array}$
+    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Let $\gamma$ be a context with a hole variable $h$.
         Now $|[h := \vartheta_1(e, a, b; T)]\gamma| = [h := |e|]|\gamma|$ and $|[h := \mathfrak{s}(\vartheta_1(e, a, b; T))]\gamma| = [h := |\mathfrak{s}(e)|]|\gamma|$.
