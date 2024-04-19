@@ -1,95 +1,60 @@
-\chapter{Object Normalization}
+\chapter{Object Normalization and \texorpdfstring{$\varphi$}{Phi} the Foil}
 \label{chap:5}
 
 Consistency guarantees that the logic and equational theory of $\ced$ is non-trivial.
 Proof normalization guarantees that, at least, inference for kinds and types is decidable.
 Neither of these properties are strong enough on their own to guarantee decidability of type checking.
 To obtain decidability of type checking it must be the case that objects are normalizing.
-However, the technique described below depends on both proof normalization and consistency.
-While this is not the only possible way it is suggestive how difficult a property object normalization is to prove.
+Unfortunately, object normalization does not hold when the \textsc{Cast} rule is used, and it is not clear how the rule may be repaired to acquire object normalization.
+A proof is \textbf{strict} if it does not use the \textsc{Cast} rule in its derivation.
+While strict proofs do have normalizing objects the technique described below to prove this fact depends on both proof normalization and consistency.
+This is suggestive of how difficult a property object normalization is to show.
 
-The technique for proving object normalization proceeds in two parts.
-First, a notion of strict syntax is defined where $\varphi$ forms are eliminated.
-Proofs will yield strict proofs and utilizing both proof normalization and consistency one can show that proof reduction bounds strict object reduction.
-Hence, strict objects will be strongly normalizing.
-Second, a notion of well-typed observational equivalence where the only observation of interest is divergence of objects is defined.
-Then it is demonstrated that proofs are observational equivalent to their strict version.
-Thus, because strict objects are normalizing, it must be the case that objects are normalizing.
+\section{Normalization for Strict Proofs}
 
-\section{Strict Syntax}
-
-An important observation to make about $\varphi$ forms is that they do not expand the logical theory.
-Meaning, it is not possible to prove \textit{new} propositions or inhabit \textit{new} types.
-Instead, the $\varphi$ form is meant primarily as a means of obtaining efficient objects for an already proven property.
-To that end a strict variation of syntax is easily defined on arbitrary syntax by replacing any $\varphi$ form with its internal proof witness.
-Figure~\ref{fig:strict} describes strictification of syntax.
-Notice that $\mathfrak{s}(t)$ is structural on all syntax forms \textit{except} the $\varphi$ form where everything but the internal proof witness is discarded.
-
-\input{figures/05/strict.tex}
-
-An immediate consequence of this definition is that strict proofs remain proofs of the original type.
-Note, however, that the type itself is not made strict.
-Strictification of the type would not hold because $\varphi$ constructs inside the type may be compared via the conversion relation and strict objects are not equal to the corresponding object.
-\begin{lemma}
-    \label{lem:5:strict_proof}
-    If $\Gamma \vdash t : A$ then $\Gamma \vdash \mathfrak{s}(t) : A$
-\end{lemma}
-\begin{proof}
-    By induction on $\Gamma \vdash t : A$, because $\mathfrak{s}$ is structural the $\varphi$ rule is the only one of interest:
-
-    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
-    \begin{proofcase}
-        Immediate by IH applied to $\D{3}$.
-    \end{proofcase}
-\end{proof}
-Of course, if strict syntax reduces, then the resulting syntax must be strict.
-This is an obvious consequence of the fact that reduction never introduces $\varphi$ forms.
-\begin{lemma}
-    \label{lem:5:strict_preservation}
-    If $\mathfrak{s}(s) \betared t$ then $t = \mathfrak{s}(t)$
-\end{lemma}
-\begin{proof}
-    Without $\varphi$ constructs $\mathfrak{s}(s) = s$ by a trivial induction.
-    Reduction cannot produce $\varphi$ constructs, thus $t$ necessarily does not have $\varphi$ as a subexpression.
-    Hence, $\mathfrak{s}(t) = t$.
-\end{proof}
-The core observation is that proof reduction in strict proofs upper-bounds reduction in strict objects.
+The core observation is that proof reduction in strict proofs upper-bounds reduction in their corresponding objects.
 Thus, if a strict object steps, and note that this must be a $\beta$-step, then there is some strict proof such that the original strict proof reduces to it and the erasures match.
 There could be many more reductions in the strict proof because syntax forms for equality and intersections are all mostly erased.
 However, none of these forms will block a $\beta$-redex because the proof is well-typed.
 Note that this property hinges on both proof normalization and equational consistency.
 Proof normalization is used to eliminate any extraneous redexes that would otherwise be erased.
-Consistency is used to eliminate the $\delta$ case as it could theoretically generate a $\beta$-redex after erasure if the theory was not consistent.
+Consistency is used to eliminate the $\delta$ case as it could theoretically generate a $\beta$-redex after erasure if the theory was not equationally consistent.
 Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this is impossible because the syntax under consideration is strict.
+
+\begin{definition}
+    $\Gamma \vdash_{\ced^\text{-}} t : A$ iff $\mathcal{D} : \Gamma \vdash t : A$ and the \textnormal{\textsc{Cast}} rule is not used in $\mathcal{D}$
+\end{definition}
+
 \begin{lemma}
     \label{lem:5:strict_erase_red_step}
-    If $\Gamma \vdash s : A$ and $|\mathfrak{s}(s)| \betared t$ then $\exists\ t^\prime$ such that $\mathfrak{s}(s) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$
+    If $\Gamma \vdash_{\ced^\text{-}} s : A$ and $|s| \betared t$ then $\exists\ t^\prime$ such that $s \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$
 \end{lemma}
 \begin{proof}
-    By induction on $\Gamma \vdash s : A$.
-    The erasure of the \textsc{Ax}, \textsc{Var}, \textsc{Refl}, and \textsc{Cast} cases are values and thus do not reduce.
-    First projection and first promotion are very similar to second projection and second promotion (respectively).
-    The \textsc{Int} and \textsc{Eq} cases are structural in both erasure and strictification and are thus very similar to the \textsc{Pi} case.
+    By induction on $\Gamma \vdash_{\ced^\text{-}} s : A$.
+    The erasure of the \textsc{Ax}, \textsc{Var}, and \textsc{Refl}, cases are values and thus do not reduce.
+    The \textsc{Cast} case is impossible because it is intentionally excluded.
+    First projection is very similar to second projection case.
+    The \textsc{Int} and \textsc{Eq} cases are structural in erasure and are thus very similar to the \textsc{Pi} case.
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}((x : A) \to_m B)| = (x : |\mathfrak{s}(A)|) \to_m |\mathfrak{s}(B)|$.
-        Suppose that $|\mathfrak{s}(A)| \betared t$.
-        By the IH applied to $\D{1}$: $\exists\ t^\prime$ such that $\mathfrak{s}(A) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Thus, $(x : \mathfrak{s}(A)) \to_m \mathfrak{s}(B) \betastar_{\neq 0} (x : t^\prime) \to_m \mathfrak{s}(B)$ and $|(x : t^\prime) \to_m \mathfrak{s}(B)| = (x : t) \to_m |\mathfrak{s}(B)|$.
-        The case where a reduction happens in $|\mathfrak{s}(B)|$ is similar.
+        Have $|(x : A) \to_m B| = (x : |A|) \to_m |B|$.
+        Suppose that $|A| \betared t$.
+        By the IH applied to $\D{1}$: $\exists\ t^\prime$ such that $A \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Thus, $(x : A) \to_m B \betastar_{\neq 0} (x : t^\prime) \to_m B$ and $|(x : t^\prime) \to_m B| = (x : t) \to_m |B|$.
+        The case where a reduction happens in $|B|$ is similar.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
         Suppose $m = 0$.
-        Have $|\mathfrak{s}(\abs{\lambda_0}{x}{A}{b}|)| = |\mathfrak{s}(b)|$ with $|\mathfrak{s}(b)| \betared t$.
+        Have $|\abs{\lambda_0}{x}{A}{b}| = |b|$ with $|b| \betared t$.
         Applying the IH to $\D{2}$ concludes the case.
         \\ \\
         Suppose that $m = \omega$, note that $m = \tau$ is very similar and thus omitted.
-        Have $|\mathfrak{s}(\abs{\lambda_\omega}{x}{A}{b})| = \abs{\lambda_\omega}{x}{\diamond}{|\mathfrak{s}(b)|}$ and $|\mathfrak{s}(b)| \betared t$.
-        Applying the IH to $\D{2}$ yields $\exists\ t^\prime$ such that $\mathfrak{s}(b) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $\abs{\lambda_\omega}{x}{\mathfrak{s}(A)}{\mathfrak{s}(b)} \betastar_{\neq 0} \abs{\lambda_\omega}{x}{\mathfrak{s}(A)}{t^\prime}$ and $|\abs{\lambda_\omega}{x}{\mathfrak{s}(A)}{t^\prime}| = \abs{\lambda_\omega}{x}{\diamond}{t}$.
+        Have $|\abs{\lambda_\omega}{x}{A}{b}| = \abs{\lambda_\omega}{x}{\diamond}{|b|}$ and $|b| \betared t$.
+        Applying the IH to $\D{2}$ yields $\exists\ t^\prime$ such that $b \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $\abs{\lambda_\omega}{x}{A}{b} \betastar_{\neq 0} \abs{\lambda_\omega}{x}{A}{t^\prime}$ and $|\abs{\lambda_\omega}{x}{A}{t^\prime}| = \abs{\lambda_\omega}{x}{\diamond}{t}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
@@ -97,70 +62,70 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
         If $m = 0$ then the proof follows by a straightforward application of the IH to $\D{1}$.
         \\ \\
         Suppose that $m = \omega$.
-        Let $|\mathfrak{s}(f)| = \abs{\lambda_\omega}{x}{\diamond}{v}$ and $\app{|\mathfrak{s}(f)|}{\omega}{|\mathfrak{s}(a)|} \betared [x := |\mathfrak{s}(a)|]v$.
-        By Theorem~\ref{lem:3:proof_normalization} $\mathfrak{s}(f)$ is strongly normalizing in proof reduction.
+        Let $|f| = \abs{\lambda_\omega}{x}{\diamond}{v}$ and $\app{|f|}{\omega}{|a|} \betared [x := |a|]v$.
+        By Theorem~\ref{lem:3:proof_normalization} $f$ is strongly normalizing in proof reduction.
         If $f$ contains a projection redex, promotion redex, or erased application redex then produce $f_i$ by contracting that redex.
-        Continue contracting these redexes until none remain, assume $k$ such redexes are contracted, thus $\mathfrak{s}(f) \betastar f_k$.
-        Note that none of these redexes affect the erasure of $f$, thus $|\mathfrak{s}(f)| = |f_k|$.
-        Now $f_k$ has only four possibilities: $f_k = \abs{\lambda_\omega}{x}{A}{b}$, or $f_k = \psi(\prefl(z; Z), a, b; A, P)$, or $f_k = \delta(\prefl(t; A))$, or $f_k = \varphi(f, e; A, T)$.
-        By strictification the $\varphi$ case is impossible and by Theorem~\ref{lem:4:eq_consistency} the $\delta$ case is impossible.
+        Continue contracting these redexes until none remain, assume $k$ such redexes are contracted, thus $f \betastar f_k$.
+        Note that none of these redexes affect the erasure of $f$, thus $|f| = |f_k|$.
+        Now $f_k$ has only three possibilities: $f_k = \abs{\lambda_\omega}{x}{A}{b}$, or $f_k = \psi(\prefl(z; Z), a, b; A, P)$, or $f_k = \delta(\prefl(t; A))$.
+        The $\varphi$ case is impossible by the restriction of the judgment and by Theorem~\ref{lem:4:eq_consistency} the $\delta$ case is impossible.
         \begin{itemize}
             \item {
                 Suppose $f_k = \abs{\lambda_\omega}{x}{A}{b}$.
-                Now $\app{f_k}{\omega}{\mathfrak{s}(a)} \betared [x := \mathfrak{s}(a)]b$ and $|[x := \mathfrak{s}(a)]b| = [x := |\mathfrak{s}(a)|]v$.
+                Now $\app{f_k}{\omega}{a} \betared [x := a]b$ and $|[x := a]b| = [x := |a|]v$.
             }
             \item {
                 Suppose $f_k = \psi(\prefl(z; Z), a, b; A, P)$.
-                Now $\app{\psi(\prefl(z; Z), a, b; A, P)}{\omega}{\mathfrak{s}(a)} \betared \mathfrak{s}(a)$.
-                Note that $|f_k| = |\mathfrak{s}(f)|$, but $|\psi(\prefl(z; Z), a, b; A, P)| = \abs{\lambda_\omega}{x}{\diamond}{x}$ and $|\mathfrak{s}(f)| = \abs{\lambda_\omega}{x}{\diamond}{v}$.
-                Thus, $v = x$ and $|\mathfrak{s}(a)| = [x := |\mathfrak{s}(a)|]v$.
+                Now $\app{\psi(\prefl(z; Z), a, b; A, P)}{\omega}{a} \betared a$.
+                Note that $|f_k| = |f|$, but $|\psi(\prefl(z; Z), a, b; A, P)| = \abs{\lambda_\omega}{x}{\diamond}{x}$ and $|f| = \abs{\lambda_\omega}{x}{\diamond}{v}$.
+                Thus, $v = x$ and $|a| = [x := |a|]v$.
             }
         \end{itemize}
         \vspace{.15in}
-        Suppose $m = \omega$ and $|\mathfrak{s}(f)| \betared t$.
-        Note that the case where $|\mathfrak{s}(a)| \betared t$ is very similar and thus omitted.
-        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ such that $\mathfrak{s}(f) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $\app{\mathfrak{s}(f)}{\omega}{\mathfrak{s}(a)} \betastar_{\neq 0} \app{t^\prime}{\omega}{\mathfrak{s}(a)}$ and $|\app{t^\prime}{\omega}{\mathfrak{s}(a)}| = \app{t}{\omega}{|\mathfrak{s}(a)|}$.
+        Suppose $m = \omega$ and $|f| \betared t$.
+        Note that the case where $|a| \betared t$ is very similar and thus omitted.
+        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ such that $f \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $\app{f}{\omega}{a} \betastar_{\neq 0} \app{t^\prime}{\omega}{a}$ and $|\app{t^\prime}{\omega}{a}| = \app{t}{\omega}{|a|}$.
         \\ \\
-        Suppose $m = \tau$ then strictification and erasure are structural.
+        Suppose $m = \tau$ then erasure is structural.
         Thus, a $\beta$-redex is tracked exactly and any structural redexes are very similar to the $m = \omega$ case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}([t_1, t_2; A])| = |\mathfrak{s}(t_1)|$ and $|\mathfrak{s}(t_1)| \betared t$.
-        Applying the IH to $\D{1}$ yields $\exists\ t^\prime$ such that $\mathfrak{s}(t_1) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $[\mathfrak{s}(t_1), \mathfrak{s}(t_2); \mathfrak{s}(A)] \betastar_{\neq 0} [t^\prime, \mathfrak{s}(t_2); \mathfrak{s}(A)]$ and $|[t^\prime, \mathfrak{s}(t_2); \mathfrak{s}(A)]| = t$.
+        Have $|[t_1, t_2; A]| = |t_1|$ and $|t_1| \betared t$.
+        Applying the IH to $\D{1}$ yields $\exists\ t^\prime$ such that $t_1 \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $[t_1, t_2; A] \betastar_{\neq 0} [t^\prime, t_2; A]$ and $|[t^\prime, t_2; A]| = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}(b.2)| = |\mathfrak{s}(b)|$ and $|\mathfrak{s}(b)| \betared t$.
-        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ such that $\mathfrak{s}(b) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $(\mathfrak{s}(b)).2 \betastar_{\neq 0} t^\prime.2$ and $|t^\prime.2| = t$.
+        Have $|b.2| = |b|$ and $|b| \betared t$.
+        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ such that $b \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $b.2 \betastar_{\neq 0} t^\prime.2$ and $|t^\prime.2| = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}(\psi(e, a, b; A, T))| = |\mathfrak{s}(e)|$ and $|\mathfrak{s}(e)| \betared t$.
-        Applying the IH to $\D{4}$ yields $\exists\ t^\prime$ such that $\mathfrak{s}(e) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $\psi(\mathfrak{s}(e), \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}(A), \mathfrak{s}(T)) \betastar_{\neq 0} \psi(t^\prime, \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}(A), \mathfrak{s}(T))$
-            and $|\psi(t^\prime, \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}(A), \mathfrak{s}(T))| = t$.
+        Have $|\psi(e, a, b; A, T)| = |e|$ and $|e| \betared t$.
+        Applying the IH to $\D{4}$ yields $\exists\ t^\prime$ such that $e \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $\psi(e, a, b; A, T) \betastar_{\neq 0} \psi(t^\prime, a, b; A, T)$
+            and $|\psi(t^\prime, a, b; A, T)| = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}(\vartheta_2(e, a, b; (x : A) \cap B))| = |\mathfrak{s}(e)|$ and $|\mathfrak{s}(e)| \betared t$.
-        Applying the IH to $\D{5}$ gives $\exists\ t^\prime$ where $\mathfrak{s}(e) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $\vartheta_2(\mathfrak{s}(e), \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}((x : A) \cap B)) \betastar_{\neq 0} \vartheta_2(t^\prime, \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}((x : A) \cap B))$
-            and $|\vartheta_2(t^\prime, \mathfrak{s}(a), \mathfrak{s}(b); \mathfrak{s}((x : A) \cap B))| = t$.
+        Have $|\vartheta(e, a, b; (x : A) \cap B)| = |e|$ and $|e| \betared t$.
+        Applying the IH to $\D{4}$ gives $\exists\ t^\prime$ where $e \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $\vartheta(e, a, b; (x : A) \cap B) \betastar_{\neq 0} \vartheta(t^\prime, a, b; (x : A) \cap B)$
+            and $|\vartheta(t^\prime, a, b; (x : A) \cap B)| = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
     \begin{proofcase}
-        Have $|\mathfrak{s}(\delta(e))| = |\mathfrak{s}(e)|$ and $|\mathfrak{s}(e)| \betared t$.
-        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ where $\mathfrak{s}(e) \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
-        Now $\delta(\mathfrak{s}(e)) \betastar_{\neq 0} \delta(t^\prime)$ and $|\delta(t^\prime)| = t$.
+        Have $|\delta(e)| = |e|$ and $|e| \betared t$.
+        Applying the IH to $\D{1}$ gives $\exists\ t^\prime$ where $e \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
+        Now $\delta(e) \betastar_{\neq 0} \delta(t^\prime)$ and $|\delta(t^\prime)| = t$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
@@ -172,20 +137,20 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
 
 \begin{theorem}[Strict Object Normalization]
     \label{lem:5:strict_object_sn}
-    If $\Gamma \vdash t : A$ then $|\mathfrak{s}(t)|$ is strongly normalizing
+    If $\Gamma \vdash_{\ced^\text{-}} t : A$ then $|t|$ is strongly normalizing
 \end{theorem}
 \begin{proof}
-    Lemma~\ref{lem:5:strict_proof} gives $\Gamma \vdash \mathfrak{s}(t) : A$ and thus by Theorem~\ref{lem:3:proof_normalization}: $\mathfrak{s}(t)$ is strongly normalizing wrt proof reduction.
-    Let $\partial$ be the maximum length reduction sequence $\mathfrak{s}(t)$ could take to reach the unique value.
-    Suppose wlog that $|\mathfrak{s}(t)|$ contains a redex.
-    Contract this redex giving $|\mathfrak{s}(t)| \betared e_1$.
-    By Lemma~\ref{lem:5:strict_erase_red_step}: $\exists\ t_1$ such that $\mathfrak{s}(t) \betastar_{\neq 0} t_1$ and $|t_1| = e_1$.
-    Using preservation of proof reduction: $\Gamma \vdash t_1 : A$ and moreover by Lemma~\ref{lem:5:strict_preservation} $\mathfrak{s}(t_1) = t_1$.
-    Let the number of contracted redexes by the reduction $\mathfrak{s}(t) \betastar_{\neq 0} t_1$ be $k$, then there is a maximum of $\partial - k$ redexes in $t_1$.
+    By Theorem~\ref{lem:3:proof_normalization}: $t$ is strongly normalizing wrt proof reduction.
+    Let $\partial$ be the maximum length reduction sequence $t$ could take to reach the unique value.
+    Suppose wlog that $|t|$ contains a redex.
+    Contract this redex giving $|t| \betared e_1$.
+    By Lemma~\ref{lem:5:strict_erase_red_step}: $\exists\ t_1$ such that $t \betastar_{\neq 0} t_1$ and $|t_1| = e_1$.
+    Using preservation of proof reduction: $\Gamma \vdash_{\ced^\text{-}} t_1 : A$.
+    Let the number of contracted redexes by the reduction $t \betastar_{\neq 0} t_1$ be $k$, then there is a maximum of $\partial - k$ redexes in $t_1$.
     If redexes remain in $e_1$ than the process can be repeated because $t_1$ is a strict proof whose erasure is $e_1$.
     However, eventually the number of steps taken must run out, because $\partial$ is a finite value.
     Thus, the procedure may be repeated as many times as desired, but $e_i$, the value after $i$ iterations of this process, must eventually run out of redexes by Lemma~\ref{lem:5:strict_erase_red_step}.
-    Therefore, $|\mathfrak{s}(t)|$ is strongly normalizing.
+    Therefore, $|t|$ is strongly normalizing.
 \end{proof}
 
 Strong normalization of strict objects leads to an interesting observation.
@@ -195,12 +160,11 @@ In other words, why not merely compare for equality: $|u| = |v|$.
 The answer is because $\varphi$ may generate $\beta$-redexes after erasure, and it turns out that it is the only syntax form for which this is possible.
 Thus, if $\varphi$ was removed from the system then conversion \textit{could} be defined using equality of objects instead of reduction convertibility of objects.
 The $\varphi$ form is unique amongst all the other syntax.
-It is both not responsible for any new properties, but also responsible for the only interesting reduction in objects.
 
 Another question that the reader may have is why not represent the reduction of $\varphi$ in the proof system.
 The answer is that there is no obvious way to make the reduction well-typed, thus preservation would be lost.
-Indeed, the proof witness of a $\varphi$ form, $f : (a : A) \to (x : A) \cap B$, is allowed to be as complicated as required to produce a subtype, $(x : A) \cap B$, from the corresponding supertype, $A$.
-However, the object for the $\varphi$ is merely the identity $\lambda$-term ($\abs{\lambda}{x}{\diamond}{x}$).
+Indeed, the proof witness of a $\varphi(a, b, e; A, (x : A) \cap B)$ form, $b$, is allowed to be as complicated as required to produce the subtype $(x : A) \cap B$.
+However, the object, $|a|$, is typed at the super-type $A$.
 To make it possible to type this term in the proof system some notion of subtyping would have to be added directly into the rules.
 It is not immediately clear how to make this move without producing a radically different system.
 Yet, it does hint that the $\varphi$ rule is, in some sense, expanding a semantic subtyping relation that is later realized internally via a notion of casts.
@@ -208,26 +172,31 @@ Indeed, it may be fruitful to view the proof-object distinction as being fundame
 
 \section{Observational Equivalence of Objects}
 
-Unfortunately, the structural relationship between strict objects and regular objects is not easy to exploit, if it can used at all.
-Observational equivalence gives a method of relating regular objects to strict objects.
+Unfortunately, proofs involving the $\varphi$ form do not have normalizing objects.
+While it is not clear how to augment the proof system to enforce normalization it is possible to describe an external condition on proofs that would guarantee object normalization for any arbitrary proof.
+The idea is to observe that each $\varphi(a, b, e; A, (x : A) \cap B)$ form has some associated proof witness ($b$) and some object witness ($a$).
+Evidence ($e$) is also provided that these two witnesses are equal at type $A$.
+If $e$ reduces to a value, then that implies $|a| \betaconv |b|$, but if this holds than whatever usage of $\varphi$ should be normalizing.
+However, the evidence produced in a proof need not ever reduce to a value, yet it will still be discarded by the erasure of $\varphi$.
+
+Observational (or contextual) equivalence of objects gives a strong enough claim to transfer the normalization property from one object to another.
 Objects being the concept of interest means that contexts need to be well-typed because an object is only the erasure of a proof.
 To make contexts the inductive structure of syntax is reused with a unique fresh free variable, labelled $h$, that represents a hole.
-The variable is unique meaning it occurs only once in the given syntax.
+The variable is unique meaning it occurs only once in the given syntax, but it can be trivially duplicated by an abstraction.
 Context structure could be defined inductively, but this methodology allows reuse of erasure and substitution.
 \begin{definition}
     A \textbf{context} $\gamma : (\Gamma, A) \to (\Delta, B)$ is a syntactic form with a unique free variable $h$ representing a hole such that if $\Gamma \vdash t : A$ then $\Delta \vdash [h := t]\gamma : B$.
 \end{definition}
 
-Observational equivalence is then defined to be equivalence of divergence of the associated objects substituted for $h$ in the given context.
+Observational equivalence is then defined to be logical equivalence of divergence of the associated objects substituted for $h$ in the given context.
 There are several possible ways to defined observational equivalence including the choice of what counts as an observation.
 For the purposes of this chapter divergence is the only observation of interest.
+Note that it is easy to see that observational equivalence forms an equivalence relation relative to the parameters $\Gamma$ and $A$.
 
 \begin{definition}
     The syntax $a$ and $b$ are \textbf{observationally equivalent} at $A$ in $\Gamma$ (written: $\Gamma \vdash a \approx_A b$) iff
     for any context $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ with unique fresh variable $h$: $|[h := a]\gamma|$ normalizes iff $|[h := b]\gamma|$ normalizes
 \end{definition}
-
-It is easy to see that observational equivalence forms an equivalence relation relative to the parameters $\Gamma$ and $A$.
 
 \begin{lemma}
     \label{lem:5:obs_refl}
@@ -259,195 +228,129 @@ It is easy to see that observational equivalence forms an equivalence relation r
     Hence, $|[h := a]\gamma|$ normalizes if and only if $|[h := c]\gamma|$ normalizes.
 \end{proof}
 
-Moreover, because observational equivalence only tracks divergence it must be the case that if an object is observationally equivalent to a strongly normalizing object, then it is also strongly normalizing.
-
-\begin{lemma}
-    \label{lem:5:obs_implies_sn}
-    If $\Gamma \vdash a : A$, $\Gamma \vdash b : A$, $|a|$ is strongly normalizing, and $\Gamma \vdash a \approx_A b$ then $|b|$ is strongly normalizing
-\end{lemma}
-\begin{proof}
-    Immediate by definition of observational equivalence, $|b|$ must be normalizing in any possible context $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$.
-    Thus, $|b|$ must be strongly normalizing.
-\end{proof}
-
-Knowing that $\varphi$ objects behave like the identity function is critical.
-Note that the condition $FV(|e|)$ being empty is necessary to ensure the below lemma holds.
-If this condition where dropped than $\app{e}{\omega}{a}$ for when $a$ is a value would say nothing about the reduction behavior of $f$.
-This is because $e$ could be a free variable in $\Gamma$ and thus the equational proof it is evidence for would not be ``actionable'' in some sense.
-It is not clear if this condition is too strict, as one could imagine a more refined or semantic condition that allows rewriting in contexts that are in some sense ordered.
-To that point, the free variable condition is communicating that the computational nature of $|e|$ cannot depend on any hypothetical evidence.
-Thus, the computational nature of $|e|$ is a sort of ground truth.
-Regardless, the condition is one that works and that is not too onerous as to prevent constructions of interest.
-
-\begin{lemma}
-    \label{lem:5:phi_obs_id}
-    Let $T = (a : A) \to_\omega (x : A) \cap B$.
-    Suppose:
-    \begin{enumerate}
-        \item $\Gamma \vdash T : \star$
-        \item $\Gamma \vdash f : T$
-        \item $\Gamma \vdash e : (a : A) \to_\omega a_\star =_A (\app{f}{\omega}{a_\star}).1$
-        \item $FV(|e|)$ is empty
-        \item $\Gamma \vdash a : A$
-    \end{enumerate}
-    Then $\Gamma \vdash a \approx_A (\app{f}{\omega}{a}).1$
-\end{lemma}
-\begin{proof}
-    Suppose $a \betastar a^\prime$ where $FV(|a^\prime|)$ is empty then $\app{e}{\omega}{a}$ must reduce to a value because $FV(|e|)$ is empty.
-    Note that theoretically the definition of $e$ could use $\varphi$, but because $e$ is erased and Lemma~\ref{lem:5:strict_proof} shows that $\varphi$ does not enable any new proofs it can be safely assumed that $e = \mathfrak{s}(e)$.
-    In other words, any usage of $\varphi$ that contains a $\varphi$ in $e$ can always be transformed into a usage that does not contain $\varphi$ in the definition of $e$ without affecting either the typing relation or object reduction.
-    Hence, $\app{e}{\omega}{a} \betastar \prefl(z; Z)$ where $|z|$ is in normal form, $z \equiv a^\prime$, and $z \equiv (\app{f}{\omega}{a^\prime}).1$.
-    Thus, $\app{|f|}{\omega}{|a^\prime|} \betastar |z|$ and $|a^\prime| \betastar |z|$.
-    Meaning both are normalizing and hence observationally equivalent.
-    \\ \\
-    Suppose $a$ is neutral, i.e. $FV(|a|)$ is not empty.
-    In this case $\app{e}{\omega}{a}$ does not necessarily reduce to a value because $a$ is neutral.
-    Let $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ be a context with hole variable $h$.
-    It is possible that $a$ reduces to a value after substitution into $h$.
-    However, this falls into the purview of the above case, thus suppose wlog that $a$ remains neutral after substitution.
-    If $|[h := a]\gamma|$ diverges then clearly $|[h := \app{f}{\omega}{a}.1]\gamma|$ diverges as well.
-    Thus, suppose $|[h := a]\gamma|$ normalizes.
-    There are two possibilities to consider:
-    \begin{enumerate}
-        \item {
-            Suppose $A$ has no inhabitants and is equivalent to false.
-            In this scenario, $|f|$ must reduce to a term that looks like $\abs{\lambda_\omega}{x}{\diamond}{\app{y}{\omega}{\cdots}}$ for $y = x$ or $y \in \Gamma$.
-            One alternative possibility is for $f$ to contain a $\varphi$ rule, but this requires equational evidence that $f$ behaves like an identity and critically that equational evidence cannot depend on $x : A$ or any other variable in $\Gamma$.
-            Hence, any $\varphi$ rule used in $f$ must be via closed terms, but because $f$ produces a $(x : A) \cap B$ the body must contain a variable representing false to inhabit $A$.
-            Therefore, regardless of the situation, $|f|$ must be neutral and thus $\app{|f|}{\omega}{|a|}$ must be neutral.
-        }
-        \item {
-            Suppose $A$ has inhabitants and is not equivalent to false.
-            Let $\vdash v : A$ represent an arbitrary closed value of $A$.
-            Using the same above argument, $\app{e}{\omega}{v}$ would reduce to a value meaning $\app{|f|}{\omega}{|v|} \betastar |v|$.
-            Thus, $f$ must reduce to some intermediary $f^\prime$ such that $FV(|f^\prime|)$ is empty.
-            Note that technically $f$ may contain free variables, but they cannot be used in a computationally relevant way.
-            Now $|f^\prime|$ must reduce to a term that looks like $\abs{\lambda_\omega}{x}{\diamond}{\app{x}{\omega}{\cdots}}$, but when a neutral is applied to this function it produces a neutral.
-            Hence, $\app{|f|}{\omega}{|a|}$ is neutral.
-        }
-    \end{enumerate}
-\end{proof}
-
-The key theorem is that regular proofs are observationally equivalent to their strictification.
-The only way this theorem could fail is because of $\varphi$ subexpressions.
-However, Lemma~\ref{lem:5:phi_obs_id} conveys that $\varphi$ proofs are observationally equivalent to an identity function.
-Indeed, the previous lemma does all the heavy lifting in making this theorem go through.
+\begin{definition}
+    A proof is $\varphi$-\textbf{safe} iff for every usage of $\varphi$ with $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) : (x : A) \cap B$ then $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) \approx_{(x : A) \cap B} b$
+\end{definition}
 
 \begin{theorem}
-    \label{lem:5:strict_obs_regular}
-    If $\Gamma \vdash t : A$ then $\Gamma \vdash t \approx_A \mathfrak{s}(t)$
+    If $\Gamma \vdash t : A$ and $t$ is $\varphi$-safe then $|t|$ is strongly normalizing
 \end{theorem}
 \begin{proof}
-    By induction on $\Gamma \vdash t : A$.
-    The \textsc{Ax} and \textsc{Var} cases are trivial because $\mathfrak{s}(\star) = \star$ and $\mathfrak{s}(x_K) = x_K$.
-    Cases that cannot participate in well-typed reductions: \textsc{Int} and \textsc{Eq} are omitted in favor of presenting only the \textsc{Pi} case.
-    The \textsc{Fst} case is very similiar to the \textsc{Snd} case and omitted.
-    Likewise, the \textsc{PrmSnd} case is very similar to the \textsc{PrmFst} case and omitted.
-
-    $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
-    \begin{proofcase}
-        Have $\mathfrak{s}((x : A) \to_m B) = (x : \mathfrak{s}(A)) \to_m \mathfrak{s}(B)$.
-        Applying the IH to $\D{1}$ and $\D{2}$ yields $\Gamma \vdash A \approx_{\pdom(m, K)} \mathfrak{s}(A)$ and $\Gamma; x_m : A \vdash B \approx_{\pcodom(m)} \mathfrak{s}(B)$.
-        Thus, because no reduction in $A$ or $B$ can alter the initial structural shape of this syntax it must be the case that $\Gamma \vdash (x : A) \to_m B \approx_{\pcodom(m)} \mathfrak{s}((x : A) \to_m B)$.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
-    \begin{proofcase}
-        Have $\mathfrak{s}(\abs{\lambda_m}{x}{A}{t}) = \abs{\lambda_m}{x}{\mathfrak{s}(A)}{\mathfrak{s}(t)}$.
-        If $m = \omega$ or $m = \tau$ then the case is similar to the \textsc{Pi} case.
-        Suppose $m = 0$.
-        Let $\gamma : (\Gamma, (x : A) \to_m B) \to (\varepsilon, \pUnit)$ be an arbitrary context with hole variable $h$.
-        Now $|[h := \abs{\lambda_m}{x}{A}{t}]\gamma| = [h := |t|]|\gamma|$ and $|[h := \abs{\lambda_m}{x}{\mathfrak{s}(A)}{\mathfrak{s}(t)}]\gamma = [h := |\mathfrak{s}(t)|]|\gamma|$.
-        By the IH applied to $\D{2}$: $\Gamma; x_m : A \vdash t \approx_B \mathfrak{s}(t)$ which means that $[h := |t|]|\gamma|$ normalizes iff $[h := |\mathfrak{s}(t)|]|\gamma|$.
-        Note that while it is true the type of the contexts differ, the consequence remains the same because observational equivalence is phrased relative to erasure.
-    \end{proofcase}
+    By lexicographic induction on the nesting count of $\varphi$ in $t$ and the inference judgment $\Gamma \vdash t : A$.
+    If $t$ does not contain any $\varphi$ subexpressions then it is a strict proof and thus $|t|$ is strongly normalizing by Theorem~\ref{lem:5:strict_object_sn}.
+    Thus, suppose $t$ has $i + 1$ nested $\varphi$ expressions.
+    For every case except the \textsc{App} case $|t|$ is strongly normalizing by the IH.
+    The \textsc{App} case is special because the function-part could be a $\varphi$ and thus generate a $\beta$-redex in erasure that is not tracked by proof reduction.
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Suppose $m = \omega$.
-        The only way that $\app{f}{\omega}{a}$ could be non-terminating is if $f = \varphi(f^\prime, e; A, T)$.
-        Thus, suppose this is the case wlog.
-        Destructing $\D{1}$ and applying Lemma~\ref{lem:5:phi_obs_id} gives $\Gamma \vdash a \approx_A (\app{f^\prime}{\omega}{a}).1$.
-        Applying the IH to $\D{2}$ gives $\Gamma \vdash a \approx_A \mathfrak{s}(a)$.
-        Applying the IH to a subderivation of $\D{1}$ yields $\Gamma \vdash f^\prime \approx_T \mathfrak{s}(f^\prime)$.
-        However, if $f^\prime$ behaves like the identity for any well-typed input it must be the case that $\mathfrak{s}(f^\prime)$ does as well.
-        Hence, $\Gamma \vdash \app{f}{\omega}{a} \approx_B \app{\mathfrak{s}(f)}{\omega}{\mathfrak{s}(a)}$
-        \\ \\
-        Suppose $m = \tau$.
-        There are no possible $\beta$-reductions involving $\varphi$, thus by proof normalization and the IH the case is concluded.
-        \\ \\
-        Suppose $m = 0$.
-        Let $\gamma$ be a context with a hole variable $h$.
-        Now $|[h := \app{f}{0}{a}]\gamma| = [h := |f|]|\gamma|$ and $|[h := \mathfrak{s}(\app{f}{0}{a})]\gamma| = [h := |\mathfrak{s}(f)|]|\gamma|$.
-        Applying the IH to $\D{1}$ concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with hole variable $h$.
-        Now $|[h := [t, s; T]]\gamma| = [h := |t|]|\gamma|$ and $|[h := \mathfrak{s}([t, s; T])]\gamma| = [h := |\mathfrak{s}(t)|]|\gamma|$.
-        These objects are observationally equivalent by applying the IH to $\D{2}$.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with hole variable $h$.
-        Now $|[h := t.2]\gamma| = [h := |t|]|\gamma|$ and $|[h := \mathfrak{s}(t.2)]\gamma| = [h := |\mathfrak{s}(t)|]|\gamma$.
-        Applying the IH to $\D{1}$ concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \ReflRule[*] \end{array}$
-    \begin{proofcase}
-        Note that $|\prefl(t; A)| = \abs{\lambda}{x}{\diamond}{x}$ and this erasure does not depend on $t$ or $A$.
-        Thus, $|\mathfrak{s}(\prefl(t; A)) = \abs{\lambda}{x}{\diamond}{x}$, hence the case is trivial.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with a hole variable $h$.
-        Now $|[h := \psi(e, a, b; A, P)]\gamma| = [h := |e|]|\gamma|$ and $|[h := \mathfrak{s}(\psi(e, a, b; A, P))]\gamma| = [h := |\mathfrak{s}(e)|]|\gamma|$.
-        Applying the IH to $\D{4}$ concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with a hole variable $h$.
-        Now $|[h := \vartheta_1(e, a, b; T)]\gamma| = [h := |e|]|\gamma|$ and $|[h := \mathfrak{s}(\vartheta_1(e, a, b; T))]\gamma| = [h := |\mathfrak{s}(e)|]|\gamma|$.
-        Applying the IH to $\D{4}$ concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with a hole variable $h$.
-        Now $|[h := \varphi(f, e; A, T)]\gamma| = [h := \abs{\lambda_\omega}{x}{\diamond}{x}]|\gamma|$ and $|[h := \mathfrak{s}(\varphi(f, e; A,T))]\gamma| = [h := |\mathfrak{s}(f)|]|\gamma|$.
-        Applying the IH to $\D{3}$ gives that $\Gamma \vdash f \approx_T \mathfrak{s}(f)$.
-        Let $\Gamma \vdash a : A$ be an arbitrary proof of $a$, then by Lemma~\ref{lem:5:phi_obs_id}: $\Gamma \vdash a \approx_A (\app{f}{\omega}{a}).1$.
-        Hence, $f$ behaves like the identity for any well-typed $a$ proof and thus so does $\mathfrak{s}(f)$ because it is observationally equivalent to $f$.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
-    \begin{proofcase}
-        Let $\gamma$ be a context with a hole variable $h$.
-        Now $|[h := \delta(e)]\gamma| = [h := |e|]|\gamma|$ and $|[h := \mathfrak{s}(\delta(e))]\gamma| = [h := |\mathfrak{s}(e)|]|\gamma|$.
-        Applying the IH to $\D{1}$ concludes the case.
-    \end{proofcase}
-
-    $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
-    \begin{proofcase}
-        Applying the IH to $\D{1}$ gives $\Gamma \vdash t \approx_B \mathfrak{s}(t)$.
-        Note that $\Gamma \vdash t : A$ by assumption and Lemma~\ref{lem:5:strict_proof} gives $\Gamma \vdash \mathfrak{s}(t) : A$.
-        With $\D{1}$ and $\D{2}$ the following derivation is obtained: $\Gamma \vdash \mathfrak{s}(t) : B$.
-        Thus, a context $\gamma : (\Gamma, A) \to (\varepsilon, \pUnit)$ is constructed by working through the intermediary context at type $B$.
+        Suppose wlog that $f = \varphi(a^\prime, b, e; A^\prime, T).2$ and thus $\app{|f|}{\omega}{|a|} = \app{|a^\prime|}{\omega}{|a|}$.
+        By the IH both $|a^\prime|$ and $|a|$ are strongly normalizing.
+        Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e; A^\prime, T) \approx_T b$.
+        Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e; A^\prime, T).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
+        Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]\gamma$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]\gamma$ is normalizing.
+        However, $\app{b.2}{\omega}{a}$ has a smaller nesting level of $\varphi$ expressions, thus $\app{|b|}{\omega}{|a|}$ is strongly normalizing.
     \end{proofcase}
 \end{proof}
 
-\begin{theorem}[Object Normalization]
-    \label{lem:5:object_normalization}
-    If $\Gamma \vdash t : A$ then $|t|$ is strongly normalizing
-\end{theorem}
-\begin{proof}
-    By Lemma~\ref{lem:5:strict_proof}: $\Gamma \vdash \mathfrak{s}(t) : A$.
-    Now Theorem~\ref{lem:5:strict_obs_regular} yields $\Gamma \vdash t \approx_A \mathfrak{s}(t)$.
-    Lemma~\ref{lem:5:strict_object_sn} gives $|\mathfrak{s}(t)|$ is strongly normalizing.
-    Therefore, Lemma~\ref{lem:5:obs_implies_sn} concludes.
-\end{proof}
+Characterizing when $\varphi$ does not introduce diverging objects is useful because it enables, at the bare minimum, an external validation of each usage.
+It is not clear how this requirement may be internalized in the system.
+First, a logical relation capturing observational equivalence would likely need to be developed, but because this relation needs to capture equivalence of objects it is not obvious how to adapt existing approaches.
+Moreover, that relation would have to be bolted on an as auxiliary proof system in order to prove $\varphi$-safety.
+At least, the evidence required to use a \textsc{Cast} rule is a sanity check.
+Indeed, if this evidence is ``morally'' true then contextual equivalence will hold by the Leibniz Law.
+
+\begin{conjecture}
+    $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) \approx_{(x : A) \cap B} b$ iff $\Gamma \vdash a \approx_{A} b.1$
+\end{conjecture}
+
+Note that while the evidence for $\varphi(a, b, e; A, (x : A) \cap B)$ has the type $e : a =_A b.1$ it is easy to use this evidence to construct a proof $e^\prime : \varphi(a, b, e; A, (x : A) \cap B) =_{(x : A) \cap B} b$.
+Just eliminate $e$ using $\psi$ and the objects will match.
+Going the opposite direction is just as simple, as $b$ may be substituted with the left-hand side and the objects will again be identical.
+However, it is not clear that a first projection expressed via observational equivalence is logically equivalent to $\varphi$-safety.
+The primary obstacle is determining if the erasure of every $\gamma : ((x : A) \cap B, \Gamma) \to (\varepsilon, \pUnit)$ context can be computed via a first projection operation on contexts to obtain $\gamma.1 : (A, \Gamma) \to (\varepsilon, \pUnit)$ with the same erasure.
+Demonstrating this conjecture holds would be the first important step to defining a logical relation for contextual equivalence, because it would mean that $\varphi$ terms could be removed entirely from the definition.
+
+\section{Counterexamples with \texorpdfstring{$\varphi$}{Phi}}
+
+It does not take much effort to produce an example of divergence using $\varphi$.
+Note, however, that all examples require a context where $\pFalse$ is derivable.
+The first example uses $\varphi$ to give self a recursive type: $\pself : \pUnit$ and $\pself : \pUnit \to_\omega \pUnit$ simultaneously.
+Divergence is a trivial consequence.
+In this example, the False premise is completely erased.
+This is not really a problem as a proof assistant needs to reduce under binders anyway and the erased argument blocks logical issues regardless.
+\begin{align*}
+    \pFalse &= (X : \star) \to_0 X_\square \\
+    \pself &= \abs{\lambda_\omega}{x}{\pUnit}{
+        \apptwo{x}{0}{\pUnit}{\omega}{x}
+    } \\
+    |\pself| &= \abs{\lambda_\omega}{x}{\diamond}{\app{x}{\omega}{x}} \\
+    b &= \abs{\lambda_\omega}{f}{\pFalse}{
+        [
+            \app{f}{0}{(\pUnit \to_\omega \pUnit)},
+            \app{f}{0}{\pUnit}
+        ]
+    } \\
+    e &= \abs{\lambda_\omega}{f}{\pFalse}{
+        \app{f}{0}{
+            (\pself =_{\pUnit \to_\omega \pUnit} (\app{b}{\omega}{f}).1)
+        }
+    } \\
+    bad &= \abs{\lambda_0}{f}{\pFalse}{
+        \app{\pself}{\omega}{
+            (
+                \varphi(\pself, \app{b}{\omega}{f}, \app{e}{\omega}{f})
+            ).2
+        }
+    } \\
+    |bad| &= \app{|\pself|}{\omega}{|\pself|}
+\end{align*}
+What one can learn from the above example is that the hypothetical evidence is problematic for using $\varphi$.
+Restricting the context is one idea to make all usages $\varphi$-safe.
+Unfortunately, the restriction that $FV(|e|)$ is empty is too strong, it prevents all interesting usages because $b.1 \betastar a$ in all cases as a result.
+Instead, the reader might imagine that the context is \textit{partially} restricted.
+For example, suppose $b : (a : A) \to (x : A) \cap B$ and $e : (a : A) \to a_\star =_A (\app{b}{\omega}{a}).1$ with $FV(|e|)$ empty.
+With this setup, $e$ depends only on the single input and expresses only the fact that $b$ is extensionally an identity function.
+The object witness term $a$ can then be dropped and the object for the $\varphi$ term would be: $|\varphi(b, e)| = \abs{\lambda_\omega}{x}{\diamond}{x}$.
+Unfortunately, this idea fails as enough of the context may be uncurried into the type of $A$ to construct a divergent term.
+\begin{align*}
+    A &= (\pUnit \to_\omega \pUnit) \times \pFalse \\
+    T &= (A \to_\omega \pUnit \to_\omega \pUnit) \to_\omega (\pUnit \to_\omega \pUnit) \to_\omega \pUnit \\
+    b &= \abs{\lambda_\omega}{w}{A}{
+        \app{(\app{\psnd}{\omega}{w})}{0}{(A \cap T)}
+    } \\
+    e &= \abs{\lambda_\omega}{x}{A}{
+        \app{(\app{\psnd}{\omega}{x})}{0}{(x =_A (\app{b}{\omega}{x}).1)}
+    } \\
+    phi &= \abs{\lambda_\omega}{a}{A}{\varphi(a, \app{b}{\omega}{a}, \app{e}{\omega}{a})} \\
+    p1 &= \abs{\lambda_\omega}{f}{\pFalse}{\apptwo{\ppair}{\omega}{\pself}{\omega}{f}} \\
+    p2 &= \abs{\lambda_\omega}{x}{A}{\app{\pfst}{\omega}{x}} \\
+    p3 &= \abs{\lambda_\omega}{f}{\pFalse}{
+        \apptwo{(\app{phi}{\omega}{(\app{p1}{\omega}{f})}).2}
+            {\omega}{p2}
+            {\omega}{\pself}
+    } \\
+    bad &= \abs{\lambda_\omega}{f}{\pFalse}{
+        \apptwo{(\appthr{p3}{\omega}{f}{0}{\pUnit}{\omega}{\punit})}
+            {0}{(\pUnit \to_\omega \pUnit)}
+            {\omega}{\pself}
+    } \\
+    |bad| &= \abs{\lambda_\omega}{f}{\diamond}{\app{|\pself|}{\omega}{|\pself|}}
+\end{align*}
+This counterexample requires a relevant abstraction, but this could probably be avoided by a more sophisticated formulation.
+Again, it also does not really matter as proof assistants reduce under binders anyway.
+This example demonstrates that finding a balance between usability and restriction of the context is very difficult, if not simply impossible.
+
+Another option is to remove $\varphi$ altogether from the system.
+It is a significant source of complexity because it demands reduction after erasure in the definition of conversion and is the \textit{only} source of divergence in $\ced$.
+To contrast, $\oldced$ has the following sources of divergence:
+\begin{enumerate}
+    \item terms on the left-hand and right-hand side of an equality are untyped-$\lambda$-calculus syntax;
+    \item the Kleene Trick allows for untyped-$\lambda$-calculus syntax as witnesses of trivial equalities;
+    \item the rewrite rule, $\rho$, is erased and thus enables non-termination by Abel and Coquand \cite{abel2020};
+    \item the $\varphi$ rule, for the same reason as $\ced$.
+\end{enumerate}
+The first three sources are eliminated by the design of $\ced$, yet the last remains.
+Ultimately, the \textsc{Cast} rule is too important to not only the spirit of Cedille but its capability.
+Losing $\varphi$, as far as the current research shows, would prevent almost all existing encodings.
+The cost to be paid would be too much.

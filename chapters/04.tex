@@ -9,8 +9,7 @@
 
 \newcommand{\cId}{\textnormal{Id}}
 \newcommand{\crefl}{\textnormal{refl}}
-\newcommand{\cthetaone}{\textnormal{theta$_1$}}
-\newcommand{\cthetatwo}{\textnormal{theta$_2$}}
+\newcommand{\ctheta}{\textnormal{theta}}
 \newcommand{\csubst}{\textnormal{subst}}
 \newcommand{\cdelta}{\textnormal{delta}}
 \newcommand{\cirrel}{\textnormal{irrel}}
@@ -22,10 +21,9 @@ The ideas leading to CDLE, of course, grew over time with work on efficient lamb
 Ultimately, the modern version of CDLE, as presented in this chapter, is the culmination of these efforts.
 
 CDLE is an affirmative answer to the question: is lambda-encoded data enough for a proof assistant?
-While there may be other philosophical objections the system Mendler-style encodings have been shown to be efficient and enable course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
+While there may be other philosophical objections, Mendler-style encodings have been shown to be efficient and enable course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
 Moreover, the edition of the $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, yields efficient data reuse via casts \cite{diehl2018_generic_reuse}.
-However, the success of CDLE does not stop there.
-The successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone_recursive_types}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
+A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone_recursive_types}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
 
 CDLE commits to impredicative (i.e. parametric in sense of $F^\omega$) quantification.
 With that in mind the well-studied reader may not be surprised at the power and versatility of CDLE.
@@ -62,7 +60,7 @@ The purpose of this relation is only to reveal a constructor for a type, thus we
 Conversion for types is presented in Figure~\ref{fig:4:type_cong} and kind conversion in Figure~\ref{fig:4:kind_cong}.
 Note that these conversion relations correspond to $\beta$-conversion for types and kinds.
 Finally, erasure of terms (and only terms) is presented in Figure~\ref{fig:4:erasure}.
-Erasure is only meaningful with terms in CDLE unlike in $\ced$ where it is defined for all raw syntax.
+Erasure is only meaningful for terms in CDLE unlike in $\ced$ where it is defined for all raw syntax.
 
 The presentation in this work deviates from other descriptions of CDLE by adding a symmetry rule for equality (\c{c}).
 This rule is admissible using the rewrite rule ($\rho$), but it is convenient to have available for the model.
@@ -74,11 +72,10 @@ Otherwise, the presentation is identical to the one by Stump and Jenkins \cite{s
 A few useful facts about CDLE are needed before defining the model.
 First, some helpful terms are defined below.
 Note that an annotation rule ($\chi$) is added to some terms in order to guarantee that each definition always infers a type, as opposed to checks against a type.
-The $\cBool$ definition is a standard Church encoding boolean type, with its two associated values ($\ctt$ and $\cff$).
+The $\cBool$ definition is a standard Church encoded boolean type, with its two associated values ($\ctt$ and $\cff$).
 An identity type, $\cId$, is defined as a desired output of the model for the equality of $\ced$.
 Indeed, CDLEs equality is very flexible in comparison to $\ced$.
 Not only is it untyped, but it allows for any well-scoped term to serve as the erasure (or object) of a reflexivity proof.
-The $\cirrel$ definition will not be used in the model and is instead used after to demonstrate that an irrelevance axiom may be added to $\ced$ while still preserving consistency.
 \begin{align*}
     \cBool &:= \abs{\forall}{X}{\star}{X \to X \to X} \\
     \ctt &:= \chi\ \cBool\ - \absu{\Lambda}{X}{
@@ -109,22 +106,12 @@ The $\cirrel$ definition will not be used in the model and is instead used after
     \cdelta &:= \chi\ \cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X}\ -
         \\ &\absu{\lambda}{e}{
         (\delta - e.1) \cdot (\cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X})\ e
-    } \\
-    \cirrel &:= \chi\ \abs{\forall}{A}{\star}{
-            \abs{\forall}{a\ b}{A}{
-                \cId \cdot A\ a\ b \eto \cId \cdot A\ a\ b
-            }
-        }\ -
-        \\& \absu{\Lambda}{A\ a\ b\ e}{
-        \\& [\rho\ e.1\ @\ x\ \langle b \rangle.\ \{ x \simeq b \}\ -\ \beta\{ \absu{\lambda}{x}{x} \}),
-            \\& [\beta\{ \absu{\lambda}{x}{x} \}, \absu{\Lambda}{X}{\absu{\lambda}{x}{x}}]]
     }
 \end{align*}
 Aside from the previous terms it is also useful to have terms representing the target output of the substitution and promotion rules of $\ced$.
 All of these terms are constructed to obtain specific erasures.
-
 \begin{align*}
-    \cthetaone &:= \chi\ 
+    \ctheta &:= \chi\ 
         \abs{\forall}{A}{\star}{
             \abs{\forall}{B}{A \to \star}{
                 \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B\ x})}{
@@ -136,21 +123,6 @@ All of these terms are constructed to obtain specific erasures.
             \absu{\lambda}{e}{
                 \\ &\varphi\ (\rho\ e.2.1\ @\ x\ \langle e \rangle.\ \{ x \cong e \}\ -\ \beta\{ \absu{\lambda}{x}{x} \})\ -
                 \\ &(\rho\ e.1\ @\ x\ \langle b \rangle.\ \cId \cdot (\abs{\iota}{x}{A}{B\ x}))\ x\ b\ -\ \crefl \cdot (\abs{\iota}{x}{A}{B\ x})\ \edash b)
-                \\ &\{ e \} 
-            }
-        }
-\end{align*}
-\begin{align*}
-    \cthetatwo &:= \chi\
-        \abs{\forall}{A\ B}{\star}{
-            \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
-                \\ &\cId \cdot A\ a.2\ b.2 \to \cId \cdot (\abs{\iota}{x}{A}{B})\ a\ b
-            }
-        }\ -
-        \\ &\absu{\Lambda}{A\ B\ a\ b}{
-            \absu{\lambda}{e}{
-                \\ &\varphi\ (\rho\ e.2.1\ @\ x\ \langle e \rangle.\ \{ x \cong e \}\ -\ \beta\{ \absu{\lambda}{x}{x} \})\ -
-                \\ &(\rho\ e.1\ @\ x\ \langle b \rangle.\ \cId \cdot (\abs{\iota}{x}{A}{B}))\ x\ b\ -\ \crefl \cdot (\abs{\iota}{x}{A}{B})\ \edash b)
                 \\ &\{ e \} 
             }
         }
@@ -182,9 +154,7 @@ Moreover, carefully crafting terms with specific erasures is a trivial matter in
     |\cff| &= \absu{\lambda}{x\ y}{y} \\
     |\crefl \cdot A\ \edash a| &= \absu{\lambda}{x}{x} \\
     |\cdelta\ e| &= |e| \\
-    |\cirrel \cdot A\ \edash a\ \edash b\ \edash e| &= \absu{\lambda}{x}{x} \\
-    |\cthetaone \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\ 
-    |\cthetatwo \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\
+    |\ctheta \cdot A \cdot B\ \edash a\ \edash b\ e| &= |e| \\
     |\csubst \cdot A\ \edash a\ \edash b \cdot P\ e| &= |e|
 \end{align*}
 Finally, each of these terms is shown to infer the desired type.
@@ -210,33 +180,13 @@ Thus, for these definitions more care is needed to infer the correct kind, but b
         }
         \item $\vdash_{\oldced} \cdelta \infr \cId \cdot \cBool\ \ctt\ \cff \to \abs{\forall}{X}{\star}{X}$
         \item {
-            $
-                \vdash_{\oldced} \cirrel \infr \abs{\forall}{A}{\star}{
-                    \abs{\forall}{a\ b}{A}{
-                        \cId \cdot A\ a\ b \eto \cId \cdot A\ a\ b
-                    }
-                }
-            $
-        }
-        \item {
-            $\vdash_{\oldced} \cthetaone \infr
+            $\vdash_{\oldced} \ctheta \infr
             \begin{aligned}
                  &\abs{\forall}{A}{\star}{
                     \abs{\forall}{B}{A \to \star}{
                         \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B\ x})}{
                             \\ &\cId \cdot A\ a.1\ b.1 \to \cId \cdot (\abs{\iota}{x}{A}{B\ x})\ a\ b
                         }
-                    }
-                }
-            \end{aligned}
-            $
-        }
-        \item {
-            $\vdash_{\oldced} \cthetatwo \infr 
-            \begin{aligned}
-                &\abs{\forall}{A\ B}{\star}{
-                    \abs{\forall}{a\ b}{(\abs{\iota}{x}{A}{B})}{
-                        \\ &\cId \cdot A\ a.2\ b.2 \to \cId \cdot (\abs{\iota}{x}{A}{B})\ a\ b
                     }
                 }
             \end{aligned}
@@ -264,9 +214,9 @@ Thus, for these definitions more care is needed to infer the correct kind, but b
     These inferences are trivially formalized in the Cedille tool.
 \end{proof}
 
-A small collection of additional lemmas about CDLE is needed to prove soundness of the model and presented now.
-These lemmas are standard, weakening, symmetry of conversion, and transitivity of conversion.
-The only real difficulty is the bidirectional presentation which requires stating the desired lemma for each variation of judgment.
+A small collection of additional lemmas about CDLE is needed to prove soundness of the model and presented next.
+These lemmas are standard: weakening, symmetry of conversion, and transitivity of conversion.
+The only real difficulty is the bidirectional presentation which requires stating the desired lemma for each variation of judgment and using mutual recursion in the proof.
 
 \begin{lemma}
     \label{lem:4:c1_weakening}
@@ -316,13 +266,42 @@ The only real difficulty is the bidirectional presentation which requires statin
     The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
 \end{proof}
 
+% \section{Counterexamples to Decidability of Type Checking in CDLE}
+
+% It is well-known that Cedille does not enjoy decidability of type checking.
+% However, it might not be clear exactly how this property fails.
+% Below is a series of formalized examples in Cedille that will loop when attempting to check using the Cedille tool.
+% Commentary to accompany the formalized Cedille code is also provided to highlight what causes the failure.
+
+% \begin{enumerate}
+%     \item {
+%         Equality being untyped enables rewriting equations for \textit{any} predicate.
+%         In this example the equality \texttt{e1} should be an equality between \texttt{Id -> Id} typed proofs, but it is used with a predicate over \texttt{False} proofs.
+%         \verbatim{
+%             Id : ★ = ∀ X:★. X ➔ X.
+
+%             self : Id ➔ Id = λ u. u u.
+
+%             False : ★ = ∀ X:★. X.
+
+%             bad1 : ∀ P:False ➔ ★. Π f:False. P f
+%             = Λ P. λ f.
+%             {e1 : {f ≃ self} = f·{f ≃ self}} -
+%             {e2 : {f ≃ f f} = f·{f ≃ f f}} -
+%             ρ e2 - ρ e1 - (f·(P f)).
+%         }
+%     }
+
+% \end{enumerate}
+
+
 \section{Model}
 
 Figure~\ref{fig:4:model} describes the model of $\ced$ in CDLE.
 Note that this model is straightforward: abstractions to abstractions, applications to applications, pairs to pairs, etc.
 The complicated part is the equality type and its constructs, however all the necessary work to find suitable terms for these constructs was already completed above.
-There is one hiccup involving the $\vartheta_i$ constructs.
-In order to have a fully applied $\cthetaone$ it must be the case that the annotation for $\vartheta_1$ is an intersection type.
+There is one hiccup involving the promotion ($\vartheta$) rule.
+In order to have a fully applied $\ctheta$ it must be the case that the annotation for $\vartheta$ is an intersection type.
 For proofs this will always be the case, but for arbitrary syntax it is not necessarily true.
 To work around this a catch-all case is also provided where the model only interprets the equality proof $e$.
 This choice is largely arbitrary, but it is picked to make sure that one critical property is preserved: erasure.
@@ -385,11 +364,11 @@ This choice is largely arbitrary, but it is picked to make sure that one critica
         Have $\sema{|\prefl(a; A)|} = \sema{\abs{\lambda}{x}{\diamond}{x_\star}} = \absu{\lambda}{x}{x}$ and $|\sema{\prefl(a; A)}| = |\crefl \cdot \sema{A}\ \edash \sema{a}| = \absu{\lambda}{x}{x}$.
     \end{proofcase}
 
-    $\text{Case: }t = \vartheta_2(e, a, b; T)$
+    $\text{Case: }t = \vartheta(e, a, b; T)$
     \begin{proofcase}
-        Have $\sema{|\vartheta_2(e, a, b; T)|} = \sema{|e|}$.
-        Suppose $T = (x : A) \cap B$ then $|\sema{\vartheta_2(e, a, b; (x : A) \cap B)}| = |\cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e}| = |\sema{e}|$.
-        Otherwise, $|\sema{\vartheta_2(e, a, b; T)}| = |\sema{e}|$.
+        Have $\sema{|\vartheta(e, a, b; T)|} = \sema{|e|}$.
+        Suppose $T = (x : A) \cap B$ then $|\sema{\vartheta(e, a, b; (x : A) \cap B)}| = |\ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e}| = |\sema{e}|$.
+        Otherwise, $|\sema{\vartheta(e, a, b; T)}| = |\sema{e}|$.
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
     \end{proofcase}
 
@@ -401,7 +380,8 @@ This choice is largely arbitrary, but it is picked to make sure that one critica
 
     $\text{Case: }t = \varphi(f, e; A, T)$
     \begin{proofcase}
-        Have $\sema{|\varphi(f, e; A, T)|} = \sema{\abs{\lambda}{x}{\diamond}{x_\star}} = \absu{\lambda}{x}{x}$ and $|\sema{\varphi(f, e; A, T)}| = |\absu{\lambda}{\varphi (\sema{e}\ x).1 - (\sema{f}\ x) \{ x\}}| = \absu{\lambda}{x}{x}$.
+        Have $\sema{|\varphi(a, b, e; A, T)|} = \sema{|a|}$ and $|\sema{\varphi(a, b, e; A, T)}| = |\varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \}| = |\sema{a}|$.
+        By the IH applied to $a\pterm$: $\sema{|a|} = |\sema{a}|$.
     \end{proofcase}
 
     $\text{Case: }t = \delta(e)$
@@ -428,7 +408,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 \end{lemma}
 \begin{proof}
     By induction on $t$ and inversion on $t\pterm$.
-    The cases: erased lambda, pair, first projection, second projection, promotion ($\vartheta_i$), substitution ($\psi$), and separation ($\delta$) all erase to a subexpression that is a term.
+    The cases: erased lambda, pair, first projection, second projection, promotion ($\vartheta$), substitution ($\psi$), and separation ($\delta$) all erase to a subexpression that is a term.
     Hence, these cases are very similar to the erased application case and omitted.
     The erasure of the variable, reflexivity, and cast cases are values and thus do not reduce.
 
@@ -756,24 +736,22 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         \end{enumerate}
         Note that $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$ which means $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr A \to \star$.
         By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
-            $\sema{\Gamma} \vdash_{\oldced} \cthetaone \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
+            $\sema{\Gamma} \vdash_{\oldced} \ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        Note by $\D{1}$ that $f\pterm$ and by classification $e\pterm$ with $T\ptype$
+        Note by soundness of classification that $a, b, e\pterm$ and $A, B\ptype$.
         Applying the IH gives:
         \begin{enumerate}
-            \item[$\D{1}$.] $\sema{T} = \sema{A} \to \abs{\iota}{x}{\sema{A}}{\sema{B}}$
-            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{T} \infr \star$
-            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{f} \chck \sema{T}$
-            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \abs{\Pi}{a}{\sema{A}}{\cId \cdot \sema{A}\ a\ (\sema{f}\ \sema{a}).1}$
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}.1$
         \end{enumerate}
-        Note that $\sema{\varphi(f, e; A, T)} = \absu{\lambda}{x}{\cdots}$ and thus by the lambda rule of $\oldced$ the goal is to show $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \varphi\ \text{\c{c}}\ (\sema{e}\ x).1 - (\sema{f}\ x)\ \{ x \} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
-        By the application and first projection rule and some maneuvering of type conversion: $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} (\sema{e}\ x).1 \chck \{ a \cong (f\ a).1 \}$.
-        Using the same manipulations, except now for $f$, gives $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} (\sema{f}\ x).1 \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$.
-        Note that obviously $FV(x) \subseteq dom(\Gamma, x : \sema{A})$.
-        Thus, the goal is obtained by the  $\simeq$ symmetry and $\varphi$ rule of $\oldced$.
+        By the application and first projection rule and some maneuvering of type conversion: $\sema{\Gamma} \vdash_{\oldced} \text{\c{c}}\ \sema{e}.1 \chck \{ \sema{b} \cong \sema{a}\}$.
+        Note that $FV(\sema{a}) \subseteq dom(\Gamma)$ because otherwise $\D{2}$ is not a proof.
+        Thus, the goal is obtained by the $\varphi$ rule of $\oldced$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
@@ -814,34 +792,3 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
     \label{lem:4:eq_consistency}
     $\neg (\vdash_{c_2} t : \ptt =_{\pBool} \pff)$
 \end{corollary}
-
-\section{Irrelevance Axiom}
-
-The $\cirrel$ definition communicates that the axiom $i : (A : \star) \to_0 (a\ b : A) \to_0 a =_A b \to_0 a =_A b$ with the erasure $|i| = \absu{\lambda}{x}{x}$ may be added to $\ced$ without breaking consistency.
-Indeed, this axiom would not introduce any proof reduction steps and thus proofs would still normalize.
-The model could then be trivially extended to interpret $i$ as $\sema{i} = \cirrel$.
-This irrelevance axiom enables an unrestricted $\varphi$ rule:
-
-\begin{minipage}{0.5\textwidth}
-    \begin{align*}
-        \text{cast}& : (A : \star) \to_0 (B : A_\square \to_\tau \star) \\
-            &\to_0 (f : A_\square \to_\omega (x : A_\square) \cap \app{B_\square}{\tau}{x_\star}) \\
-            &\to_0 (e : (a : A_\square) \to_\omega a_\star =_{A_\square} (\app{f_\star}{\omega}{a_\star}).1) \\
-            &\to_0 A_\square \to_\omega (x : A_\square) \cap \app{B_\square}{\tau}{x_\star}
-    \end{align*}
-\end{minipage}%
-\begin{minipage}{0.5\textwidth}
-    \begin{align*}
-        \text{cast}&\ A\ B\ f\ e = \varphi(f, \\
-            &\abs{\lambda}{a}{A}{ \\
-                &\app{\appthr{i}{0}{A}{0}{a}{0}{(\app{f}{\omega}{a_\star}).1}}{0}{(\app{e}{\omega}{a_\star})}
-            }; \\
-            &A, A \to_\omega (x : A) \cap \app{B}{\tau}{x_\star})
-    \end{align*}
-\end{minipage}
-\vspace{.15in}
-
-Note that cast is well-typed because the erasure of $i$ discards all the used subexpressions: $A$, $B$, $f$, and $e$.
-Thus, $FV(|\app{\appthr{i}{0}{A}{0}{a}{0}{(\app{f}{\omega}{a_\star}).1}}{0}{(\app{e}{\omega}{a_\star})}|)$ is empty.
-However, because this axiom side-steps the free variable condition it can be used to produce proofs whose objects are not normalizing.
-Indeed, as Abel and Coquand remark: normalization is lost when irrelevance of equality evidence is combined with impredicative quantification \cite{abel2020}.
