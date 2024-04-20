@@ -266,33 +266,20 @@ The only real difficulty is the bidirectional presentation which requires statin
     The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
 \end{proof}
 
-% \section{Counterexamples to Decidability of Type Checking in CDLE}
+\section{Counterexamples to Decidability of Type Checking in CDLE}
 
-% It is well-known that Cedille does not enjoy decidability of type checking.
-% However, it might not be clear exactly how this property fails.
-% Below is a series of formalized examples in Cedille that will loop when attempting to check using the Cedille tool.
-% Commentary to accompany the formalized Cedille code is also provided to highlight what causes the failure.
+It is well-known that Cedille does not enjoy decidability of type checking.
+However, it might not be clear exactly how this property fails.
+Below is a series of formalized examples in Cedille that will loop when attempting to check using the Cedille tool.
+Commentary to accompany the formalized Cedille code is also provided to highlight what causes the failure.
 
-% \begin{enumerate}
-%     \item {
-%         Equality being untyped enables rewriting equations for \textit{any} predicate.
-%         In this example the equality \texttt{e1} should be an equality between \texttt{Id -> Id} typed proofs, but it is used with a predicate over \texttt{False} proofs.
-%         \verbatim{
-%             Id : ★ = ∀ X:★. X ➔ X.
+\begin{enumerate}
+    \item {
+        Equality being untyped enables rewriting equations for \textit{any} predicate.
+        In this example the equality \texttt{e1} should be an equality between \texttt{Id -> Id} typed proofs, but it is used with a predicate over \texttt{False} proofs.
+    }
 
-%             self : Id ➔ Id = λ u. u u.
-
-%             False : ★ = ∀ X:★. X.
-
-%             bad1 : ∀ P:False ➔ ★. Π f:False. P f
-%             = Λ P. λ f.
-%             {e1 : {f ≃ self} = f·{f ≃ self}} -
-%             {e2 : {f ≃ f f} = f·{f ≃ f f}} -
-%             ρ e2 - ρ e1 - (f·(P f)).
-%         }
-%     }
-
-% \end{enumerate}
+\end{enumerate}
 
 
 \section{Model}
