@@ -1,0 +1,93 @@
+\section{Derivations}
+
+\begin{align*}
+    \pCast &= \abs{\lambda_\tau}{A}{\star}{
+        \abs{\lambda_\tau}{B}{\star}{
+            (f : A_\square \to_\tau A_\square \cap B_\square)
+            \cap ((a:A_\square) \to_0 a_\star = (\app{f_\star}{0}{a_\star}).1)
+        }
+    } \\
+    \pcastIrrel &= \abs{\lambda_0}{A}{\star}{
+        \abs{\lambda_0}{B}{\star}{
+            \abs{\lambda_0}{k}{\apptwo{\pCast}{\tau}{A_\square}{\tau}{B_\square}}{
+                \\ &[\abs{\lambda_\omega}{a}{A_\square}{
+                    \varphi(a_\star, \app{k_\star.1}{\omega}{a_\star}, \app{k_\star.2}{0}{a_\star})
+                }, \abs{\lambda_0}{a}{A_\square}{
+                    \prefl(a_\star; A_\square)
+                };
+                \apptwo{\pCast}{\tau}{A_\square}{\tau}{B_\square}]
+            }
+        }
+    }
+\end{align*}
+
+\begin{theorem}
+    \label{lem:2:cast_derivations}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item $\pCast : \star \to_\tau \star \to_\tau \star$
+        \item $\pcastIrrel : (A:\star) \to_0 (B:\star) \to_0 \apptwo{\pCast}{\tau}{A_\square}{\tau}{B_\square} \to_0 \apptwo{\pCast}{\tau}{A_\square}{\tau}{B_\square}$
+    \end{enumerate}
+\end{theorem}
+
+\begin{align*}
+    \pFalse &= (X:\star) \to_0 X_\square \\
+    \pTop &= \pFalse \to_0 \pFalse \\
+    \ptopInj &= \abs{\lambda_0}{A}{\star}{
+        \abs{\lambda_\omega}{a}{A_\square}{
+            \\ &[
+                \abs{\lambda_0}{f}{\pFalse}{
+                    \varphi(a_\star,
+                        \app{f_\star}{0}{(A_\square \cap \pFalse)},
+                        \app{f_\star}{0}{(a_\star = (\app{f_\star}{0}{(A_\square \cap \pFalse)}).1 )}.2 )
+                },
+                a_\star;
+                A_\square \cap \pFalse
+            ]
+        }
+    } \\
+    \pView &= \abs{\lambda_\tau}{A}{\star}{
+        \abs{\lambda_\tau}{x}{\pTop}{
+            (z : (\pTop \cap A_\square)) \times (x_\star = z_\star.1)
+        }
+    } \\
+    \pintrView &= \abs{\lambda_0}{A}{\star}{
+        \abs{\lambda_\omega}{x}{\pTop}{
+            \abs{\lambda_0}{a}{A}{
+                \abs{\lambda_0}{e}{(x_\star = (\apptwo{\ptopInj}{0}{A_\square}{\omega}{a_\star}).1)}{
+                    \\ &\apptwo{\psigma}
+                        {\omega}{\varphi(x_\star, \apptwo{\ptopInj}{0}{A_\square}{\omega}{a_\star}, e_\star)}
+                        {\omega}{\prefl(x_\star; \pTop)}
+                }
+            }
+        }
+    } \\
+    \pelimView &= \abs{\lambda_0}{A}{\star}{
+        \abs{\lambda_\omega}{b}{\pTop}{
+            \abs{\lambda_0}{v}{\apptwo{\pView}{\tau}{A_\square}{\tau}{b_\star}}{
+                \varphi(b_\star, \app{\pdfst}{\omega}{v}, \app{\pdsnd}{\omega}{v}).2
+            }
+        }
+    }
+\end{align*}
+
+\begin{theorem}
+    \label{lem:2:view_derivations}
+    \textcolor{white}{\_}
+    \begin{enumerate}
+        \item $\pFalse : \star$
+        \item $\pTop : \star$
+        \item $\ptopInj : (A:\star) \to_0 A_\square \to_\omega \pTop \cap A_\square$
+        \item $\pView : \star \to_\tau \pTop \to_\tau \star$
+        \item {
+            $
+                \pintrView : 
+                \begin{aligned}
+                    &(A:\star) \to_0 (x:\pTop) \to_\omega (a:A_\square) \to_0
+                        \\ &(x_\star = (\apptwo{\ptopInj}{0}{A_\square}{\omega}{a_\star}).1) \to_0 \apptwo{\pView}{\tau}{A_\square}{\tau}{x_\star}
+                \end{aligned}
+            $
+        }
+        \item $\pelimView : (A:\star) \to_0 (b:\pTop) \to_\omega \apptwo{\pView}{\tau}{A_\square}{\tau}{b_\star} \to_0 A$
+    \end{enumerate}
+\end{theorem}

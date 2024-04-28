@@ -1,26 +1,61 @@
 \chapter{Conclusion}
 
+The design of Cedille followed an extrinsic (or curry-style) philosophy that placed programs as primary with types as annotations.
+Under this philosophy it is only natural to consider an untyped equality because that is the version that is closer to ones semantic understanding.
+However, these decision led to equality enabling non-terminating derivations originating independently using: untyped indices; untyped witnesses of reflexivity; untyped Leibniz Law; erased $\rho$ (when type equality is present); erased $\delta$; and $\varphi$.
+In this work an alternative road is taken where $\ced$ is designed around a hybrid philosophy of intrinsic and extrinsic.
+Proofs are considered primary and the design itself follows proof theoretic principles, but universal (dependent) quantification is with respect to objects.
+An object is the erasure of a proof, but critically it is not merely an untyped $\lambda$-calculus term.
+Objects do not exist without proofs.
+This distinction allowed for a description of proof reduction and, separately, object reduction.
+Moreover, many metatheoretic properties are shown relative to proof reduction and conversion including: syntactic proof preservation and strong proof normalization.
+Additionally, in the absence of the $\varphi$ construct, proof reduction upper-bounds object reduction.
+
+A failure of the proof theoretic discipline and victory of the extrinsic philosophy is the $\varphi$ construct.
+Unfortunately, the \textsc{Cast} rule does block many desirable properties such as decidability of type checking.
+However, it does not prevent logical consistency and the apparent strength it adds to the theory is substantial.
+Indeed, it is not clear how to derive any of the interesting encodings published in existing literature without the $\varphi$ construct.
+It is the only source of non-termination in the system $\ced$.
+
+This trade-off is the best that can be offered at this moment in time as it is not clear how to systematically correct $\varphi$ without destroying all of its benefits.
+To that end, the remaining of this chapter will inform the reader on alternative paths taken with equality in other type theories and other pertinent related work.
+Additionally, a brief section of future work is presented to communicate open problems and, in the opinion of the author, promising ideas.
 
 \section{Related Work}
 
-\subsection{Extensional Type Theories}
 
-Subjects: Extensional Type Theory, Setoid Type Theory, Observational Type Theory
-
-\subsection{Univalent Type Theories}
-
-Subjects: Homotopy Type Theory, Cubical Type Theory
-
-\subsection{Miscellaneous Type Theories}
-
-Subsects: Quantitative Type Theory, Rewriting, Zombie, Iso-type Systems, Two-level Type Theories
-
-\subsection{Encoding Inductive Data}
-
-Subjects: Impredicative Encodings, Quotient Inductive-Inductive Encodings
 
 
 \section{Future Work}
 
+There are three important open questions that this work does not address that should hopefully be answered in the future.
+While the first two questions are concerned with the $\varphi$ rule the third notes of a new possibility obtained by making the equality typed in $\ced$.
+
+First, there is a question if the $\varphi$ construct is necessary for efficient inductive data.
+Without the $\textsc{Cast}$ rule it is possible to derive inductive Church encodings that are \textit{not} efficient because computing an out (e.g. a predecessor of a natural number) is proportional to the size of the data (e.g. linear time for natural numbers).
+One potential method is using Scott encodings instead which have been shown to be inductive in Cedille \cite{jenkins2021monotone}.
+Note that the method for showing this in Cedille does leverage the $\varphi$ construct.
+However, it seems unlikely that all ink has dried on the topic of impredicative encodings, especially in Cedille.
+While an ``escape hatch'' such as $\varphi$ would still be present in the system knowing which encodings do not depend on it would be useful to delineate the relative power between the system with and without $\varphi$.
+
+Second, modifying the $\varphi$ rule is another avenue that requires more investigation.
+While restricting the rule with internal derivations seems to be a dead end because any restriction may be satisfied by an inconsistent context there could be lightweight external additions to enable using the \textsc{Cast} rule without caveats.
+Another possibility is dropping the $\varphi$ rule and replacing it with weaker variants that are still capable enough to derive existing encodings.
+It is, however, not clear just how many special rules would be required.
+For example, requiring a special rule for each encoding is tantamount to extending the system with that particular construct anyway.
+Thus, why bother with the special rules.
+
+Finally, now that the equality type is typed it is possible that function extensionality is a consistent axiom.
+Indeed, because equality is untyped in Cedille the $\delta$ rule is powerful enough to separate two extensionally equal functions, refuting the axiom.
+With a typed equality the separation rule of $\ced$ may only act on typed terms.
+Therefore, separation is only capable of differentiation functions by applying test inputs.
+While this is convincing intuition showing that this axiom is consistent requires an extensional model which, of course, cannot exist for Cedille.
 
 \section{Closing Remarks}
+
+The core system $\ced$ represents a step forward to a proof theoretic version of Cedille.
+With this design the equality type is modified to remove all sources of non-termination with the lone exception of the $\varphi$ construct.
+Ideally, this construct would also be corrected to disallow creation of non-terminating terms, but there is currently no known method to systematically accomplish this.
+A system without $\varphi$ is capable of deriving inductive Church encodings, but many (if not all) of the other encodings published in existing research use $\varphi$ in an essential way.
+Nevertheless, there is an external condition that may be checked to ensure a particular usage of $\varphi$ does not introduce non-termination.
+Even with this trade-off the system $\ced$ enjoys a better behaved metatheory than Cedille while enabling derivation of the currently existing encodings.

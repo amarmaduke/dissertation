@@ -163,7 +163,7 @@ The $\varphi$ form is unique amongst all the other syntax.
 
 Another question that the reader may have is why not represent the reduction of $\varphi$ in the proof system.
 The answer is that there is no obvious way to make the reduction well-typed, thus preservation would be lost.
-Indeed, the proof witness of a $\varphi(a, b, e; A, (x : A) \cap B)$ form, $b$, is allowed to be as complicated as required to produce the subtype $(x : A) \cap B$.
+Indeed, the proof witness of a $\varphi(a, b, e)$ form, $b$, is allowed to be as complicated as required to produce the subtype $(x : A) \cap B$.
 However, the object, $|a|$, is typed at the super-type $A$.
 To make it possible to type this term in the proof system some notion of subtyping would have to be added directly into the rules.
 It is not immediately clear how to make this move without producing a radically different system.
@@ -174,7 +174,7 @@ Indeed, it may be fruitful to view the proof-object distinction as being fundame
 
 Unfortunately, proofs involving the $\varphi$ form do not have normalizing objects.
 While it is not clear how to augment the proof system to enforce normalization it is possible to describe an external condition on proofs that would guarantee object normalization for any arbitrary proof.
-The idea is to observe that each $\varphi(a, b, e; A, (x : A) \cap B)$ form has some associated proof witness ($b$) and some object witness ($a$).
+The idea is to observe that each $\varphi(a, b, e)$ form has some associated proof witness ($b$) and some object witness ($a$).
 Evidence ($e$) is also provided that these two witnesses are equal at type $A$.
 If $e$ reduces to a value, then that implies $|a| \betaconv |b|$, but if this holds than whatever usage of $\varphi$ should be normalizing.
 However, the evidence produced in a proof need not ever reduce to a value, yet it will still be discarded by the erasure of $\varphi$.
@@ -244,10 +244,10 @@ Note that it is easy to see that observational equivalence forms an equivalence 
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $f = \varphi(a^\prime, b, e; A^\prime, T).2$ and thus $\app{|f|}{\omega}{|a|} = \app{|a^\prime|}{\omega}{|a|}$.
+        Suppose wlog that $f = \varphi(a^\prime, b, e).2$ and thus $\app{|f|}{\omega}{|a|} = \app{|a^\prime|}{\omega}{|a|}$.
         By the IH both $|a^\prime|$ and $|a|$ are strongly normalizing.
-        Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e; A^\prime, T) \approx_T b$.
-        Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e; A^\prime, T).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
+        Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e) \approx_{(x : A) \cap B} b$.
+        Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
         Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]\gamma$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]\gamma$ is normalizing.
         However, $\app{b.2}{\omega}{a}$ has a smaller nesting level of $\varphi$ expressions, thus $\app{|b|}{\omega}{|a|}$ is strongly normalizing.
     \end{proofcase}
@@ -261,10 +261,10 @@ At least, the evidence required to use a \textsc{Cast} rule is a sanity check.
 Indeed, if this evidence is ``morally'' true then contextual equivalence will hold by the Leibniz Law.
 
 \begin{conjecture}
-    $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) \approx_{(x : A) \cap B} b$ iff $\Gamma \vdash a \approx_{A} b.1$
+    $\Gamma \vdash \varphi(a, b, e) \approx_{(x : A) \cap B} b$ iff $\Gamma \vdash a \approx_{A} b.1$
 \end{conjecture}
 
-Note that while the evidence for $\varphi(a, b, e; A, (x : A) \cap B)$ has the type $e : a =_A b.1$ it is easy to use this evidence to construct a proof $e^\prime : \varphi(a, b, e; A, (x : A) \cap B) =_{(x : A) \cap B} b$.
+Note that while the evidence for $\varphi(a, b, e)$ has the type $e : a =_A b.1$ it is easy to use this evidence to construct a proof $e^\prime : \varphi(a, b, e) =_{(x : A) \cap B} b$.
 Just eliminate $e$ using $\psi$ and the objects will match.
 Going the opposite direction is just as simple, as $b$ may be substituted with the left-hand side and the objects will again be identical.
 However, it is not clear that a first projection expressed via observational equivalence is logically equivalent to $\varphi$-safety.
@@ -347,7 +347,7 @@ To contrast, $\oldced$ has the following sources of divergence:
 \begin{enumerate}
     \item terms on the left-hand and right-hand side of an equality are untyped-$\lambda$-calculus syntax;
     \item the Kleene Trick allows for untyped-$\lambda$-calculus syntax as witnesses of trivial equalities;
-    \item the rewrite rule, $\rho$, is erased and thus enables non-termination by Abel and Coquand \cite{abel2020};
+    \item the rewrite rule, $\rho$, is erased and thus enables non-termination by Abel and Coquand \cite{abel2020_normalization};
     \item the $\varphi$ rule, for the same reason as $\ced$.
 \end{enumerate}
 The first three sources are eliminated by the design of $\ced$, yet the last remains.

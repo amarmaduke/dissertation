@@ -72,9 +72,6 @@ Note that this means this rule enables non-termination.
 In Chapter~\ref{chap:5} it is shown that this rule is the only source of non-termination and a precise condition for when it may be used in a terminating way is devised.
 The cast rule is critical to the spirit of Cedille.
 Thus, simply dropping it to obtain a strongly normalizing system is not really a sufficient choice as it throws too much away in its loss.
-An observant reader may notice that there are some redundant type annotations in the rule.
-These annotations are present merely to simplify models developed in Chapter~\ref{chap:3}.
-A more concise version of the system with fewer redundancies is developed in Chapter~\ref{chap:6}.
 
 $\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct objects.
 
@@ -100,7 +97,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 \begin{proof}
     By induction.
     The \textsc{Ax}, \textsc{Pi}, \textsc{Int} and \textsc{Eq} rules are trivial.
-    Rules \textsc{Lam}, \textsc{Pair}, \textsc{Cast}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
+    Rules \textsc{Lam}, \textsc{Pair}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
     The \textsc{Fst} and \textsc{App} rules are omitted because it is similar to the \textsc{Snd} rule.
     Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
 
@@ -128,6 +125,11 @@ Next three standard lemmas are proved about the type system: weakening, substitu
         Applying the IH to $\D{1}$ gives that $(x : A) \cap B\pseobj$.
         Now, by Lemma~\ref{lem:2:infer_implies_pseobj}: $a, b\pseobj$.
         Using the pseudo-object rule for equality concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
@@ -174,7 +176,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
     By induction on $\Gamma, y : B, \Delta \vdash t : A$.
     The \textsc{Ax} rule is trivial and omitted.
     The rules \textsc{Lam} and \textsc{Int} are very similar to the \textsc{Pi} rule.
-    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{Prm}, \textsc{Cast} and \textsc{Sep} rules are proven by applying \textit{1.} to sub-derivations and using the associated rule.
+    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{Prm}, \textsc{Cast} and \textsc{Sep} rules are proven by applying the IH to sub-derivations and using the associated rule.
     Rule \textsc{Snd} is very similar to \textsc{App} and thus omitted.
     Likewise, \textsc{Conv} is very similar to \textsc{Pair} and thus omitted.
 
@@ -229,7 +231,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 \end{lemma}
 \begin{proof}
     By induction.
-    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, \textsc{Cast}, and \textsc{Conv} rules are trivial.
+    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, and \textsc{Conv} rules are trivial.
     The \textsc{Fst} rule is omitted because it is similar to \textsc{Snd} rule.
     Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
 
@@ -263,6 +265,11 @@ Next three standard lemmas are proved about the type system: weakening, substitu
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Immediate by applying the \textsc{Eq} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$

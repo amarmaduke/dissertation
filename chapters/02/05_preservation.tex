@@ -201,14 +201,16 @@ The proof follows by induction on the typing derivation and case analysis on the
     \begin{proofcase}
         Suppose $a \betared a^\prime$.
         Then $a =_A b.1 \equiv a^\prime =_A b.1$ and by \textsc{Conv} rule $\Gamma \vdash e : a^\prime =_A b.1$.
-        Applying \textit{1} to $\D{2}$ yields $\Gamma \vdash a^\prime : A$.
+        Applying \textit{1} to $\D{1}$ yields $\Gamma \vdash a^\prime : A$.
         The \textsc{Cast} rule concludes.
         \\ \\
-        Suppose $b \betared b^\prime$, or $A \betared A^\prime$, or $B \betared B^\prime$.
-        These cases are all similar to the previous case.
+        Suppose $b \betared b^\prime$.
+        Then $a =_A b.1 \equiv a =_A b^\prime.1$ and by \textsc{Conv} rule $\Gamma \vdash e : a =_A b^\prime.1$.
+        Applying \textit{1} to $\D{2}$ yields $\Gamma \vdash b^\prime : (x : A) \cap B$.
+        The \textsc{Cast} rule concludes.
         \\ \\
         Suppose $e \betared e^\prime$.
-        Applying \textit{1} to $\D{4}$ yields $\Gamma \vdash e^\prime : a =_A b.1$
+        Applying \textit{1} to $\D{3}$ yields $\Gamma \vdash e^\prime : a =_A b.1$
         The \textsc{Cast} rule concludes.
     \end{proofcase}
 

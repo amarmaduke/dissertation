@@ -674,17 +674,16 @@ Finally, soundness of the term semantics is proven by a straightforward inductio
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        Note by $\D{2}$ it is clear that $A$ is a type.
+        Note by $\D{1}$ it is clear that $A$ is a type.
         Applying the IH to subderivations:
         \begin{enumerate}
-            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [(x : A) \cap B] : 0$
-            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [a] : \sema{A}$
-            \item[$\D{4}.$] $\sema{\Gamma} \vdash_\omega [b] : \sema{(x : A) \cap B}$
-            \item[$\D{4}.$] $\sema{\Gamma} \vdash_\omega [e] : \fpId$
+            \item[$\D{1}.$] $\sema{\Gamma} \vdash_\omega [a] : \sema{A}$
+            \item[$\D{2}.$] $\sema{\Gamma} \vdash_\omega [b] : \sema{A} \times \sema{B}$
+            \item[$\D{3}.$] $\sema{\Gamma} \vdash_\omega [e] : \fpId$
         \end{enumerate}
-        Deconstructing $\sema{\Gamma} \vdash_\omega [(x : A) \cap B] : 0$ gives $\sema{\Gamma} \vdash_\omega [A] : 0$.
-        By Lemma~\ref{lem:3:canonical_element}: $\sema{\Gamma} \vdash_\omega c^{\sema{T}} : \sema{T}$.
-        Applying Lemma~\ref{lem:3:fomega_eta} five times concludes the case.
+        Note that $\sema{\Gamma} \vdash_\omega [b].2 : \sema{B}$.
+        Thus, $\sema{\Gamma} \vdash_\omega ([a], [b].2) : \sema{A} \times \sema{B}$.
+        Applying Lemma~\ref{lem:3:fomega_eta} concludes the case.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$

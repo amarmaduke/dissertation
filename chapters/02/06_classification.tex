@@ -219,8 +219,10 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        By the IH applied to $\D{1}$: $(x : A) \cap B\ptype$.
-        Thus, by the IH and inversion applied to the remaining derivations: $a, b, e\pterm$.
+        By Lemma~\ref{lem:2:classification}: $\Gamma \vdash (x : A) \cap B : K$.
+        However, $K = \kind$ is impossible by inversion.
+        Using the IH and inversion applied to the sub-derivations yields: $a, b, e\pterm$.
+        Thus, $\varphi(a, b, e)\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$

@@ -443,9 +443,9 @@ This choice is largely arbitrary, but it is picked to make sure that one critica
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
     \end{proofcase}
 
-    $\text{Case: }t = \varphi(f, e; A, T)$
+    $\text{Case: }t = \varphi(a, b, e)$
     \begin{proofcase}
-        Have $\sema{|\varphi(a, b, e; A, T)|} = \sema{|a|}$ and $|\sema{\varphi(a, b, e; A, T)}| = |\varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \}| = |\sema{a}|$.
+        Have $\sema{|\varphi(a, b, e)|} = \sema{|a|}$ and $|\sema{\varphi(a, b, e)}| = |\varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \}| = |\sema{a}|$.
         By the IH applied to $a\pterm$: $\sema{|a|} = |\sema{a}|$.
     \end{proofcase}
 
@@ -806,16 +806,15 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        Note by soundness of classification that $a, b, e\pterm$ and $A, B\ptype$.
+        Note by soundness of classification that $a, b, e\pterm$.
         Applying the IH gives:
         \begin{enumerate}
-            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$
-            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
-            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
-            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}.1$
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}.1$
         \end{enumerate}
         By the application and first projection rule and some maneuvering of type conversion: $\sema{\Gamma} \vdash_{\oldced} \text{\c{c}}\ \sema{e}.1 \chck \{ \sema{b} \cong \sema{a}\}$.
-        Note that $FV(\sema{a}) \subseteq dom(\Gamma)$ because otherwise $\D{2}$ is not a proof.
+        Note that $FV(\sema{a}) \subseteq dom(\Gamma)$ because otherwise $\D{1}$ is not a proof.
         Thus, the goal is obtained by the $\varphi$ rule of $\oldced$.
     \end{proofcase}
 
