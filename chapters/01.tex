@@ -313,240 +313,93 @@ If it is the latter, then striving for decidable type theories that are capable 
 
 \section{Equality}
 
-A type theory is \textit{intensional} if its propositional equality is able to observe the operational definition of a function.
-Within mathematics, functions are defined as a functional relation between their inputs and outputs, but this definition lacks any computational content.
-In contrast, dependent type theories are constructive in nature, a function is not merely a functional relation but a stronger notion of an operational term encoding the procedure to produce outputs from inputs.
-This additional structure prevents equality of functions from being defined pointwise in situations where the extra structure is observable.
-The below variant of Martin-L\"{o}f's intensional identity type is a canonical example of an intensional propositional equality.
+\input{figures/01/equality.tex}
 
-% \[
-%     \arraycolsep=12pt
-%     \def\arraystretch{3}
-%     \begin{array}{c}
-%         \infer{\Gamma \vdash refl(a) \synth Id_A(a, a)}{
-%             \Gamma \vdash a \synth A
-%         }
-%         \\
-%         \infer{\Gamma \vdash elim(p, \absu{\lambda}{x}{b}) \synth P(a, a', p)}{
-%             \let\scriptstyle\textstyle
-%             \substack{
-%                 \Gamma, \ann{x}{A}, \ann{y}{A}, \ann{z}{Id_A(x, y)} \vdash P(x, y, z) \synth \star
-%                 \\
-%                 \Gamma \vdash p \synth Id_A(a, a')
-%                 \quad
-%                 \Gamma, \ann{x}{A} \vdash b \synth P(x, x, refl(x))
-%             }
-%         }
-%         \vspace{-.25in}
-%         \\
-%         elim(refl(a), \absu{\lambda}{x}{b}) = b[x \mapsto a]
-%     \end{array}
-% \]
-
-Note that the variation of the intensional identity type does matter.
-In dependent type theories with an impredicative universe of types Coquand et al. showed that an identity type with a proof-irrelevant cast refutes strong normalization \cite{abel2020_normalization}.
-This is an instance of propositional equality being sensitive to other features of a type theory.
-
-\textbf{Function extensionality}, the formal statement of which is shown below, is a reasoning principle that is often lost in the intensional setting.
-$$\abs{\Pi}{f, g}{X \to Y}{
-    (\abs{\Pi}{x}{X}{Id_Y(f\ x, g\ x)}) \to Id_{X \to Y}(f, g)
-}$$
-Postulating function extensionality as an axiom breaks canonicity but as a reasoning principle, particularly when formalizing mathematics, it is significantly more convenient.
-Absolving the tension between a dependent type theory with good metatheoretical properties, which intensional propositional equality gives, and a theory that admits function extensionality has and is a major goal of current research.
-The additional constructive information supplied to define a function in dependent type theory gets in the way of strong reasoning principles.
-Thus, one might say that equality is about what properties of an object one wishes to \textit{ignore} as opposed to some philosophically ordained notion.
-However, the intensional information of a function is also potentially important.
-For computer science, the intensional behavior may be critical to security properties or computational complexity (e.g. it may be undesirable to equate merge sort with bubble sort).
-
-Outside of dependent type theory a common definition of equality is Leibniz equality, which equates two objects only if any predicate that holds of one object necessarily holds of the other.
-Leibniz equality can be viewed as a Church-encoded version of the identity type which means that these different definitions of propositional equality imply one another.
-However, they are only isomorphic if quantification is parametric and function extensionality holds \cite{abel2020_equality}.
+While a Leibniz Law may be stated in CC using a Church encoding it does not enable strong reasoning principles.
+The standard definition of equality used to extend systems like CC is Martin-L\"{o}f's intensional identity type, depicted in Figure~\ref{fig:lof_eq}.
+This formulation comes with a so-called inductive eliminator: the $J$ rule.
+However, this formulation does not admit function extensionality, which is formally defined below.
+$$(f\ g : A \to B) \to ((x : A) \to f\ x =_B g\ x) \to f =_{A \to B} g$$
+Function extensionality is a commonly presumed reasoning principle in mathematics and many successful mathematical formulations assume it as an additional axiom.
+Defining systems where function extensionality is derivable instead of axiomatically postulated was (and still is) an active area of research.
+Note that the Church encoded Leibniz Law is logically equivalent to the identity type.
+Moreover, they are isomorphic if quantification is parametric and function extensionality holds \cite{abel2020_equality}.
 
 Attempting to bridge the gap between intensional and extensional features Streicher proposed his Axiom K in 1993 \cite{streicher1993}.
-Today this axiom is better known as Uniqueness of Identity Proofs (UIP), specified below, but which intuitively means that all proofs of an equality are themselves equal.
-$$\abs{\Pi}{x, y}{X}{
-    \abs{\Pi}{p, q}{Id_X(x, y)}{
-        Id_{Id_X(x, y)}(p, q)
-    }
-}$$
-For many years it was an open question whether or not the intensional identity type always satisfied UIP as it was generally believed there is only one equality proof, the reflexivity proof.
+Today this is known as the Uniqueness of Identity Proofs (UIP), formally defined below.
+$$(x\ y : A) \to (p\ q : x =_A y) \to p =_{x =_A y} q$$
+Initially, it was believed that UIP should be a consequence of Martin-L\"{o}f's rules for the identity type because there is only one value.
+However, a proof of UIP remained elusive.
+In 1995 Hofmann answered this equation negatively: UIP is independent of Martin-L\"{o}f's identity type.
+Hofmann accomplished this by modelling identity types in two separate ways: as equivalence relations defined inductively on type structure; and as groupoids.
+His models solved a long-standing open question about the nature of the identity type. \cite{hofmann1995, hofmann1996}.
 
-In 1995 Hofmann answered this equation negatively: intensional identity types need not always satisfy UIP, but he did not stop there.
-Indeed, Hofmann investigated how many extensional notions (function extensionality, quotient types, subset types, UIP, and propositional extensionality) might be added to dependent type theory.
-To accomplish this goal he modelled identity types in two separate ways.
-First, as equivalence relations defined inductively on type structure, a precursor to the setoid model of type theory.
-Second, as groupoids, a precursor to the univalent model of type theory.
-Unfortunately, his models did not achieve all of his goals where certain metatheoretical properties and desirable definitional equalities are lost depending on the interpretation \cite{hofmann1995, hofmann1996}.
-Regardless, his contributions broke through a long-standing assumption and opened a world of varying interpretations of intensional propositional equality.
+Propositional extensionality and quotients are two additional notions that add more mathematically intuitive reasoning principles to a system and depend on equality.
+Propositional extensionality states that logical equivalence of propositions is logically equivalent to equality of propositions.
+The principle is stated formally below.
+$$(P\ Q : \textsc{Prop}) \to (P \leftrightarrow Q) \leftrightarrow (P =_\textsc{Prop} Q)$$
+This principle is stated relative to some universe of propositions, \textsc{Prop}.
+In extensions of CC this universe is $\star$, but in systems like Cedille there is no single universe of propositions.
+Quotien types ($A/\!\!\sim$) are constructed from a carrier type $A$ and an equivalence relation $\sim$ such that equality for elements of the quotient respects $\sim$.
+The simplest example quotient is the set of rational numbers which is the quotient of fractions (i.e. pairs of integers) and the equivalence relation $((n_1, d_1)\ (n_2, d_2) : \mathbb{Z \times Z}) \to n_1d_2 =_{\mathbb{Z}} n_2d_1$.
+Additionally, other algebraic objects are constructed from quotients in Set Theory (e.g. groups, fields, modules).
+Indeed, the Lean mathlib library heavily relies on quotients \cite{mathlib}.
 
-\textbf{Propositional extensionality} means that equivalence of propositions is equivalent to equality of propositions.
-Stated formally below, equivalence in this context means mutual implication.
-Propositions are assumed to be distinct from types (i.e. propositions are usually assumed to satisfy some variation of proof-irrelevance).
-The universe \textsc{Prop} captures this distinction between the more general universe of types and those interpreted as propositions.
-$$\abs{\forall}{P, Q}{\textsc{Prop}}{
-    (P \leftrightarrow Q) \leftrightarrow (P = Q)
-}$$
-
-\textbf{Quotient types} build a type $A/\!\!\sim$ from a carrier type $A$ and an equivalence relation on that carrier type $\sim$ such that the propositional equality for elements of $A/\!\!\sim$ respects the equivalence relation.
-Mathematical practice utilizes quotients extensively to construct objects from some carrier set and equations on the elements of that set.
-For example, the simplest mathematical quotient is the set of rational numbers which is the quotient of fractions (i.e. pairs of integers) and the equivalence relation $\abs{\forall}{(n_1, d_1), (n_2, d_2)}{\mathbb{Z \times Z}}{n_1d_2 = n_2d_1}$.
-Many algebraic objects are also quotients, such as groups, fields, modules, and tensor products of modules to name a few.
-
-The equivalence relation for a quotient type (or quotient set) induces a partition of the elements of that type into equivalence classes.
-If a canonical representative of an equivalence class can be effectively computed then quotient types are definable in most dependent type theories.
-It is the other variant, where a canonical representative can not be computed, that is problematic to encode.
+The equivalence relation for a quotient induces a partition of the elements of that type into equivalence classes.
+If a canonical representative of an equivalence class can be effectively computed then quotient is called \textit{definable}.
 The real numbers and multi-sets of elements that are not orderable are two examples of quotient types where a canonical representative is uncomputable \cite{li2015}.
-Indeed, the set-theoretic axiom of choice is equivalent to the ability to pick a unique representative from equivalence classes for any arbitrary equivalence relation \cite{lof2009}.
-Additionally, if a type theory supports an impredicative universe of types, then adding quotients such as the real numbers causes inconsistency \cite{chicli2002}.
+Indeed, the axiom of choice is equivalent to the ability to pick a unique representative from equivalence classes for any arbitrary equivalence relation \cite{lof2009}.
+Additionally, if a type theory supports an impredicative universe of types such as Cedille, then adding quotients such as the real numbers causes inconsistency \cite{chicli2002}.
 
-Quotients is an important feature of dependent type theories.
-Indeed, some theories are designed, at least partially, to explicitly support quotients.
-The Lean proof assistant in particular incorporates quotients axiomatically in its standard library, a choice that is arguably responsible for mathematicians interest in it as a tool for formalizing theorems (if only because it more closely matches a culture that mathematicians expect) \cite{carneiro2019}.
-Quotient inductive types is one technique for adding quotients to type theory which extends inductive definitions with equational variants that the constructors must satisfy.
-With quotient inductive types the integers can be defined succinctly as the following inductive type.
-\begin{align*}
-    \mathbb{Z} :=\ &0 : \mathbb{Z} \\
-        &succ : \mathbb{Z} \to \mathbb{Z} \\
-        &pred : \mathbb{Z} \to \mathbb{Z} \\
-        &succ\_pred : \abs{\forall}{i}{\mathbb{Z}}{succ\ (pred\ i) = i} \\
-        &pred\_succ : \abs{\forall}{i}{\mathbb{Z}}{pred\ (succ\ i) = i}
-\end{align*}
-Quotient inductive definitions were given a formal foundation in 2007 and demonstrated to be useful for direct internalization of dependent type theories \cite{altenkirch2016_quotients, dijkstra2017}.
+Equality is a critical part of the design of many type theories, Cedille included.
+However, the powerful extensional reasoning principles of equality are surprisingly difficult to obtain without causing other issues.
+A brief history of type theories that capture some extensionality is useful in understanding what can and cannot be accomplished.
 
-\subsection{Extensional Type Theories}
+Extensional Type Theory (ETT) enjoys all the aforementioned reasoning principles.
+The distinguishing feature is the addition of the equality reflection rule, allowing promotion of propositional equalities to definitional (i.e. automatic) equalities.
+However, propositional equality is almost always undecidable, and thus definitional equality becomes undecidable as a consequence.
+It is difficult to pin an exact year when equality reflection is first introduced, but some of Martin-L\"{o}f's early systems are extensional type theories and likewise some of the earliest proof assistant implementations were extensional type theories (e.g. Nuprl) \cite{constable1986}.
+In 2016 Andrej Bauer proposed a method for designing equaltiy reflection around effect handlers.
+Thus, the undecidability of equality reflection is solved by a provided handler which resolves the proof obligation \cite{bauer2016}.
+Rewriting can be added to type theory in a multitude of different ways to achieve ad hoc equality reflection.
+Cockx investigated a Rewriting Type Theory in detail where rewriting allows the addition of computational axioms.
+He notes that rewriting can encode extensional principles like quotients \cite{cockx2020, cockx2021}.
+It has also been shown that ETT can be modelled in a type theory without equality reflection as long as the axioms UIP and function extensionality are postulated \cite{winterhalter2019}.
+In fact, this result was strengthened to modelling ETT in ``weak'' theories where definitional equality is $\alpha$-equivalence and reduction is pushed into the propositional equality \cite{boulier2019}.
 
-Extensional type theory does not have any of the aforementioned extensionality problems, as its namesake might suggest.
-The distinguishing feature that transforms an intensional theory into an extensional one is the equality reflection rule, listed below.
-It is difficult to pin an exact year when equality reflection is first introduced but, some of Martin-L\"{o}f's early systems are extensional type theories and likewise some of the earliest proof assistant implementations were extensional type theories (e.g. Nuprl).
-% \[
-%     \arraycolsep=12pt
-%     \def\arraystretch{3}
-%     \begin{array}{c}
-%         \infer{\Gamma \vdash a = a' }{
-%             \Gamma \vdash p \synth Id_A(a, a')
-%         }
-%     \end{array}
-% \]
-Equality reflection collapses definitional and propositional equality.
-If propositional equality is undecidable then definitional equality becomes undecidable as a consequence.
-Thus, even though a proof assistant such as Nuprl supports quotient types, subset types, and other extensionality properties it lacks decidability of conversion checking.
-To counteract these restrictions users of Nuprl work with derivation trees as opposed to proof terms \cite{constable1986}.
-
-This trade-off, between extensional properties and good metatheoretical properties has lead the design of dependent type theories away from full-blown equality reflection.
-Instead, designers have attempted to leverage other techniques, interpreting types as setoids or groupoids, or adding ad hoc equality reflection via rewriting.
-However, in 2016 Andrej Bauer demonstrated that equality reflection could be designed around effect handlers.
-The undecidability of equality reflection is side-stepped as the provided handler resolves the proof obligations generated by definitional equality by what is effectively a try-catch exception handler \cite{bauer2016}.
-
-More recently, in 2019, it was shown that extensional type theory can be modelled in an intensional type theory that satisfies UIP and function extensionality \cite{winterhalter2019}.
-This result was later strengthened to modelling extensional type theory in a weak theory \cite{boulier2019}.
-A type theory is \textit{weak} if $\beta$ and $\eta$ convertibility rules have to be expressed in the syntax meaning that definitional equality is $\alpha$-equivalence.
-These results argue that extensional dependent type theory \textit{is} intensional type theory with UIP and function extensionality.
-Especially because equality reflection hampers any procedure to automatically decide definitional equalities anyway, making the reduction to a weak intensional type theory moot.
-
-Bishop, in 1967, showed that much of mathematical analysis could be carried out in a constructive setting.
-His constructive analysis heavily leveraged ``Bishop sets'' or \textit{setoids} which incorporate a carrier set of elements together with an equivalence relation about those sets \cite{bishop1967}.
-As mentioned previously, setoids were used by Hofmann to construct models of type theory that supported some extensional properties.
-Although Hofmann's models did not capture all the desired properties for an intensional type theory with extensional features the idea of modelling types as setoids persisted.
-
-Altenkirch in particular has heavily invested in dependent type theories in this style.
-In 1999, Altenkirch improved Hofmann's setoid model to a type theory that admits large eliminations, enjoys function extensionality, has decidable definitional equality, and satisfies canonicity.
-Moreover, he stresses that the metatheory used to accomplish this model is itself an \textit{intensional} one, whereas Hofmann's metatheory was extensional.
-Altenkirch accomplished this task by incorporating a proof irrelevant universe of propositions which will be a common theme for type theories supporting extensional features.
-However, his 1999 attempt did not contain dependent types or quotients though Altenkirch claimed quotients could be easily added \cite{altenkirch1999}.
-
-\textbf{Observational Type Theory (OTT)} was introduced years later (in 2007) by Altenkirch and McBride.
-The core ideas remained the same: semantically types are interpreted as setoids and universe of propositions is added to an intensional type theory.
-What OTT introduces, however, is defining propositional equality by recursion on type constructors.
+Observational Type Theory (OTT) was introduced in 2007 by Altenkirch and McBride.
+The core idea behind OTT is to define propositional equality by recursion on type constructors.
 This recursive definition grants greater flexibility in how equality is treated for individual type formers.
-Elimination of propositional equality is additionally defined to act via coercions which are also defined recursively on type structure.
-Critically, propositional equality for function types (and coercions related to it) can be defined to admit pointwise equality directly.
-Unfortunately, the definition of OTT makes the connection to the setoid model less clear which prevents an obvious addition of quotient types and a universe of types \cite{altenkirch2007}.
+Thus, equality of function types may be defined to be exactly function extensionality \cite{altenkirch2007}.
+In 2022, Pujet et al. introduced an improvement that resolved limitations in the original formulation of OTT.
+The authors note that a critical difference from prior attempts at OTT is that propositions satisfy definitional proof-irrelevance preventing proof obligations muddying goals of judgements.
+Moreover, many desirable properties are proven including: propositional extensionality, UIP, strong normalization, consistency, decidability of type checking, and quotients provided the equivalence relation is proof-irrelevant \cite{pujet2022}.
 
-In 2022, Pujet et al. introduce an improvement of OTT and move past many of the limitations of the prior work.
-The reduction of definitional equality is altered to reduce terms to weak head normal form as opposed to a full normal form.
-Stopping at weak head normal form allows the head constructor to determine the corresponding propositional equality rule.
-Thus, the recursive definition of propositional equality that was the namesake of OTT is lifted to standard typing rules.
-In the case of function types, this means that pointwise equality can be directly defined as the typing rule for the identity type.
-Therefore, function extensionality is baked into the typing judgments and there is no way for the intensional difference of functions to be observed by the identity type.
-Like prior developments, the techniques of Pujet et al. hinge on a proof-irrelevant universe of propositions.
-However, the authors note that a critical difference from prior attempts at OTT is that propositions satisfy definitional proof-irrelevance (as opposed to propositional proof-irrelevance) which prevents equational proof obligations muddying goals of type judgments.
-Moreover, many desirable properties are proven including: propositional extensionality, UIP, strong normalization, consistency, and decidability of type checking.
-Quotient types are also added provided the equivalence relation is proof-irrelevant (in other words, provided the equivalence relation is expressed in terms of the universe of propositions) \cite{pujet2022}.
+Setoid Type Theory (SeTT) is an alternative path taken by Altenkirch after work on the original OTT.
+Using setoids internally to reason mathematically is a standard (and often heavily disliked) method of reasoning with extensional principles in a system that lacks them.
+Altenkirch's idea is to construct a setoid model directly in a weaker theory while making the bureaucracy of doing it manually automatic.
+The model is a syntactic translation which gives a way to bootstrap extensionality principles from intensional theories.
+Initial models where strong enough to support function extensionaltiy and propositional extesionality \cite{altenkirch2019}.
+Later, the models where improved to internalize a universe of setoids \cite{altenkirch2021}.
 
-\textbf{Setoid Type Theory (SeTT)}, meanwhile, is the evolution of Altenkirch's work on OTT.
-Based on the original root idea by Altenkirch of constructing a setoid model directly in an intensional type theory as he did in 1999, the first introduction of SeTT (in 2019) improved on the first attempt by making function extensionality, propositional extensionality, and the elimination principle for the identity type hold definitionally.
-Indeed, the new model is noted to be a \textit{syntactic translation} from a setoid type theory to an intensional type theory.
-A critical property of syntactic translations is that definitional equalities are all preserved \cite{altenkirch2019}.
-Syntactic translations, in the words of Altenkirch, give a way to bootstrap extensionality principles from intensional type theories.
-The syntactic translation is later improved to internalize a universe of setoids (i.e. a universe of types) \cite{altenkirch2021}.
-
-\subsection{Univalent Type Theories}
-
-While setoid type theory was and continues to be explored there is a competing interpretation of types foreshadowed by Hofmann as groupoids.
-A \textit{groupoid} is a collection of objects and invertible morphisms between those objects that satisfy identity and associativity laws.
-Setoids are a special case of groupoids.
-There is a further generalization to $n$-groupoids that allows invertible 2-morphisms with morphisms as objects, invertible 3-morphisms with 2-morphisms as objects, and so on up-to invertible $n$-morphisms with $n-1$-morphisms as objects.
-A limiting process can be applied to this generalization obtaining $\omega$-groupoids that have infinite towers of invertible $i$-morphisms with $i-1$-morphisms as objects.
-A groupoid and its generalizations are studied in Category Theory, but for the purposes of modeling dependent type theory the core idea is that propositional equality has a rich proof structure including interesting equality proofs between equality proofs.
-Of course, as a natural consequence, UIP is refuted in a non-degenerate groupoid model.
-
-In 2006, the mathematician Voevodsky began studying type theory has an alternative foundation for mathematics after expressing doubts about the correctness of results in the mathematical literature.
-He proposed the Univalence Axiom, shown below, as a desirable feature of dependent type theory because, in his opinion, it accurately modelled the transport of properties between objects that mathematicians take for granted \cite{voevodsky2006}.
-From this point forward, a \textit{univalent} type theory is any type theory that admits univalence either as an axiom or as a derivable notion.
+In 2006, the mathematician Voevodsky began studying type theory as an alternative foundation for mathematics after expressing doubts about the correctness of results in the mathematical literature.
+He proposed the Univalence Axiom (UA), shown below, as a desirable feature of type theory because, in his opinion, it accurately modelled the transport of properties between objects that mathematicians take for granted \cite{voevodsky2006}.
 Upon closer inspection of the Univalence Axiom it becomes clear that it is a generalization of propositional extensionality.
-Where propositional extensionality states an equivalence between equivalent propositions and equal propositions, the Univalence Axiom states that an isomorphism between types is isomorphic to an equality between types.
-$$\abs{\forall}{A, B}{\star}{
-    (A \simeq B) \simeq (A = B)
-}$$
+$$(A\ B : \textsc{Type}) \to (A \simeq B) \simeq (A =_\textsc{Type} B)$$
 
-\textbf{Homotopy Type Theory (HoTT)} is one of the first univalent theories proposed from these observations.
-HoTT interprets the intensional identity type as consisting of homotopy equivalences between types and terms.
-A \textit{homotopy} between two functions $f, g : X \to Y$ is a continuous map $h : \mathbb{I} \to X \to Y$ such that $h(0) = f$ and $h(1) = g$ and where $\mathbb{I} = [0, 1]$ is the unit interval.
-It is a mathematical device to express the smooth deformation of one function to another.
-Of course, homotopies are generalizable beyond the case of first-order functions.
-However, notice that if the identity type consists of homotopies then the metatheory of HoTT necessarily appeals to the existence of a set of real numbers (i.e. $\mathbb{I} \subseteq \mathbb{R}$).
-Nonetheless, HoTT has been used effectively to build a foundation of mathematics and to work synthetically in the field of Homotopy Theory \cite{hottbook}.
+Homotopy Type Theory (HoTT) is one of the first theories devised satisfying UA.
+HoTT interprets the identity type as homotopy equivalences and has been used effectively to build a foundation of mathematics while working synthetically in the field of Homotopy Theory \cite{hottbook}.
+However, HoTT does not give an internal derivation of UA, thus the computational property, canonicity, is lost.
+The search for computational models of UA began with a univalent type theory in the category of simplicial sets, but this was noted to be problematic because of the classical metatheory \cite{kapulkin2012}.
+Bezem demonstrated that Voevodsky's simplicial sets model is \textit{necessarily} classical \cite{bezem2015}.
+Later, Bezem devised a model using constructive metatheory with cubical sets \cite{bezem2014}.
 
-The Univalence Axiom was originally just that, an axiom, but this breaks canonicity.
-Dependent type theories throughout their conception have kept great interest in maintaining a dual purpose: as a programming language \textit{and} as a logic.
-An initial model construction of univalent type theory in the category of simplicial sets was noted as problematic because of its use of a classical metatheory \cite{kapulkin2012}.
-Later, Bezem demonstrated that Voevodsky's simplicial sets model is \textit{necessarily} classical \cite{bezem2015}.
-For deciding some metatheoretical properties, such as consistency, a classical model is sufficient, but as a road to providing a constructive derivation of the Univalence Axiom these models are not helpful.
-Fortunately, Bezem was also able to show that a model with a constructive metatheory is possible using cubical sets which was an important step towards providing a computational basis to the Univalence Axiom \cite{bezem2014}.
-
-\textbf{Cubical type theory} provides a computational interpretation to the Univalence Axiom by lifting the unit interval from the semantic domain to syntax.
-The $\lambda$-calculus is extended with two constants $0$ and $1$ and a theory of \textit{names} representing distinguished points inside the interval.
-In one such development by Cohen et al. various operations are also assumed to hold on elements of the interval including maximums, minimums, and involutions forming a De Morgan algebra which the authors claim simplify semantic justifications \cite{cohen2016}.
-Soon after, more variations of cubical type theories were considered all tweaking the underlying operations allowed on the unit interval.
-In 2018, Pitts et al. explored the minimal set of axioms in a topos theoretic setting needed to model different kinds of cubical type theories.
-Propositional equality, called the path type in cubical type theory, is constructed as functions with domain $\mathbb{I}$.
-Various axioms are postulated including connectedness, distinctness of end-points, a connection algebra on the names of the interval, and a set of ``face-formulas'' \cite{pitts2018}.
-
-However, two years later Cavallo et al. observe that a more minimal axiomatic framework works for achieving the goals of Pitts et al. \cite{cavallo2020}.
-With their approach there is no need for the diagonals used by Cohen or the connection algebra used by Pitts.
-Indeed, the minimal set of axioms are:
-\begin{align*}
-    \text{ax}_1 &: \abs{\Pi}{P}{\mathbb{I} \to \star}{
-        (\abs{\Pi}{i}{\mathbb{I}}{P\ i + \neg(P\ i)}) \to
-        (\abs{\Pi}{i}{\mathbb{I}}{P\ i})
-        + (\abs{\Pi}{i}{\mathbb{I}}{\neg(P\ i)})
-    } \\
-    \text{ax}_2 &: \neg(0 = 1)
-\end{align*}
-The minimal \textit{face formulas} needed is a universe of propositions satisfying the following three rules:
-\begin{align*}
-    (-\text{ is }0) &: \mathbb{I} \to \Phi
-    &\text{ax}_3 &: \abs{\Pi}{i}{\mathbb{I}}{
-        [(i\text{ is 0})] = (i = 0)
-    } \\
-    (-\text{ is }1) &: \mathbb{I} \to \Phi
-    &\text{ax}_4 &: \abs{\Pi}{i}{\mathbb{I}}{[(i\text{ is 1})] = (i = 1)} \\
-    \vee &: \Phi \to \Phi \to \Phi
-    &\text{ax}_5 &: \abs{\Pi}{\varphi, \psi}{\Phi}{[\varphi \vee \phi] = [\varphi] \vee [\psi]}
-\end{align*}
-where $[\phi]$ is a function from syntactic propositional formulas to propositions.
-With only the minimal set of axioms the model construction only supports weakened rules of propositional equality, but it serves as a consistent basis to explain extensions to different cubical type theory structures.
-The work of Cavallo et al. arguably presents the essence of cubical type theory:
+Cubical Type Theory (CTT) provided a computational interpretation of UA by introducing a fundamental interval pretype.
+Cohen et al. devised a variation of CTT that they claim simplified semantic justifications using a De Morgan algebra for the interval \cite{cohen2016}.
+Indeed, the advent of cubical sets as a model of UA introduced not one CTT, but several variants.
+In 2018, Pitts et al. investigated a minimal set of axioms for modeling CTTs \cite{pitts2018}.
+Two years later Cavallo et al. observed that the minimal set could be further simplified while still achieving the goals of Pitts \cite{cavallo2020}.
+The work of Cavallo et al. arguably presents the essence of CTT:
 \begin{enumerate}
     \item {
         the interval must be connected, which prevents a discretization and maintains an internal continuity for smooth deformations (i.e. homotopy);
@@ -558,63 +411,24 @@ The work of Cavallo et al. arguably presents the essence of cubical type theory:
         and a description of face formulas that encode a simple universe of propositions that allow distinguishing endpoints and disjunctive combination.
     }
 \end{enumerate}
-Like setoid type theories, cubical type theories also rely on a description of a universe of propositions to encode statements about propositional equality.
-This shared feature hints at the virality of equality.
-It is not enough to change the rules of equality, one must control the space that equality can act upon as well.
-
-Univalent type theory has been effective in incorporating extensional features into a dependent type theory without hampering metatheoretical properties.
-For instance, quotient types are representable when an additional rule truncating the higher-order equality structure is also included \cite{kraus2020}.
-Moreover, a new variant of inductive types named \textit{higher inductive types} generalizes quotient inductive types allowing for the definition of homotopy spaces directly as inductive types \cite{angiuli2017}.
-Cubical techniques are also useful in constructing setoid type theories that support definitional UIP by adding the appropriate rules to define a degenerate groupoid model \cite{sterling2020}.
+Univalent type theory has been effective in incorporating extensional features into type theory.
+For instance, quotient types are representable with an additional truncation rule \cite{kraus2020}.
+Moreover, a new variant of inductive types named \textit{higher inductive types} generalizes inductive quotients \cite{angiuli2017}.
+Cubical techniques are also useful in constructing setoid type theories that support definitional UIP \cite{sterling2020}.
 Finally, cubical type theory has recently been implemented as Cubical Agda which extends the development with records, coinductive types, and dependent pattern matching on higher inductive types \cite{vezzosi2021}.
 
 Univalent type theories can have some undesirable side effects from a programmatic perspective.
-For instance, Hofmann noticed early on that in a groupoid model of types it can be the case that $\mathbb{N} = \mathbb{Z}$ because propositional equality is isomorphism.
-Altenkirch notes that any construction in a univalent type theory is necessarily stable under homotopy equivalence \cite{altenkirch2016}.
-While a desirable situation for mathematics, programming languages often want even bit-identical representations to not be considered equal because the types capture external notions.
-Indeed, Voevodsky's early proposals for extension to dependent type theory contain two separate propositional equalities, one to capture isomorphism and support univalence, and one to keep the strict equalities of the original identity type \cite{voevodsky2013}.
-Today, Voevodsky's proposed type theory would be called a \textit{two-level} type theory (2LTT).
+For instance, Hofmann noticed early on that in a groupoid model of types it can be the case that $\mathbb{N} = \mathbb{Z}$.
+Altenkirch enforces this observation by noting that any construction in CTT is necessarily stable under homotopy equivalence \cite{altenkirch2016}.
+Indeed, Voevodsky's early proposals contain two separate propositional equalities, one to capture isomorphism, and one to capture strict equalities \cite{voevodsky2013}.
 
-The core idea behind a two-level type theory is to have two universes of types, an ``inner'' univalent universe satisfying the univalence axiom, and an ``outer'' strict universe satisfying UIP.
+Voevodksy's idea was explored further in Two-Level Type Theory (2LTT).
+The core idea behind 2LTT is to have two universes of types, an ``inner'' universe satisfying UA, and an ``outer'' universe satisfying UIP.
 This setup can be viewed as an internalization of the ``inner'' theories metatheory as the ``outer'' theory.
-Indeed, some statements in HoTT are metatheoretical in nature and can not be expressed in HoTT alone.
-For example, the definition of semi-simplicial types (an object used in Homotopy Theory) in a two-level type theory appeals to a natural number in the ``outer'' theory as a parameter.
-
-There need not be a subsumption requirement between the ``inner'' universes and the ``outer'' universes, only an embedding from the ``inner'' to the ``outer'' is required.
-Annenkov et al. note in their formulation of 2LTT that the context of the type theory is shared between both theories though the authors concede that this does not need to be the case.
-However, critically the dependent function and dependent pair types agree between both theories allowing for intercommunication in their formulation \cite{annenkov2017}.
-Capriotti expands upon the foundational aspects of 2LTT showing a conservativity result with respect to HoTT thus confirming that including the ``outer'' theory does not break any internal results constructed in the ``inner'' theory \cite{capriotti2017}.
-
-Angiuli adapts 2LTT when introducing Cartesian Cubical Type Theory to incorporate a strict equality and justify a computational semantics in the same spirit as the one used for Nuprl \cite{angiuli2019}.
-Indeed, 2LTT even allows a notion of strict proposition (i.e. a universe of propositions that are definitionally irrelevant).
-However, Gilbert the originator of strict propositions, notes that if a strict equality is included in the universe of strict propositions then univalence is no longer compatible hinting at some limitations \cite{gilbert2019}.
-
-\subsection{Miscellaneous Type Theories}
-
-Not all dependent type theories fit neatly into the above story.
-Indeed, Cedille itself does not.
-To conclude the tour of type theories this subsection reflects on these theories.
-
-\textbf{Quantitative Type Theory} augments any dependent type theory with usage annotations for the corresponding variables in context.
-These usage annotations restrict how often a given variable is used in the term body.
-Atkey, improving on prior work by McBride, describes a general intensional quantitative type theory parameterized by a semiring of usage annotations, the most familiar variant being $\{ 0, 1, \omega \}$ or \textit{erased}, \textit{linear}, and \textit{unrestricted} \cite{atkey2018}.
-Idris 2 is an implementation of quantitative type theory that demonstrates how session types can be effectively used in a setting with usage annotations \cite{brady2021}.
-
-\textbf{Rewriting} can be added to dependent type theory in a multitude of different ways to achieve ad hoc equality reflection.
-Cockx investigates a Rewriting Type Theory in detail in his work where rewriting allows the addition of computational axioms.
-He notes that rewriting can be used to postulate quotients and higher inductive types.
-In particular, rewriting is safely added to a dependent type theory by restricting the left hand-side to linear patterns, where rewrite rules must be orthogonal (i.e. a term can not be an instance of two or more rewrites on the left-hand side), and each rewrite satisfies a technical triangle property (to guarantee confluence).
-With these restrictions the addition of rewrites does not break confluence or consistency while also maintaining a modular framework for adding rewrite rules \cite{cockx2020, cockx2021}
-
-\textbf{Zombie}, a close cousin to Cedille, is a dependently typed programming language allowing arbitrary recursion.
-For definitional equality, Zombie does not beta-reduce expressions to normal forms and instead uses congruence closure.
-Moreover, because Zombie allows non-terminating values, it uses a call by value reduction strategy to prevent non-terminating proof terms from tricking the type system.
-Like Cedille, Zombie includes irrelevant function spaces and a heterogeneous equality type.
-Additionally, it refutes function extensionality \cite{sjoberg2017}.
-
-\textbf{Iso-type systems} generalize the notion of an iso-recursive type to any type.
-In these systems definitional equality is $\alpha$-equivalence while leveraging cast annotations to recover more general conversion rules.
-In this respect, an iso-type system is a \textit{weak} type theory with limited automation capabilities in its definitional equality \cite{yang2019}.
+The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2017}.
+Capriotti expanded upon the foundational aspects of 2LTT showing a conservativity result with respect to HoTT confirming that including the ``outer'' theory does not break any internal results constructed in the ``inner'' theory \cite{capriotti2017}.
+Angiuli adapted 2LTT to incorporate a strict equality and justify a computational semantics in the same spirit as the one used for Nuprl \cite{angiuli2019}.
+However, Gilbert noted that if a strict equality is included in a universe of strict propositions then UA is no longer compatible hinting at limitations \cite{gilbert2019}.
 
 \section{Thesis}
 

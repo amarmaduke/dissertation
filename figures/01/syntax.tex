@@ -4,16 +4,17 @@
     \begin{align*}
         t &::= x\ |\ \mathfrak{b}(\kappa_1, x : t_1, t_2)\ |\ \mathfrak{c}(\kappa_2, t_1, \ldots, t_{\mathfrak{a}(\kappa_2)}) \\
         \kappa_1 &::= \lambda\ |\ \Pi \\
-        \kappa_2 &::=\star\ |\ \kind\ |\ \text{app} \\
-    \end{align*}
-    \vspace{-.6in}
+        \kappa_2 &::=\star\ |\ \kind\ |\ \text{app}
+    \end{align*}%
     \begin{minipage}{0.32\textwidth}
+        \vspace{-.2in}
         \begin{align*}
             \mathfrak{a}(\star) = \mathfrak{a}(\kind) &= 0 \\
             \mathfrak{a}(\text{app}) &= 2
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.32\textwidth}
+        \vspace{-.2in}
         \begin{align*}
             \abs{\lambda}{x}{t_1}{t_2} &:= \mathfrak{b}(\lambda, x : t_1, t_2) \\
             (x : t_1) \to t_2 &:= \mathfrak{b}(\Pi, x : t_1, t_2) \\
@@ -21,6 +22,7 @@
         \end{align*}
     \end{minipage}%
     \begin{minipage}{0.32\textwidth}
+        \vspace{-.2in}
         \begin{align*}
             \star &:= \mathfrak{c}(\star) \\
             \kind &:= \mathfrak{c}(\kind)
