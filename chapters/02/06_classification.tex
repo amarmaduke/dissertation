@@ -3,11 +3,11 @@
 \input{figures/02/classify.tex}
 
 Classification is a critical property of a system like CC with unified syntax.
-It allows for the syntax to instead be stratified into levels which would enable an intrinsic presentation of the system.
-For the core theory of Cedille2 there are only two universes like the original CC, thus the stratification places terms into three separate levels.
+It allows for the syntax to instead be stratified into levels which enable an intrinsic presentation of the system.
+For $\ced$ there are only two universes like the original CC, thus the stratification places terms into three separate levels.
 A term is either a \textit{kind} (thus $A = \kind$), a \textit{type} (thus $\Gamma \vdash A : \kind$), or a \textit{term} (thus $\Gamma \vdash A : \star$).
 Determining the appropriate level for syntax is also decidable with a classification function defined in Figure~\ref{fig:2:classify}.
-This function is crafted to maintain preservation of classification after both reduction and erasure.
+This function is crafted to preserve classification after both reduction and erasure.
 Note that because the function is defined on syntax it is possible that there is no valid level because the syntax is not a proof, in these cases the syntax is given the classification \textit{undefined}.
 
 \begin{definition}
@@ -19,7 +19,7 @@ Note that because the function is defined on syntax it is possible that there is
     \end{enumerate}
 \end{definition}
 
-Note that the condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it are necessary.
+The condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it in the definition of $\mathcal{C}(-)$ are necessary.
 Take for example $\abs{\lambda_\tau}{x}{\star}{x_\star}$.
 This is not well-typed and hence not a proof, but it also should not be a kind, type, or term because it will prevent preservation of classification during reduction.
 If $a\pterm$ then the application will correctly produce a term, but if $a\ptype$ then an application will reduce to a type.

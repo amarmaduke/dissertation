@@ -180,7 +180,7 @@ If $e$ reduces to a value, then that implies $|a| \betaconv |b|$, but if this ho
 However, the evidence produced in a proof need not ever reduce to a value, yet it will still be discarded by the erasure of $\varphi$.
 
 Observational (or contextual) equivalence of objects gives a strong enough claim to transfer the normalization property from one object to another.
-Objects being the concept of interest means that contexts need to be well-typed because an object is only the erasure of a proof.
+Objects being the concept of interest means that contexts need to be well-typed because an object is the erasure of a proof.
 To make contexts the inductive structure of syntax is reused with a unique fresh free variable, labelled $h$, that represents a hole.
 The variable is unique meaning it occurs only once in the given syntax, but it can be trivially duplicated by an abstraction.
 Context structure could be defined inductively, but this methodology allows reuse of erasure and substitution.
@@ -189,7 +189,7 @@ Context structure could be defined inductively, but this methodology allows reus
 \end{definition}
 
 Observational equivalence is then defined to be logical equivalence of divergence of the associated objects substituted for $h$ in the given context.
-There are several possible ways to defined observational equivalence including the choice of what counts as an observation.
+There are several possible ways to define observational equivalence including the choice of what counts as an observation.
 For the purposes of this chapter divergence is the only observation of interest.
 Note that it is easy to see that observational equivalence forms an equivalence relation relative to the parameters $\Gamma$ and $A$.
 
@@ -256,7 +256,7 @@ Note that it is easy to see that observational equivalence forms an equivalence 
 Characterizing when $\varphi$ does not introduce diverging objects is useful because it enables, at the bare minimum, an external validation of each usage.
 It is not clear how this requirement may be internalized in the system.
 First, a logical relation capturing observational equivalence would likely need to be developed, but because this relation needs to capture equivalence of objects it is not obvious how to adapt existing approaches.
-Moreover, that relation would have to be bolted on an as auxiliary proof system in order to prove $\varphi$-safety.
+Moreover, the logical relation would have to be bolted on as an auxiliary proof system in order to prove $\varphi$-safety.
 At least, the evidence required to use a \textsc{Cast} rule is a sanity check.
 Indeed, if this evidence is ``morally'' true then contextual equivalence will hold by the Leibniz Law.
 
@@ -278,7 +278,7 @@ Note, however, that all examples require a context where $\pFalse$ is derivable.
 The first example uses $\varphi$ to give self a recursive type: $\pself : \pUnit$ and $\pself : \pUnit \to_\omega \pUnit$ simultaneously.
 Divergence is a trivial consequence.
 In this example, the False premise is completely erased.
-This is not really a problem as a proof assistant needs to reduce under binders anyway and the erased argument blocks logical issues regardless.
+This is not a problem as a proof assistant needs to reduce under binders regardless and the erased argument still blocks potential logical inconsistency.
 \begin{align*}
     \pFalse &= (X : \star) \to_0 X_\square \\
     \pself &= \abs{\lambda_\omega}{x}{\pUnit}{
@@ -338,19 +338,20 @@ Unfortunately, this idea fails as enough of the context may be uncurried into th
     |bad| &= \abs{\lambda_\omega}{f}{\diamond}{\app{|\pself|}{\omega}{|\pself|}}
 \end{align*}
 This counterexample requires a relevant abstraction, but this could probably be avoided by a more sophisticated formulation.
-Again, it also does not really matter as proof assistants reduce under binders anyway.
+Again, it does not matter as proof assistants reduce under binders regardless.
 This example demonstrates that finding a balance between usability and restriction of the context is very difficult, if not simply impossible.
 
 Another option is to remove $\varphi$ altogether from the system.
 It is a significant source of complexity because it demands reduction after erasure in the definition of conversion and is the \textit{only} source of divergence in $\ced$.
-To contrast, $\oldced$ has the following sources of divergence:
+To contrast, CDLE has the following sources of divergence:
 \begin{enumerate}
-    \item terms on the left-hand and right-hand side of an equality are untyped-$\lambda$-calculus syntax;
-    \item the Kleene Trick allows for untyped-$\lambda$-calculus syntax as witnesses of trivial equalities;
-    \item the rewrite rule, $\rho$, is erased and thus enables non-termination by Abel and Coquand \cite{abel2020_normalization};
+    \item indices and witnesses of trivial equalities are untyped $\lambda$-calculus terms;
+    \item the rewrite rule, $\rho$, effectively allows casts because rewrites are not typed;
+    \item the rewrite rule, $\rho$, is erased enabling non-termination when equality of types is expressible;
+    \item the separate rule, $\delta$, is erased enabling non-termination in an inconsistent context;
     \item the $\varphi$ rule, for the same reason as $\ced$.
 \end{enumerate}
-The first three sources are eliminated by the design of $\ced$, yet the last remains.
+The initial four sources are eliminated by the design of $\ced$, yet the last remains.
 Ultimately, the \textsc{Cast} rule is too important to not only the spirit of Cedille but its capability.
 Losing $\varphi$, as far as the current research shows, would prevent almost all existing encodings.
-The cost to be paid would be too much.
+The benefits outweigh the consequence.

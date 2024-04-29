@@ -7,10 +7,10 @@ This strategy involves the common technique of defining a parallel reduction var
 Parallel reduction allows reduction steps to occur in any subexpression, but reductions that generate new redexes cannot be reduced in a single step.
 Figure~\ref{fig:par-reduction} presents the inductive definition of parallel reduction.
 In fact, it is possible to compute the resulting syntax after all possible redexes are contracted by a single parallel reduction step.
-This is the \textit{reduction completion} (written $\parp{t}$) of some syntax $t$.
+This is the \textit{reduction completion} (written $\parp{t}$).
 The definition of reduction completion is shown in Figure~\ref{fig:par-triangle}.
 Reduction completion enables the derivation of a triangle property for parallel reduction of which confluence for parallel reduction is a consequence.
-With confluence for parallel reduction and logical equivalence then confluence of one-step reduction is immediate.
+Confluence for multistep reduction is an immediate consequence of confluence for parallel reduction and logical equivalence between parallel reduction and multistep reduction.
 
 \input{figures/02/triangle.tex}
 

@@ -3,11 +3,9 @@
 \input{figures/03/typing_macros.tex}
 
 There are several techniques for showing strong normalization of a PTS, including saturated sets \cite{geuvers1994_sn_satset}, model theory \cite{terlouw1995_sn}, realizability \cite{ong1993}, etc.
-Geuvers and Nederhof describe yet another technique that models CC inside F$^\omega$ where term dependencies are all erased at the type level \cite{geuvers1991_sn_tof}.
+Geuvers and Nederhof describe a technique that models CC inside F$^\omega$ where term dependencies are all erased at the type level \cite{geuvers1991_sn_tof}.
 In this chapter the technique of Geuvers and Nederhof will be adapted to show strong normalization of proof reduction.
-Note, this will not entail that objects are strongly normalizing.
-Moreover, proof normalization ends up being a rather weak property, as it will not entail consistency either.
-Nevertheless, it is an important stepping stone to strong normalization for objects.
+Proof normalization ends up being a rather weak property, because it does not entail consistency.
 
 \section{Model Description}
 
@@ -20,7 +18,7 @@ Moreover, it is a subsystem of the Calculus of Inductive Constructions and thus 
 \input{figures/03/reduction.tex}
 \input{figures/03/infer.tex}
 
-The model follows all the same principles for the CC fragment of Cedille2.
+The model follows all the same principles for the CC fragment of $\ced$.
 For example, consider the \textsc{Lam} rule.
 $$\LambdaRule$$
 The goal is to find three semantic functions: one for kinds ($V(-)$); one for types ($\sema{-}$); and one for terms ($[-]$), such that:
@@ -43,10 +41,10 @@ There does not appear to be a more sensible choice, as the dependencies $a$ and 
 
 \input{figures/03/model.tex}
 
-The model interpretation for contexts always introduces two fresh variables, $0 : \star$ which is a canonical type, and $\bot : (X : \star) \to X$ which is used to construct canonical inhabitants for any type or kind.
+The model interpretation for contexts always introduces two fresh variables, $0 : \star$ which is a canonical type, and $\bot : (X : \star) \to X$ which is used to construct canonical inhabitants for a type.
 Note that including $\bot$ prevents this model from entailing consistency for the source system.
 Regardless, F$^\omega$ is strongly normalizing in all contexts, thus the addition of $\bot$ does not prevent the model from serving its current purpose.
-Before exploring more in-depth examples of the model the reader is invited to skim to the semantic functions in Figure~\ref{fig:3:model_types} and Figure~\ref{fig:3:model_terms}.
+Before exploring more in-depth examples of the model the reader is invited to skim the semantic functions in Figure~\ref{fig:3:model_types} and Figure~\ref{fig:3:model_terms}.
 
 Consider the following examples to garner intuition for the semantic model:
 \begin{enumerate}
@@ -72,14 +70,14 @@ Consider the following examples to garner intuition for the semantic model:
     \item {
         Given $\Gamma \vdash_{\ced} t : T$ where $\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square$, $t = [(\app{f_\star}{\omega}{a_\star}).1, (\app{f_\star}{\omega}{a_\star}).2; (x : A_\square) \cap B_\square]$, and $T = (x : A_\square) \cap B_\square$ then
         \begin{align*}
-            &\sema{A : \star; B : A \to_\tau \star; a : A; f : A \to_\omega (x : A) \cap B} =\\
+            &\sema{\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square} =\\
             &\quad 0 : \star;\ \bot : (X : \star) \to X;\ A : \star;\ w_A : 0;\ B : \star;\ w_B : 0; \\
             &\quad a : A;\ f : A \to A \times B
         \end{align*}
-            $$[[(\app{f}{\omega}{a}).1, (\app{f}{\omega}{a}).2]] = (\abs{\lambda}{y}{0}{
+            $$[[(\app{f_\star}{\omega}{a_\star}).1, (\app{f_\star}{\omega}{a_\star}).2; (x : A_\square) \cap B_\square]] = (\abs{\lambda}{y}{0}{
                 ((f\ a).1, (f\ a).2)
             })\ (c^{0 \to 0 \to 0}\ w_A\ w_B)$$
-        $$\sema{(x : A) \cap B} = A \times B$$
+        $$\sema{(x : A_\square) \cap B_\square} = A \times B$$
     }
 \end{enumerate}
 
@@ -91,7 +89,7 @@ Thus, extra layers of abstraction are added when interpreting function arguments
 With the model defined the next step is to prove it is sound.
 The process begins by showing the interpretation of kinds ($V(-)$) is sound.
 This is not particularly difficult as the kind interpretation is quite simple.
-After proving soundness lemmas about substitution and conversion are also shown and follow without much difficulty.
+After, lemmas about substitution and conversion follow without difficulty.
 
 \begin{theorem}[Soundness of $V$]
     \label{lem:3:soudness_of_v}
@@ -126,7 +124,7 @@ After proving soundness lemmas about substitution and conversion are also shown 
 
 \begin{lemma}
     \label{lem:3:conv_of_v}
-    If $\Gamma_1 \vdash A : \kind$, $\Gamma_2 \vdash B : \kind$, and $A \equiv B$ then $V(A) = V(B)$
+    If $\Gamma_1 \vdash_{\ced} A : \kind$, $\Gamma_2 \vdash_{\ced} B : \kind$, and $A \equiv B$ then $V(A) = V(B)$
 \end{lemma}
 \begin{proof}
     By induction on $\Gamma \vdash A : \kind$.
@@ -144,7 +142,7 @@ After proving soundness lemmas about substitution and conversion are also shown 
 
 \begin{lemma}
     \label{lem:3:v_subst}
-    If $\Gamma \vdash V(t) : \kind$ then $[x := b]V(t) = V(t) = V([x := b]t)$
+    If $\Gamma \vdash_\omega V(t) : \kind$ then $[x := b]V(t) = V(t) = V([x := b]t)$
 \end{lemma}
 \begin{proof}
     By induction on $t$ and inversion on $\Gamma \vdash V(t) : \kind$.
@@ -177,7 +175,7 @@ A standard substitution lemma is proven after.
 \begin{lemma}
     \label{lem:3:var_not_in_sema_when_kind}
     Suppose $\Gamma \vdash t : A$, $x_m : B \in \Gamma$, and $B$ type, then $x \notin FV(\sema{t})$
-    where $A = \kind$ or $\Gamma \vdash A : \kind$
+    where $A = \kind$ or $\Gamma \vdash_{\ced} A : \kind$
 \end{lemma}
 \begin{proof}
     Note that the restrictions on $A$ makes sure that $\sema{-}$ is well-defined.
@@ -434,7 +432,7 @@ Luckily, erasure is homomorphic on type-like structure, and because the type sem
 Now conversion of the kind and type models must be handled relative to erasure.
 The above lemmas demonstrate that if reduction happens in the erased term it should somehow be mirrored in reduction for the well-typed terms.
 For kinds this turns out to be simple equality, as any possible dependence involving reduction are always dropped the structure of $V(t)$ for any $t$ is rigid.
-The type semantics is slightly more complicated, but the same intuition holds: if a reduction where to occur in a term dependency then the resulting type models are equal, otherwise the reduction is exactly mirrored in the model.
+The type semantics is slightly more complicated, but the same intuition holds: if a reduction were to occur in a term dependency then the resulting type models are equal, otherwise the reduction is exactly mirrored in the model.
 
 \begin{lemma}
     \label{lem:3:vsema_erase_red_step}
@@ -708,7 +706,7 @@ Finally, soundness of the term semantics is proven by a straightforward inductio
 
 With soundness of the model shown the normalization argument follows in the same way as for CC modelled in F$^\omega$.
 That is, proof reduction in $\ced$ is bounded by reduction in F$^\omega$, and thus because F$^\omega$ is strongly normalizing it provides a maximum number of reduction steps for which any proof must normalize in $\ced$.
-Note that some reduction steps are technical, especially $\vartheta_i$, but they are not conceptually difficult.
+Note that some reduction steps are technical, especially $\vartheta$, but are not conceptually difficult.
 
 \begin{lemma}
     \label{lem:3:canonical_subst}
@@ -845,11 +843,11 @@ Note that some reduction steps are technical, especially $\vartheta_i$, but they
     Using Lemma~\ref{lem:3:soundness_of_sema} gives $\sema{\Gamma} \vdash_\omega [t] : \sema{A}$.
     Note that F$^\omega$ with pairs is strongly normalizing with a unique normal form (because it is also confluent).
     Thus, \textit{all} possible reduction paths to the normal form are terminating.
-    Let $\partial([t])$ be the \textit{maximum} number of reduction steps $[t]$ could take to reach a normal form.
+    Let $\partial$ be the \textit{maximum} number of reduction steps $[t]$ could take to reach a normal form.
     Note that this value is computable by brute force search.
-    Pick any sequence of reductions in $t$ bounded by $\partial([t])$.
+    Pick any sequence of reductions in $t$ bounded by $\partial$.
     If this sequence concludes in a value then $t$ is strongly normalizing, because the sequence is arbitrary.
-    If $t$ is not a value then $t \betastar_{>\partial[t]} t^\prime$, but this is impossible by Lemma~\ref{lem:3:reduction_bounded}.
+    If $t$ is not a value then $t \betastar_{>\partial} t^\prime$, but this is impossible by Lemma~\ref{lem:3:reduction_bounded}.
     Now by confluence of reduction, all values reached from any arbitrary reduction path must be joinable at a single value.
     Thus, $t \betastar t_n$ where $t_n$ is a unique value.
 \end{proof}

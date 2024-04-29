@@ -20,7 +20,7 @@ Nevertheless, a basic fact about substitution on syntax is provable.
 \end{lemma}
 \begin{proof}
     By induction on $t$.
-    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes those cases.
+    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes the case.
     Suppose $t$ is a variable, $z$.
     If $z = x$, then $z \neq y$ and $t = a$ on both sides because $y \notin FV(a)$.
     If $z = y$, then $z \neq x$ and $t = [x := a]b$ on both sides.
@@ -153,7 +153,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{proof}
 
 Lemma~\ref{lem:2:betastar_subst} is the only fact about the interaction of substitution and reduction that is needed moving forward.
-A straightforward consequence is a similar lemma about substitution commuting with convertibility w.r.t. reduction.
+A straightforward consequence is a similar lemma about substitution commuting with reduction conversion.
 
 \begin{lemma}
     If $s \betaconv t$ and $a \betaconv b$ then $[x := s]a \betaconv [x := t]b$
@@ -164,7 +164,7 @@ A straightforward consequence is a similar lemma about substitution commuting wi
     Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := s]a \betastar [x := z_1]z_2$ and $[x := t]b \betastar [x := z_1]z_2$.
 \end{proof}
 
-Transitivity, as before, is a consequence of confluence.
+Transitivity, as before with F$^\omega$, is a consequence of confluence.
 Confluence is not an obvious property to obtain and can also be an involved property to prove.
 For example, a natural variant for the $\vartheta$ reduction rule is $\vartheta(\text{refl}(t.1)) \betared \text{refl}(t)$, but this breaks confluence.
 To see why, consider $\vartheta(\text{refl}([x, y; T].1))$.

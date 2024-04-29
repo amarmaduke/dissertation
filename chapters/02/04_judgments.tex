@@ -13,10 +13,13 @@ The constant $\star$ should be interpreted as a universe of types, and the const
 Thus, the axiom rule states that the universe of types \textit{is} a kind in any context.
 
 $\VarRule$ The variable rule requires that a variable at a certain type is inside the context.
-Note that variables are annotated with a mode.
+Note that variables in contexts are annotated with a mode.
 Modes take three forms: free ($\omega$); erased ($0$); or type ($\tau$).
 The type mode is used for proofs that exist inside the type universe; the free mode for proofs that belong to some type; and the erased mode for proofs that belong to some type but whose bound variable is not computationally relevant in the associated object.
-Variables are annotated with modes primarily to enable reconstruction of the appropriate binders.
+Variables in context are annotated with modes primarily to enable reconstruction of the appropriate binders.
+Alternatively, a variable in a proof is annotated with a universe, either $\star$ or $\kind$.
+The purpose of this annotation is to trivially determine the universe a variable belongs to.
+This is necessary both for classification and the model described in Chapter~\ref{chap:3}.
 
 \input{figures/02/domain.tex}
 \input{figures/02/infer1.tex}
@@ -36,7 +39,7 @@ Note that this is exactly the requirement imposed by pseudo-objects.
 $\AppRule$ The application rule is not surprising, the only notable feature is that the mode of the function type and the application must match.
 
 $\IntersectionRule$ The intersection type formation rule is similar to the function type formation rule, but the terms are all restricted to be types.
-Thus, there are no intersections of kinds in the core Cedille2 system.
+Thus, there are no intersections of kinds in $\ced$.
 
 $\PairRule$ The pair formation rule is standard for formation of dependent pairs.
 A third type annotation argument is required in order to make the formula inferable from the proof.
@@ -64,14 +67,14 @@ Notice that the only critical difference between this rule and a standard variat
 $\PromoteRule$ The promotion rule enables equational reasoning about intersections.
 Indeed, because intersections are not inductive it is difficult to reason about them without some auxiliary rule.
 It states that two elements of an intersection are equal if their first projections are equal.
-Note that this rule is about dependent intersections.
+Note that this rule is about dependent intersections, hence the focus on the first projection over the second projection.
 A non-dependent version involving the second projection is internally derivable in the system.
 
 $\CastRule$ The cast rule is a typed version of the original cast rule of Cedille.
 Note that this means this rule enables non-termination.
 In Chapter~\ref{chap:5} it is shown that this rule is the only source of non-termination and a precise condition for when it may be used in a terminating way is devised.
 The cast rule is critical to the spirit of Cedille.
-Thus, simply dropping it to obtain a strongly normalizing system is not really a sufficient choice as it throws too much away in its loss.
+Thus, simply dropping it to obtain a strongly normalizing system is not a satisfactory choice as it throws too much away in its wake.
 
 $\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct objects.
 
@@ -285,7 +288,7 @@ To remove these considerations contexts should instead be well-formed:
     A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ the variable $x \notin FV(\Gamma_1;\Gamma_2)$ and $\Gamma_1 \vdash A : K$ for some $K$
 \end{definition}
 It is not difficult to see that an inference judgment with a well-formed context is obtained from any general inference judgment.
-Moving forward it will be assumed that the context is well-formed because an equivalent proof is always obtainable under this assumption and the non-well-founded proofs will not add any value.
+Moving forward it will be assumed that the context is well-formed because an equivalent proof is always obtainable under this assumption and the ill-formed contexts will not add any value.
 \begin{lemma}
     If $\Gamma \vdash t : A$ then $\exists\ \Delta$ such that $\Delta \vdash t : A$ and $\vdash \Delta$
 \end{lemma}
