@@ -1,7 +1,7 @@
 \section{Erasure and Pseudo-objects}
 \label{sec:2:erasure}
 
-Cedille has a notion of erasure of syntax that transforms terms into the untyped $\lambda$-calculus.
+Cedille has a notion of erasure of syntax that transforms a subset of syntax into the untyped $\lambda$-calculus.
 This concept is generalized in $\ced$ to operate on general syntax.
 It still called erasure mostly as a holdover, but erasure no longer actually erases all type annotations.
 Instead, erasure should be thought of as computing the raw syntactic forms of objects.
@@ -9,7 +9,7 @@ In Section~\ref{sec:2:judgments} the notion of proof will be defined.
 An object is the erasure of a proof.
 Erasure is defined in Figure~\ref{fig:2:erasure}.
 With erasure the desired conversion relation is also definable.
-This definition will enable equating objects in a dependent quantification instead of proofs.
+This definition enables equating objects in a dependent quantification instead of proofs.
 
 \begin{definition}
     \label{def:2:conv}
@@ -99,7 +99,7 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
 Beyond these lemmas more structure needs to be imposed on raw syntax to obtain better behavior with erasure.
 In particular, the pair case and the $\lambda_0$ case are problematic.
 Indeed, for pairs there is an assumption that the first and second component are convertible.
-This restriction is what transforms these pairs into something more, an element of an intersection.
+This restriction is what transforms pairs into something more, an element of an intersection.
 Likewise, the $\lambda_0$ binder is meant to signify that the bound variable does not appear free in the erasure of the body.
 Imposing these restrictions on syntax retains the spirit of what it means to be an object.
 However, because syntax is still not a proof, this restriction on syntax instead forms a set of \textit{pseudo-objects}.
@@ -355,7 +355,7 @@ There is an inconsistency because $b$ is not a pseudo-object, it is not the case
 
 Knowing that $|s| \betaconv |t|$ if and only if $s \equiv t$ is critical for maintaining the spirit of Cedille.
 While $\ced$ is its own system the purpose is to refine the design of Cedille without losing its essential features.
-A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e. erased terms) not with annotated terms themselves.
+A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e. erased terms) not with annotated terms.
 Having Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check reduction conversion of objects.
 Not only does this maintain the spirit of Cedille, but it also enables optimizations in type checking.
 Indeed, arbitrarily expensive sequences of reductions could potentially be erased when checking $|s| \betaconv |t|$ instead of $s \equiv t$.
@@ -378,8 +378,7 @@ Indeed, arbitrarily expensive sequences of reductions could potentially be erase
     For $s\pseobj$ and $t\pseobj$ the relation $s \equiv t$ is an equivalence.
 \end{corollary}
 
-Finally, a useful lemma about interaction of substitution with conversion is obtained from the effort of pseudo-objects.
-This lemma is necessary to prove metatheoretic results about the system.
+Finally, a useful lemma about the interaction of substitution with conversion is obtained from the effort of pseudo-objects.
 
 \begin{lemma}
     If $s, t, a, b\pseobj$, $s \equiv t$, and $a \equiv b$ then $[x := s]a \equiv [x := t]b$

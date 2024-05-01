@@ -25,7 +25,7 @@ The goal is to find three semantic functions: one for kinds ($V(-)$); one for ty
     \begin{enumerate}
         \item $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$
         \item $\sema{\Gamma; x_m : A} \vdash_\omega [t] : \sema{B}$
-        \item $\sema{\Gamma} \vdash [\abs{\lambda_m}{x}{A}{t}] : \sema{(x : A) \to_m B}$
+        \item $\sema{\Gamma} \vdash_\omega [\abs{\lambda_m}{x}{A}{t}] : \sema{(x : A) \to_m B}$
     \end{enumerate}
 In order for this to work, term dependencies must all be dropped in function types.
 Moreover, kinds are squished, such that $V(\kind) = V(\star) = \star$.
@@ -34,7 +34,7 @@ The kind and type semantics is allowed to throw away terms and reductions becaus
 Instead, it is the term semantics that must take care to preserve all possible reductions such that strong normalization is a consequence of the model.
 
 For dependent intersections, the type semantics is the obvious one: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
-Note that because $A$ must be a type, it must be the case that $x \notin FV(\sema{B})$ otherwise the resulting type is not well-formed in F$^\omega$.
+Note that because $A$ is a type, it must be the case that $x \notin FV(\sema{B})$ otherwise the resulting type is not well-formed in F$^\omega$.
 This is true already for function types, thus this extension needs no special treatment.
 For equality the situation is special, the approach taken is to interpret all equalities as the type of the identity function: $\sema{a =_A b} = \fpId$.
 There does not appear to be a more sensible choice, as the dependencies $a$ and $b$ must be dropped.
@@ -82,7 +82,7 @@ Consider the following examples to garner intuition for the semantic model:
 \end{enumerate}
 
 Notice that from the perspective of the type semantics ($\sema{-}$) that term dependencies in predicates must be dropped, but that they are preserved in the term semantics ($[-]$).
-Thus, extra layers of abstraction are added when interpreting function arguments that are kinds to capture the two different usages of that variable in the separate semantic functions.
+Thus, extra layers of abstraction are added when interpreting function arguments that are kinds.
 
 \section{Model Soundness}
 
@@ -376,8 +376,8 @@ A standard substitution lemma is proven after.
 \end{proof}
 
 Finally, soundness of the term semantics must be shown.
-This is not as simple as the original argument for CC modelled in F$^\omega$ because conversion happens relative to erasure.
-Luckily, erasure is homomorphic on type-like structure, and because the type semantics drops any term dependencies it will be the case that erasure has no impact on the semantics of types.
+This is not as simple as the original argument for CC modelled in F$^\omega$ because conversion is relative to erasure.
+Luckily, erasure is locally homomorphic on type-like structure and the type semantics drops all term dependencies.
 
 \begin{lemma}
     \label{lem:3:vsema_erase}
@@ -429,10 +429,9 @@ Luckily, erasure is homomorphic on type-like structure, and because the type sem
     \end{proofcase}
 \end{proof}
 
-Now conversion of the kind and type models must be handled relative to erasure.
 The above lemmas demonstrate that if reduction happens in the erased term it should somehow be mirrored in reduction for the well-typed terms.
 For kinds this turns out to be simple equality, as any possible dependence involving reduction are always dropped the structure of $V(t)$ for any $t$ is rigid.
-The type semantics is slightly more complicated, but the same intuition holds: if a reduction were to occur in a term dependency then the resulting type models are equal, otherwise the reduction is exactly mirrored in the model.
+The type semantics is slightly more complicated, but the same intuition holds: if a reduction were to occur in a term dependency then the result of the type semantics is equal, otherwise the reduction is exactly mirrored in the model.
 
 \begin{lemma}
     \label{lem:3:vsema_erase_red_step}
@@ -540,7 +539,7 @@ The type semantics is slightly more complicated, but the same intuition holds: i
     If $\sema{s} = \sema{z}$ then obviously $\Gamma \vdash \sema{z} : T$ and the same argument as above works.
 \end{proof}
 
-With the reduction lemmas handled the required lemma about conversion is straightforward.
+With the reduction lemmas the required lemma about conversion is provable.
 Finally, soundness of the term semantics is proven by a straightforward induction on the inference judgment of $\ced$.
 
 \begin{lemma}

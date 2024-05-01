@@ -10,10 +10,10 @@ Cedille has several important encodings and derivations in the existing literatu
     \item simulated large eliminations \cite{jenkins2021_large_elim};
     \item and inductive-inductive data \cite{marmaduke2023_indind}.
 \end{enumerate}
-The unfamiliar may fear that the devil is in the details for all of these encodings, but the reality is that most of the complexity boils down to two important core ideas: irrelevant casts and views.
+The unfamiliar may fear that the devil is in the details for all of these encodings, but the reality is that most of the complexity boils down to two important core ideas: irrelevant casts and irrelevant views.
 A caveat of \textit{most} is required because some encodings make essential use of the Kleene Trick (i.e. the idea that any untyped $\lambda$-calculus term may serve as the erasure for a trivial equality in Cedille).
 In particular, quotients by idempotent functions is not possible in its existing form without the Kleene Trick.
-Indeed, it was partly invented as an excuse to use the Kleene Trick in an essential way in the first place.
+Indeed, this encoding was partly invented as an excuse to use the Kleene Trick in an essential way in the first place.
 Nevertheless, the other two important core ideas are derivable in $\ced$.
 
 To begin, the notion of casts is definable in \textit{almost} the same fashion.
@@ -41,8 +41,8 @@ Moreover, irrelevance of casts is a simple consequence of $\varphi$.
 \end{align*}
 The proofs for the associated derivations are obvious by following the term structure and applying the only valid rule.
 Irrelevance of casts are necessary for essentially all the previously listed derivations in Cedille.
-This construct is incredibly important, and it is mostly a direct consequence of $\varphi$.
-There is no known way, currently, to subvert the use of irrelevant casts to obtain efficient inductive data.
+This component is incredibly important, and it is mostly a direct consequence of $\varphi$.
+There is no known way, currently, to subvert the use of irrelevant casts to obtain generic efficient inductive data.
 However, inductive Church encodings do \textit{not} require irrelevance of casts and are possible to encode in both $\ced$ and Cedille without $\varphi$.
 \begin{theorem}
     \label{lem:2:cast_derivations}
@@ -57,7 +57,7 @@ However, inductive Church encodings do \textit{not} require irrelevance of casts
 \end{proof}
 Views are originally constructed using the Kleene Trick.
 Fortunately, the Kleene Trick is not essential to the definition.
-The definition presented below presumes that an inductive sigma type (written $(x : A) \times B$) is already internally constructed.
+The alternative construction presented below presumes that an inductive sigma type (written $(x : A) \times B$) is already internally derived.
 Note that such a type can be constructed using Church encodings as it is not recursive, meaning efficiency concerns are not a problem.
 \begin{align*}
     \pFalse &= (X:\star) \to_0 X_\square \\
@@ -102,7 +102,7 @@ Note that such a type can be constructed using Church encodings as it is not rec
 A view gives a method of representing data by an object at type Top, such that the object may be reconstructed at some other type in a relevant position assuming an irrelevant view.
 The $\ced$ definition of view is quite different from the original definition in Cedille.
 It requires the use of a sigma type, it uses a different formulation of Top, and it works with an intersection ($\pTop \cap A$) as opposed to directly with Top.
-However, the resulting interface is exactly the same, and critically the erasures are the same.
+However, the resulting interface is exactly the same, and the erasures agree with the original definitions in Cedille.
 \begin{theorem}
     \label{lem:2:view_derivations}
     \textcolor{white}{\_}
@@ -128,4 +128,4 @@ However, the resulting interface is exactly the same, and critically the erasure
 \end{proof}
 Views are not as ubiquitous as casts, but they are critical for course-of-values Mendler induction and recursive representations of data.
 Indeed, the elaboration work of Jenkins heavily depends on views \cite{jenkins2023elaborating}.
-With both irrelevant casts and irrelevant views derivable internally in $\ced$ it remains possible to reconstruct almost all existing encodings published in the literature.
+With both irrelevant casts and irrelevant views derivable internally in $\ced$ it is possible to reconstruct almost all existing encodings published in the literature.

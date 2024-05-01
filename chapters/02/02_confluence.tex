@@ -9,8 +9,8 @@ Figure~\ref{fig:par-reduction} presents the inductive definition of parallel red
 In fact, it is possible to compute the resulting syntax after all possible redexes are contracted by a single parallel reduction step.
 This is the \textit{reduction completion} (written $\parp{t}$).
 The definition of reduction completion is shown in Figure~\ref{fig:par-triangle}.
-Reduction completion enables the derivation of a triangle property for parallel reduction of which confluence for parallel reduction is a consequence.
-Confluence for multistep reduction is an immediate consequence of confluence for parallel reduction and logical equivalence between parallel reduction and multistep reduction.
+Reduction completion enables the derivation of a triangle property for which confluence for parallel reduction is a consequence.
+Confluence for multistep reduction is an immediate consequence of confluence for parallel reduction and logical equivalence between both reduction variants.
 
 \input{figures/02/triangle.tex}
 
@@ -171,7 +171,7 @@ Confluence for multistep reduction is an immediate consequence of confluence for
     To the right the situation is visually depicted.
     Note that the triangle property is ``half'' of the diamond property.
     Indeed, if $s \parred t^\prime$ then $t^\prime \parred \parp{s}$.
-    Thus, as a consequence of the triangle property, parallel reduction trivially has the diamond property.
+    As a consequence of the triangle property, parallel reduction trivially has the diamond property.
 \end{minipage}\hfill
 \begin{minipage}{.2\textwidth}
     \[\begin{tikzcd}
@@ -319,7 +319,7 @@ Thus, while important, it is still only a stepping stone to showing judgmental c
     Transitivity is a consequence of confluence, see Theorem~\ref{thm:1:trans}.
 \end{proof}
 
-Additionally, there is a final useful fact about convertibility of reduction that is occasionally used throughout the rest of this work.
+Additionally, there is a final useful fact about reduction conversion that is occasionally used throughout the rest of this work.
 That is, like reduction, conversion of subexpressions yields conversion of the entire term.
 
 \begin{lemma}

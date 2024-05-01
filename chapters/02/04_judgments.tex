@@ -1,7 +1,6 @@
 \section{Inference Judgment}
 \label{sec:2:judgments}
 
-
 The inference judgment, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
 As stated previously, the erasure of a proof is an \textit{object}.
 Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ its object.
@@ -10,14 +9,14 @@ Judgments of the form $\Gamma \vdash t : A$ should be read $t$ infers $A$ in $\G
 
 $\AxiomRule$ The axiom rule is the same as with F$^\omega$.
 The constant $\star$ should be interpreted as a universe of types, and the constant $\kind$ as a universe of kinds.
-Thus, the axiom rule states that the universe of types \textit{is} a kind in any context.
+Thus, the axiom rule states that the universe of types is a kind in any context.
 
 $\VarRule$ The variable rule requires that a variable at a certain type is inside the context.
 Note that variables in contexts are annotated with a mode.
-Modes take three forms: free ($\omega$); erased ($0$); or type ($\tau$).
-The type mode is used for proofs that exist inside the type universe; the free mode for proofs that belong to some type; and the erased mode for proofs that belong to some type but whose bound variable is not computationally relevant in the associated object.
+Modes take three forms: free ($\omega$); erased ($0$); or type-level ($\tau$).
+The type-level mode is used for proofs that exist inside the type universe; the free mode for proofs that belong to some type; and the erased mode for proofs that belong to some type but whose bound variable is not computationally relevant in the associated object.
 Variables in context are annotated with modes primarily to enable reconstruction of the appropriate binders.
-Alternatively, a variable in a proof is annotated with a universe, either $\star$ or $\kind$.
+A variable in a proof is annotated with a universe, either $\star$ or $\kind$.
 The purpose of this annotation is to trivially determine the universe a variable belongs to.
 This is necessary both for classification and the model described in Chapter~\ref{chap:3}.
 
@@ -51,16 +50,16 @@ Note that by Theorem~\ref{thm:2:beta_iff_conv} this condition is equivalent to $
 $\SecondRule$ The first and second projection rules are unsurprising.
 Both rules model projection from a pair as expected.
 
-$\EqualityRule$ The equality type formation rule requires that the type annotation is a type and that the left and right-hand sides infer that type.
+$\EqualityRule$ The equality type formation rule requires that equality is typed and that the left and right-hand sides infer that type.
 Note that a typed equality like this is standard from the perspective of modern type theory but significantly different from the \textit{untyped} equality of Cedille.
-Indeed, the equality rules are the area of significant deviation from the original Cedille design.
+Indeed, the equality rules all deviate from the original Cedille design.
 
 \input{figures/02/infer2.tex}
 
 $\ReflRule$ The reflexivity rule is the only value for equality types.
-It is the standard inductive formulation of the equality type.
+It is the standard inductive formulation of an identity type.
 
-$\SubstRule$ The substitution rule is a dependent variation of the Leibniz's Law.
+$\SubstRule$ The substitution rule is a dependent variation of Leibniz's Law.
 It is also a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
 
@@ -80,7 +79,7 @@ $\SeparationRule$ The separation rule states only that the equational theory is 
 
 \input{figures/02/infer3.tex}
 
-The first critical observation to be made is that the syntax participating in an inference judgment are pseudo-objects.
+The first observation to be made is that the syntax participating in an inference judgment are pseudo-objects.
 Thus, proofs and their types enjoy transitivity of conversion.
 Next three standard lemmas are proved about the type system: weakening, substitution, and a sort-hierarchy classification.
 
@@ -287,8 +286,8 @@ To remove these considerations contexts should instead be well-formed:
 \begin{definition}
     A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ the variable $x \notin FV(\Gamma_1;\Gamma_2)$ and $\Gamma_1 \vdash A : K$ for some $K$
 \end{definition}
-It is not difficult to see that an inference judgment with a well-formed context is obtained from any general inference judgment.
-Moving forward it will be assumed that the context is well-formed because an equivalent proof is always obtainable under this assumption and the ill-formed contexts will not add any value.
+It is not difficult to see that an inference judgment with a well-formed context is obtainable from an inference judgment with an ill-formed context.
+Moving forward it will be assumed that the context of an inference judgment is always well-formed.
 \begin{lemma}
     If $\Gamma \vdash t : A$ then $\exists\ \Delta$ such that $\Delta \vdash t : A$ and $\vdash \Delta$
 \end{lemma}
