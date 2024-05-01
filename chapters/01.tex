@@ -2,10 +2,10 @@
 \input{figures/01/typing_macros.tex}
 \input{figures/01/reduction_macros.tex}
 
-Type theory is a tool for reasoning about assertions of some domain of discourse.
+Type theory is a tool for reasoning about assertions of a domain of discourse.
 When applied to programming languages, that domain is the expressible programs and their properties.
 Of course, a type theory may be rich enough to express detailed properties about a program, such that it halts or returns an even number.
-Therein lies a tension between what properties a type theory can faithfully (i.e. consistently) encode and the complexity of the type theory itself.
+Therein lies a tension between what properties a type theory can faithfully encode and the complexity of the theory itself.
 If the theory is too complex then it may be untenable to prove that the type theory is well-behaved.
 Indeed, the design space of type theories is vast, likely infinite.
 When incorporating features the designer must balance complexity against capability.
@@ -21,7 +21,7 @@ At its base was the Simply Typed Lambda Calculus (STLC) a type theory introduced
 The STLC has only basic functions found in all programming languages.
 System F, a type theory introduced by Girard \cite{girard1972,girard1989} and independently by Reynolds \cite{reynolds1974_systemf}, is obtained from STLC by adding quantification over types (i.e. polymorphic functions).
 Adding a copy of STLC at the type-layer, functions from types to types, yields System F$^\omega$.
-Finally, the addition of quantification over terms or functions from terms to types, completes CC.
+Finally, the addition of quantification over terms, or functions from terms to types, completes CC.
 While this is not the only path through the $\lambda$-cube to arrive at CC it is the most well-known and the most immediately relevant.
 
 Perhaps surprisingly, all the systems of the $\lambda$-cube correspond to a logic.
@@ -70,7 +70,6 @@ See Figure~\ref{fig:ops_f} for the definitions of substitution and computing fre
 However, there are issues with variable renaming that must be solved.
 A syntactic form is renamed by consistently replacing bound and free variables such that there is no variable capture.
 For example, the syntax $\abs{\lambda}{x}{A}{y\ x}$ cannot be renamed to $\abs{\lambda}{y}{A}{y\ y}$ because it captures the free variable $y$ with the binder $\lambda$.
-More critically, variable capture changes the meaning of a term.
 There are several rigorous ways to solve variable renaming including (non-exhaustively): De Bruijn indices (or levels) \cite{debruijn1972}, locally-nameless representations \cite{chargueraud2012}, nominal sets \cite{pitts2013_nominal}, locally-nameless sets \cite{pitts2023_lns}, etc.
 All techniques incorporate some method of representing syntax uniquely with respect to renaming.
 For this work the variable bureaucracy will be dispensed with.
@@ -79,7 +78,7 @@ For example, $\abs{\lambda}{x}{A}{y\ x} = \abs{\lambda}{z}{A}{y\ z}$ and the sub
 
 \input{figures/01/reduction.tex}
 
-The syntax of F$^\omega$ has a well understood notion of reduction (or dynamics, or computation) defined in Figure~\ref{fig:reduction_f}.
+The syntax of F$^\omega$ has a well understood notion of reduction (also called dynamics or computation) defined in Figure~\ref{fig:reduction_f}.
 This is an \textit{inductive} definition of a two-argument relation on terms.
 A given rule of the definition is represented by a collection of premises ($P_1, \ldots, P_n$) written above the horizontal line and a conclusion ($C$) written below the line.
 An optional name for the rule (\textsc{Example}) appears to the right of the horizontal line.
@@ -134,7 +133,7 @@ Two terms are \textit{convertible}, written $t_1 \betaconv t_2$, if $\exists\ t^
 Note that this is not the only way to define convertibility in a type theory, but it is the standard method for a PTS.
 Convertibility is used in the typing rules to maintain a well-typed relation after term reduction.
 It may be tempting to view conversion as the reflexive-symmetric-transitive closure of the step relation, but transitivity is not an obvious property.
-In fact, proving transitivity of conversion is often a significant effort, beginning with the confluence lemma.
+In fact, proving transitivity of conversion is often a significant effort, requiring the confluence lemma.
 
 \begin{lemma}[Confluence]
     If $s \betastar t_1$ and $s \betastar t_2$ then $\exists\ t^\prime$ such that $t_1 \betastar t^\prime$ and $t_2 \betastar t^\prime$
@@ -161,14 +160,14 @@ Figure~\ref{fig:typing_f} defines the typing relation on terms for F$^\omega$.
 As previously mentioned this formulation is different from standard presentations.
 Four relations are defined mutually:
 \begin{enumerate}
-    \item $\Gamma \vdash t \infr T$, to be read as $T$ is the inferred type of the term $t$ in the context $\Gamma$ or, $t$ infers $T$ in $\Gamma$;
-    \item $\Gamma \vdash t \cinfr T$, to be read as $T$ is the inferred type, possibly after some reduction, of the term $t$ in the context $\Gamma$ or, $t$ reduction-infers $T$ in $\Gamma$;
-    \item $\Gamma \vdash t \chck T$, to be read as $T$ is checked against the inferred type of the term $t$ in the context $\Gamma$ or, $t$ checks against $T$ in $\Gamma$;
+    \item $\Gamma \vdash t \infr T$, to be read as $T$ is the inferred type of the term $t$ in the context $\Gamma$, or $t$ infers $T$ in $\Gamma$;
+    \item $\Gamma \vdash t \cinfr T$, to be read as $T$ is the inferred type, possibly after some reduction, of the term $t$ in the context $\Gamma$, or $t$ reduction-infers $T$ in $\Gamma$;
+    \item $\Gamma \vdash t \chck T$, to be read as $T$ is checked against the inferred type of the term $t$ in the context $\Gamma$, or $t$ checks against $T$ in $\Gamma$;
     \item $\vdash \Gamma$, to be read as the context $\Gamma$ is well-formed, and thus consists only of types that themselves have a type
 \end{enumerate}
 Note that there are two \textsc{Pi} rules that restrict the domain and codomain pairs of function types to three possibilities: $(\kind, \kind)$, $(\star, \star)$, and $(\kind, \star)$.
 This is exactly what is required by the $\lambda$-cube for this definition to be F$^\omega$.
-For the unfamiliar, interpreting rules can be difficult, thus exposition explaining a small selected set is provided.
+For the unfamiliar, interpreting rules can be difficult, thus exposition explaining a small selection is provided.
 
 $\AxiomRuleF$ The axiom rule has one premise, requiring that the context is well-formed.
 It concludes that the constant term $\star$ has type $\kind$.
@@ -180,7 +179,7 @@ Note that there is no way to determine a type for $\kind$.
 It plays the role of a type only.
 
 $\VarRuleF$ The variable rule is a context lookup.
-It scans the context to determine if the variable is anywhere in context and then the associated type is what that variable infers.
+It scans the context to determine if the variable exists in $\Gamma$ and that the associated type is what is being inferred.
 This rule is what requires the typing relation to mention a context.
 Whenever a type is inferred or checked it is always desired that the context is well-formed.
 That is why the variable rule also requires the context to be well-formed as a premise, because it is a leaf relative to the inference relation.
@@ -190,7 +189,7 @@ $\AppRuleF$ The application rule infers the type of the term $f$ and reduces tha
 Once a function type is acquired it is clear that the type of the term $a$ must match the function-type's argument-type.
 Thus, $a$ is checked against the type $A$.
 Finally, the inferred result of the application is the codomain of the function-type $B$ with the term $a$ substituted for any free occurrences of $x$ in $B$.
-This substitution is necessary because this application could be a type application to a type function.
+This substitution is necessary because this application could be a type-application to a type-function.
 For example, let $f = \abs{\lambda}{X}{\star}{\text{id}\ X}$ where id is the identity term.
 The inferred type of $f$ is then $(X : \star) \to X \to X$.
 Let $a = \mathbb{N}$ (any type constant), then $f\ \mathbb{N} \infr [X := \mathbb{N}](X \to X)$ or $f\ \mathbb{N} \infr \mathbb{N} \to \mathbb{N}$.
@@ -282,8 +281,8 @@ A proof has meaning relative to its formula, but this meaning may not be relevan
 For example, the proof $2$ for a Church encoded natural number is intuitively data, but a proof that $2$ is even is intuitively not.
 In CC, both are merely proofs that can be quantified over.
 
-Cedille alters the domain of quantification from proofs to (untyped) $\lambda$-calculus terms.
-Thus, for Cedille, the proof $2$ becomes the encoding of $2$ and the proof that $2$ is even can \textit{also} be the encoding of $2$.
+Cedille alters the domain of quantification from proofs to untyped $\lambda$-calculus terms.
+Thus, for Cedille, the proof $2$ becomes the untyped $\lambda$-calculus encoding of $2$ and the proof that $2$ is even can \textit{also} be this same untyped $\lambda$-calculus encoding.
 This is achieved through a notion of \textit{erasure} which removes type information and auxiliary syntactic forms from a term.
 Additionally, convertibility is modified to be convertibility of untyped $\lambda$-calculus terms.
 However, erasure as it is defined in Cedille enables diverging terms in inconsistent contexts.
@@ -318,14 +317,14 @@ Thus, a brief introduction and history of equality in type theories is beneficia
 
 \input{figures/01/equality.tex}
 
-While a Leibniz Law may be stated in CC using a Church encoding it does not enable strong reasoning principles.
+While Leibniz's Law may be stated in CC using a Church encoding it does not enable strong reasoning principles.
 The standard definition of equality used to extend systems like CC is Martin-L\"{o}f's identity type, depicted in Figure~\ref{fig:lof_eq}.
-This formulation comes with a so-called inductive eliminator: the $J$ rule.
+This formulation comes with an inductive eliminator: the $J$ rule.
 However, the identity type does not admit function extensionality, which is formally defined below.
 $$(f\ g : A \to B) \to ((x : A) \to f\ x =_B g\ x) \to f =_{A \to B} g$$
-Function extensionality is a commonly presumed reasoning principle in mathematics and many successful mathematical formulations assume it as an additional axiom.
+Function extensionality is a commonly presumed reasoning principle in mathematics and many successful type theories assume it as an additional axiom.
 Defining systems where function extensionality is derivable instead of axiomatically postulated was (and still is) an active area of research.
-Note that the Church encoded Leibniz Law is logically equivalent to the identity type.
+Note that the Church encoded Leibniz's Law is logically equivalent to the identity type.
 Moreover, they are isomorphic if quantification is parametric and function extensionality holds \cite{abel2020_equality}.
 
 Attempting to bridge the gap between intensional and extensional features Streicher proposed his Axiom K in 1993 \cite{streicher1993}.
@@ -337,25 +336,21 @@ In 1995 Hofmann answered this equation negatively: UIP is independent of Martin-
 Hofmann accomplished this by modelling identity types in two separate ways: as equivalence relations defined inductively on type structure and as groupoids.
 His models solved a long-standing open question about the nature of the identity type \cite{hofmann1995, hofmann1996}.
 
-Propositional extensionality and quotients are two additional notions that add more mathematically intuitive reasoning principles to a system that depend on equality.
+Propositional extensionality and quotients are two additional notions dependent on equality that add more mathematically intuitive reasoning principles.
 Propositional extensionality states that logical equivalence of propositions is logically equivalent to equality of propositions.
 This principle is stated relative to some universe of propositions, \textsc{Prop}, and defined formally below.
 $$(P\ Q : \textsc{Prop}) \to (P \leftrightarrow Q) \leftrightarrow (P =_\textsc{Prop} Q)$$
 In extensions of CC this universe is $\star$, but in systems like Cedille there is no single universe of propositions.
 Quotient types ($A/\!\!\sim$) are constructed from a carrier type $A$ and an equivalence relation $\sim$ such that equality for elements of the quotient respects $\sim$.
 The simplest example quotient is the set of rational numbers which is the quotient of fractions (i.e. pairs of integers) and the equivalence relation $((n_1, d_1)\ (n_2, d_2) : \mathbb{Z \times Z}) \to n_1d_2 =_{\mathbb{Z}} n_2d_1$.
-Additionally, other algebraic objects are constructed from quotients in Set Theory (e.g. groups, fields, modules).
+Other algebraic objects are also constructed from quotients in Set Theory such as: groups, fields, modules, etc.
 Indeed, the Lean mathlib library heavily relies on quotients \cite{mathlib}.
 
 The equivalence relation for a quotient induces a partition of the elements of that type into equivalence classes.
 If a canonical representative of an equivalence class can be effectively computed then a quotient is called \textit{definable}.
-The real numbers and multi-sets of unorderable elements are two examples of quotient types where a canonical representative is uncomputable \cite{li2015}.
-Indeed, the axiom of choice is equivalent to the ability to pick a unique representative from equivalence classes for any arbitrary equivalence relation \cite{lof2009}.
-Additionally, if a type theory supports an impredicative universe of types such as Cedille, then adding quotients such as the real numbers causes inconsistency \cite{chicli2002}.
-
-Equality is a critical part of the design of many type theories, Cedille included.
-However, the powerful extensional reasoning principles of equality are surprisingly difficult to obtain without causing other issues.
-A brief history of type theories that capture some extensionality is useful in understanding what can and cannot be accomplished.
+The real numbers and multi-sets of unorderable elements are two examples of quotient types where a canonical representative is not computable \cite{li2015}.
+Of course, the axiom of choice allows selection of a unique representative from equivalence classes for any arbitrary equivalence relation \cite{lof2009}.
+If a type theory supports an impredicative universe of types such as Cedille, then adding quotients like multisets of unorderable elements causes inconsistency \cite{chicli2002}.
 
 Extensional Type Theory (ETT) enjoys all the aforementioned reasoning principles.
 The distinguishing feature is the addition of the equality reflection rule, allowing promotion of propositional equalities to definitional (i.e. automatic) equalities.
@@ -381,8 +376,8 @@ Setoid Type Theory (SeTT) is an alternative path taken by Altenkirch after work 
 Using setoids internally to reason mathematically is a standard (and often heavily disliked) method of reasoning with extensional principles in a system that lacks them.
 Altenkirch's idea is to construct a setoid model directly in an intensional theory while making the bureaucracy of working with setoids automatic.
 The model is a syntactic translation which gives a way to bootstrap extensionality principles from intensional theories.
-Initial models where strong enough to support function extensionality and propositional extensionality \cite{altenkirch2019}.
-Later, the models where improved to internalize a universe of setoids \cite{altenkirch2021}.
+Initial models were strong enough to support function extensionality and propositional extensionality \cite{altenkirch2019}.
+Later, the models were improved to internalize a universe of setoids \cite{altenkirch2021}.
 
 In 2006, the mathematician Voevodsky began studying type theory as an alternative foundation for mathematics after expressing doubts about the correctness of results in the mathematical literature.
 He proposed the Univalence Axiom (UA), shown below, as a desirable feature of type theory.
@@ -411,7 +406,7 @@ The work of Cavallo et al. arguably presents the essence of CTT:
         the two endpoints must be distinct, which prevents collapsing the interval to a unit type and obliterating the internal structure;
     }
     \item {
-        and a description of face formulas that encode a simple universe of propositions that allow distinguishing endpoints and disjunctive combination.
+        and a description of face formulas that encode a simple universe of propositions that allow distinguishing endpoints and disjunction.
     }
 \end{enumerate}
 CTT has been effective in incorporating extensional features into type theory.
@@ -431,12 +426,11 @@ This setup can be viewed as an internalization of the ``inner'' theories metathe
 The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2017}.
 Capriotti expanded upon the foundational aspects of 2LTT showing a conservativity result with respect to HoTT confirming that including the ``outer'' theory does not break any internal results constructed in the ``inner'' theory \cite{capriotti2017}.
 Angiuli adapted 2LTT to incorporate a strict equality and justify a computational semantics in the same spirit as the one used for Nuprl \cite{angiuli2019}.
-However, Gilbert noted that if a strict equality is included in a universe of strict propositions then UA is no longer compatible hinting at limitations \cite{gilbert2019}.
 
 Over the course of type theory history many researchers have sought theories that further enable extensional principles of reasoning.
 However, function extensionality is refuted by Cedille.
 Indeed, because Cedille's equality is untyped it is possible to distinguish functions with tests outside their typed domain.
-Thus, there is little hope of modifying Cedille in its current state with existing techniques to obtain extensional reasoning principles.
+Thus, there is little hope of modifying Cedille to obtain extensional reasoning principles while also maintaining an untyped equality.
 
 \section{Thesis}
 
@@ -451,7 +445,7 @@ The redesign described herein treads this balance to obtain a better metatheory 
 \textbf{Chapter 2}\quad defines the core theory ($\ced$), including its syntax, and typing rules.
 Erasure from Cedille is rephrased as a projection from proofs to objects.
 Basic metatheoretical results are proven including: confluence, preservation, and classification.
-Important derivations including irrelevance of casts and construction of a view type are presented, demonstrating the core data used to construct almost all encodings is still possible.
+Important derivations including irrelevance casts and irrelevant views are presented, demonstrating the critical components used to construct almost all existing encodings is possible.
 \\ \\
 \textbf{Chapter 3}\quad models $\ced$ in F$^\omega$ obtaining a strong normalization result for proof reduction.
 This model is a straightforward extension of a similar model for CC.
@@ -462,11 +456,10 @@ Although CDLE is not strongly normalizing it still possess a realizability model
 $\ced$ is closely related to CDLE which makes this model straightforward to define.
 Additionally, a collection of counterexamples to normalization in CDLE is presented.
 \\ \\
-\textbf{Chapter 5}\quad proves object normalization from proof normalization and consistency for proofs that do not use the \textsc{Cast} rule.
+\textbf{Chapter 5}\quad proves object normalization for proofs that do not use the \textsc{Cast} rule.
 Unfortunately, the full theory does not enjoy object normalization.
-Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule does not introduce non-termination.
+Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule can not cause non-termination.
 Thus, the full system of $\ced$ has decidable type checking \textit{relative} to an oracle that decides this condition.
 \\ \\
 \textbf{Chapter 6}\quad concludes with comments on future work.
-An open conjecture remains that $\ced$ may be consistently extended with axiom for function extensionality.
-Proving this conjecture is beyond the scope of this work as it requires a novel extensional model.
+An open conjecture remains that $\ced$ may be consistently extended with an axiom for function extensionality.
