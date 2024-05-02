@@ -46,7 +46,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
     \label{lem:2:beta_par}
 \end{lemma}
 \begin{proof}
-    Pick any $i$ and apply the reductions to the associate subterm.
+    Pick any $i$ and apply the reductions to the associated subterm.
     A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
     Repeat until all $i$ reductions are applied.
 \end{proof}
@@ -57,11 +57,11 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{lemma}
 \begin{proof}
     By induction on $a \betared b$.
-    Second projection is the same as first projection case and omitted.
+    The second projection case is the same as the first projection case and omitted.
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
-        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{x}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
+        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{y}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
         Note that the final equality holds by Lemma~\ref{lem:2:subst_commute}.
     \end{proofcase}
 

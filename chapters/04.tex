@@ -23,7 +23,7 @@ Ultimately, the modern version of CDLE, as presented in this chapter, is the cul
 CDLE is an affirmative answer to the question: is lambda-encoded data enough for a proof assistant?
 While there may be other philosophical objections, Mendler-style encodings have been shown to be efficient and support course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
 The $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, enabled several encodings including efficient Mendler encodings.
-A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone_recursive_types}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
+A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
 
 CDLE commits to impredicative (i.e. parametric in the sense of $F^\omega$) quantification.
 With that in mind the well-studied reader may not be surprised at the power and versatility of CDLE.
@@ -323,9 +323,11 @@ Below is a series of formalized examples that will loop when attempting to check
     elim : ★ ➔ ★ ➔ Bool ➔ ★
     = λ A:★. λ B:★. λ x:Bool. ι _:{x ≃ tt} ➾ A. {x ≃ ff} ➾ B.
     in1 : ∀ A:★. ∀ B:★. A ➔ elim·A·B tt
-    = Λ A. Λ B. λ a. [Λ e. a, Λ e. {f:False = δ - e} - φ (f·{f ≃ a}) - (f·B) {a}].
+    = Λ A. Λ B. λ a. [Λ e. a
+        , Λ e. {f:False = δ - e} - φ (f·{f ≃ a}) - (f·B) {a}].
     
-    cast : ∀ A:★. ∀ B:★. ∀ a:Bool. ∀ b:Bool. Id·Bool a b ➾ elim·A·B a ➔ elim·A·B b
+    cast : ∀ A:★. ∀ B:★. ∀ a:Bool. ∀ b:Bool.
+        Id·Bool a b ➾ elim·A·B a ➔ elim·A·B b
     = Λ A. Λ B. Λ a. Λ b. Λ e. λ p. subst·Bool -a -b ·(elim·A·B) p -e.
     omega : Not·(∀ a:Bool. ∀ b:Bool. Id·Bool a b)
     = λ x. (cast·True·False -tt -ff -(x -tt -ff) (in1 self)).2 -β.
@@ -512,7 +514,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         Thus, $(\absu{\lambda}{x}{\sema{b}})\ |\sema{a}| \betared [x := |\sema{a}|]\sema{b}$.
         Using Lemma~\ref{lem:4:sema_erasure} and Lemma~\ref{lem:4:sema_subst} gives $[x := |\sema{a}|]\sema{b} = \sema{[x := |a|]b}$.
         \\ \\
-        Suppose wlog that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
+        Suppose w.l.o.g. that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
         Note that $f\pterm$, applying the IH gives $|\sema{f}| \betared \sema{f^\prime}$.
         Now $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}| \betared \sema{f^\prime}\ |\sema{a}| = \sema{\app{f^\prime}{\omega}{|a|}}$.
         The final equality uses Lemma~\ref{lem:4:sema_erasure}.
@@ -545,7 +547,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
     By induction on $s$ and inversion on $s\ptype$.
     Note that only the case where $s$ is a redex is important as all other cases are in weak-head normal form.
     Thus, suppose $s = \app{f}{\tau}{a}$,  $f = \abs{\lambda_\tau}{x}{A}{b}$, and $\app{f}{\tau}{a} \betared_n [x := a]b$.
-    Suppose wlog that $a\pterm$.
+    Suppose w.l.o.g. that $a\pterm$.
     Now $\sema{\app{f}{\tau}{a}} = \sema{f}\ \sema{a} = (\abs{\lambda}{x}{\sema{A}}{\sema{b}})\ \sema{a} \betared [x := \sema{a}]\sema{b}$.
     Using Lemma~\ref{lem:4:sema_subst} gives $[x := \sema{a}]\sema{b} = \sema{[x := a]b}$.
 \end{proof}
@@ -782,7 +784,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$: $\sema{\Gamma} \vdash_{\oldced} \crefl \cdot \sema{A}\ \edash \sema{t} \infr \cId \cdot \sema{A}\ \sema{t}\ \sema{t}$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         Note by $\D{1}$ that $a, b\pterm$ and by classification $e\pterm$ with $A, P\ptype$.
         Applying the IH gives:

@@ -1,5 +1,5 @@
 \documentclass[letterpaper, 11pt]{uiowa-thesis}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=1in, showframe]{geometry}
 \usepackage{fontspec}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
@@ -19,6 +19,9 @@
 \usepackage{newunicodechar}
 \usepackage[cache=false]{minted}
 \usetikzlibrary{nfold}
+
+\setlength\parfillskip{0pt plus .75\textwidth}
+\setlength\emergencystretch{1pt}
 
 \setminted{fontsize=\footnotesize}
 \setmonofont{Fira Code}
@@ -45,7 +48,7 @@
 
 \title{A proof theoretic redesign of the Calculus of Dependent Lambda Eliminations}
 \author{Andrew Marmaduke}
-\date{May 2024}
+\date{August 2024}
 
 \usepackage{hyperref}
 \hypersetup{

@@ -125,7 +125,7 @@ It is easy to show that any reflexive-transitive closure is itself transitive.
     $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
     \begin{proofcase}
         Let $z = t^\prime$, then we have $a\ R\ z$ and $z\ R^*\ b$.
-        By the inductive hypothesis (IH) we have $z\ R^*\ c$ and by the transitive rule we have $a\ R^*\ c$ as desired.
+        By the inductive hypothesis (IH), $z\ R^*\ c$, and by the transitive rule, $a\ R^*\ c$, as desired.
     \end{proofcase}
 \end{proof}
 
@@ -148,8 +148,8 @@ In fact, proving transitivity of conversion is often a significant effort, requi
     If $a \betaconv b$ and $b \betaconv c$ then $a \betaconv c$
 \end{theorem}
 \begin{proof}
-    By premises we know $\exists u, v$ such that $a \betastar u$, $b \betastar u$, $b \betastar v$, and $c \betastar v$.
-    By confluence, $\exists z$ such that $u \betastar z$ and $v \betastar z$.
+    By premises $\exists\ u, v$ such that $a \betastar u$, $b \betastar u$, $b \betastar v$, and $c \betastar v$.
+    By confluence, $\exists\ z$ such that $u \betastar z$ and $v \betastar z$.
     By transitivity of multistep reduction, $a \betastar z$ and $c \betastar z$.
     Therefore, $a \betaconv c$.
 \end{proof}
@@ -203,7 +203,7 @@ Thus, standard metatheoretical results such as preservation and strong normaliza
 \end{lemma}
 \begin{proof}
     See Theorem~\ref{lem:2:preservation} for an example proof of preservation.
-    The proof for F$^\omega$ is very similar.
+    The proof for F$^\omega$ is similar.
 \end{proof}
 
 \begin{theorem}[Strong Normalization of F$^\omega$]
@@ -246,9 +246,9 @@ Moreover, this allows a concise statement of the consistency of F$^\omega$.
     Suppose $\vdash t \chck \bot$.
     Let $n$ be the value of $t$ after it is normalized.
     By preservation $\vdash n \chck \bot$.
-    Deconstructing the checking judgment we know that $\vdash n \infr T$ and $T \betaconv \bot$, but $\bot$ is a value and values like $n$ infer types that are also values.
-    Thus, $T = \bot$ and we know that $\vdash n \infr \bot$.
-    By inversion on the typing rules $n = \abs{\lambda}{X}{\star}{b}$, and we have $X : \star \vdash b \infr X$.
+    Deconstructing the checking judgment gives $\vdash n \infr T$ and $T \betaconv \bot$, but $\bot$ is a value and values like $n$ infer types that are also values.
+    Thus, $T = \bot$ and $\vdash n \infr \bot$.
+    By inversion on the typing rules $n = \abs{\lambda}{X}{\star}{b}$, and thus $X : \star \vdash b \infr X$.
     The term $b$ can only be $\star$, $\kind$, or $X$, but none of these options infer type $X$.
     Therefore, there does not exist a term $b$, nor a term $n$, nor a term $t$.
 \end{proof}
@@ -423,7 +423,7 @@ Indeed, Voevodsky's early proposals contain two separate propositional equalitie
 Voevodksy's idea was explored further in Two-Level Type Theory (2LTT).
 The core idea behind 2LTT is to have two universes of types, an ``inner'' universe satisfying UA, and an ``outer'' universe satisfying UIP.
 This setup can be viewed as an internalization of the ``inner'' theories metatheory as the ``outer'' theory.
-The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2017}.
+The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2023}.
 Capriotti expanded upon the foundational aspects of 2LTT showing a conservativity result with respect to HoTT confirming that including the ``outer'' theory does not break any internal results constructed in the ``inner'' theory \cite{capriotti2017}.
 Angiuli adapted 2LTT to incorporate a strict equality and justify a computational semantics in the same spirit as the one used for Nuprl \cite{angiuli2019}.
 
