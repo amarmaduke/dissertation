@@ -39,7 +39,6 @@ However, the design of Cedille sacrificed certain properties such as the decidab
 Decidability of type checking was stressed by Kreisel to Scott as necessary to reduce proof checking to type checking because a proof does not, under Kreisel's philosophy, diverge \cite{scott1970}.
 This puts into contention if Cedille corresponds to a logic at all.
 The primary objective of this work is to improve this state of affairs.
-However, completing this journey requires a deeper introduction into the type theories of the $\lambda$-cube.
 
 \section{System \texorpdfstring{F$^\omega$}{F Omega}}
 
@@ -235,7 +234,7 @@ $$\bot = (X : \star) \to X$$
 Negation is defined as implying false:
 $$\neg A = A \to \bot$$
 These definitions are called \textit{Church encodings} and originate from Church's initial encodings of data in the $\lambda$-calculus \cite{church1932,church1933}.
-Note that if there existed a term such that $\vdash t \chck \bot$ then trivially for \textit{any} type $T$: $\vdash t\ T \chck T$.
+If there exists a term such that $\vdash t \chck \bot$ then trivially for \textit{any} type $T$: $\vdash t\ T \chck T$.
 Thus, $\bot$ is both the constant false and the proposition representing the principle of explosion from logic.
 Moreover, this allows a concise statement of the consistency of F$^\omega$.
 
@@ -315,8 +314,6 @@ Thus, a brief introduction and history of equality in type theories is beneficia
 
 \section{Equality}
 
-\input{figures/01/equality.tex}
-
 While Leibniz's Law may be stated in CC using a Church encoding it does not enable strong reasoning principles.
 The standard definition of equality used to extend systems like CC is Martin-L\"{o}f's identity type, depicted in Figure~\ref{fig:lof_eq}.
 This formulation comes with an inductive eliminator: the $J$ rule.
@@ -335,6 +332,8 @@ However, a proof of UIP remained elusive.
 In 1995 Hofmann answered this equation negatively: UIP is independent of Martin-L\"{o}f's identity type.
 Hofmann accomplished this by modelling identity types in two separate ways: as equivalence relations defined inductively on type structure and as groupoids.
 His models solved a long-standing open question about the nature of the identity type \cite{hofmann1995, hofmann1996}.
+
+\input{figures/01/equality.tex}
 
 Propositional extensionality and quotients are two additional notions dependent on equality that add more mathematically intuitive reasoning principles.
 Propositional extensionality states that logical equivalence of propositions is logically equivalent to equality of propositions.
@@ -445,7 +444,7 @@ The redesign described herein treads this balance to obtain a better metatheory 
 \textbf{Chapter 2}\quad defines the core theory ($\ced$), including its syntax, and typing rules.
 Erasure from Cedille is rephrased as a projection from proofs to objects.
 Basic metatheoretical results are proven including: confluence, preservation, and classification.
-Important derivations including irrelevance casts and irrelevant views are presented, demonstrating the critical components used to construct almost all existing encodings is possible.
+Important derivations of irrelevant casts and irrelevant views are presented, demonstrating the critical components used to construct almost all existing encodings are possible.
 \\ \\
 \textbf{Chapter 3}\quad models $\ced$ in F$^\omega$ obtaining a strong normalization result for proof reduction.
 This model is a straightforward extension of a similar model for CC.
@@ -458,7 +457,7 @@ Additionally, a collection of counterexamples to normalization in CDLE is presen
 \\ \\
 \textbf{Chapter 5}\quad proves object normalization for proofs that do not use the \textsc{Cast} rule.
 Unfortunately, the full theory does not enjoy object normalization.
-Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule can not cause non-termination.
+Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule does not cause non-termination.
 Thus, the full system of $\ced$ has decidable type checking \textit{relative} to an oracle that decides this condition.
 \\ \\
 \textbf{Chapter 6}\quad concludes with comments on future work.
