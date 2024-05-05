@@ -30,7 +30,7 @@ The goal is to find three semantic functions: one for kinds ($V(-)$); one for ty
 In order for this to work, term dependencies must all be dropped in function types.
 Moreover, kinds are squished, such that $V(\kind) = V(\star) = \star$.
 Thus, the judgment $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$ must form an F$^\omega$ type.
-The kind and type semantics is allowed to throw away terms and reductions because it only serves the purpose to maintain a well-typed output.
+The kind and type semantics is allowed to discard reductions because it only serves the purpose of maintaining a well-typed output.
 Instead, it is the term semantics that must take care to preserve all possible reductions such that strong normalization is a consequence of the model.
 
 For dependent intersections, the type semantics is the obvious one: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
@@ -70,7 +70,7 @@ Consider the following examples to garner intuition for the semantic model:
     \item {
         Given $\Gamma \vdash_{\ced} t : T$ where $\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square$, $t = [(\app{f_\star}{\omega}{a_\star}).1, (\app{f_\star}{\omega}{a_\star}).2; (x : A_\square) \cap B_\square]$, and $T = (x : A_\square) \cap B_\square$ then
         \begin{align*}
-            &\sema{\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square} =\\
+            &\sema{A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square} =\\
             &\quad 0 : \star;\ \bot : (X : \star) \to X;\ A : \star;\ w_A : 0;\ B : \star;\ w_B : 0; \\
             &\quad a : A;\ f : A \to A \times B
         \end{align*}
