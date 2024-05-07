@@ -1,4 +1,4 @@
-\chapter{Consistency and Relationship to CDLE}
+\chapter{Consistency}
 \input{figures/04/type_typing_macros.tex}
 \input{figures/04/term_typing_macros.tex}
 \input{figures/04/cong_macros.tex}
@@ -14,35 +14,35 @@
 \newcommand{\cdelta}{\textnormal{delta}}
 \newcommand{\cirrel}{\textnormal{irrel}}
 
-The Calculus of Dependent Lambda Eliminations (CDLE) was first introduced in 2017 \cite{stump2017_cdle} as the core system for the in progress Cedille tool.
+The Calculus of Dependent Lambda Eliminations (abbreviated as CDLE or $\oldced$) was first introduced in 2017 \cite{stump2017_cdle} as the core system for the in progress Cedille tool.
 At that time, CDLE included complicated machinery for lifting lambda terms to the type-level enabling some large eliminations.
 Over the years, the core system for the Cedille tool was still referred to as CDLE as it evolved culminating in the current core system used in Cedille version 1.1.2 \cite{stump2021_cedillecore}.
-The ideas leading to CDLE, of course, grew over time with work on efficient lambda encodings in total theories \cite{stump2016_encodings}; self-types for encodings \cite{fu2014self}; and experiments involving irrelevance \cite{sjoberg2012irrelevance,sjoberg2011equality}.
+The ideas leading to CDLE grew over time with work on efficient lambda encodings in total theories \cite{stump2016_encodings}; self-types for encodings \cite{fu2014self}; and experiments involving irrelevance \cite{sjoberg2012irrelevance,sjoberg2011equality}.
 Ultimately, the modern version of CDLE, as presented in this chapter, is the culmination of these efforts.
 
 CDLE is an affirmative answer to the question: is lambda-encoded data enough for a proof assistant?
-While there may be other philosophical objections, Mendler-style encodings have been shown to be efficient and enable course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
-Moreover, the edition of the $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, yields efficient data reuse via casts \cite{diehl2018_generic_reuse}.
-A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone_recursive_types}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
+While there may be other philosophical objections, Mendler-style encodings have been shown to be efficient and support course-of-values induction \cite{firsov2018_mendler,firsov2018course}.
+The $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, enabled several encodings including efficient Mendler encodings.
+A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
 
-CDLE commits to impredicative (i.e. parametric in sense of $F^\omega$) quantification.
+CDLE commits to impredicative (i.e. parametric in the sense of $F^\omega$) quantification.
 With that in mind the well-studied reader may not be surprised at the power and versatility of CDLE.
 However, taming impredicative quantification without losing logical consistency is a difficult task.
-Indeed, this is precisely why several proof assistants have discarded impredicative quantification or relegated it into a universe of propositions.
-A core philosophy behind both Cedille and Cedille2 is to walk a different road and embrace impredicative quantification.
+Indeed, this is why several proof assistants have discarded impredicative quantification or relegated it to a universe of propositions.
+A core philosophy behind both CDLE and $\ced$ is to try a different path and embrace impredicative quantification.
 To achieve that goal a realizability model was developed for CDLE to demonstrate logical consistency \cite{stump2021_cedillecore}.
 This chapter will describe a model of $\ced$ in CDLE to prove consistency.
 
 \section{Calculus of Dependent Lambda Eliminations}
 
 CDLE is described using an intrinsic style where syntax is presented directly with the typing derivation.
-However, erasure it still a crucial part of CDLE which gives it an extrinsic philosophy.
-Whether a system is intrinsic or extrinsic is perhaps not a terribly interesting distinction.
+However, erasure is still a crucial part of CDLE which gives it an extrinsic philosophy.
+Whether a system is intrinsic or extrinsic is perhaps not an interesting distinction.
 Technically, $\ced$ is described extrinsically because syntax is defined independently of the typing relation, but there is no essential reason for this choice.
-Moreover, any intrinsic system necessarily admits a projection of its raw syntax, which would enable an extrinsic presentation.
+Moreover, any intrinsic system necessarily admits a projection of its raw syntax which enables an extrinsic presentation.
 It is better to think about these details via their philosophical import.
-An intrinsic system wishes to say that raw syntax has no meaning, or at the very least no meaning that anyone should care about.
-Alternatively, an extrinsic system wishes to say that types are in some sense only annotations, and it is the raw syntax that is primary.
+An intrinsic system wishes to say that raw syntax has no meaning, or at the very least no meaning the designer cares about.
+Alternatively, an extrinsic system wishes to say that types are in some sense only annotations with the raw syntax being primary.
 
 \input{figures/04/infer1.tex}
 \input{figures/04/infer2.tex}
@@ -50,17 +50,17 @@ Alternatively, an extrinsic system wishes to say that types are in some sense on
 As one might guess these philosophical positions are not entirely black and white.
 For example, Pfenning demonstrates how both methods can be combined \cite{pfenning2008church}.
 Cedille has been historically described as an extrinsic system.
-With Cedille2 it is more correct to be called a \textit{combined} system, both intrinsic and extrinsic.
+The type theory $\ced$ might best be described as a \textit{combined} system, both intrinsic and extrinsic.
 That is, a \textit{proof} has no meaning as just syntax, but an \textit{object} discards the extra information as mere annotations.
 
-The kind formation rules as presented in Figure~\ref{fig:4:kind}, type formation rules in Figure~\ref{fig:4:type}, and term annotation rules in Figure~\ref{fig:4:term}.
+The CLDE type system kind formation rules are presented in Figure~\ref{fig:4:kind}, type formation rules in Figure~\ref{fig:4:type}, and term annotation rules in Figure~\ref{fig:4:term}.
 Lowercase letters are used to refer to metavariables of terms, uppercase letters for metavariables of types, and variations of $\kappa$ for metavariables of kinds.
 Call-by-name reduction of the $\lambda$-calculus fragment is used in the rules for types and is written $A \betared_n B$.
 The purpose of this relation is only to reveal a constructor for a type, thus weak-head normal form is sufficient.
 Conversion for types is presented in Figure~\ref{fig:4:type_cong} and kind conversion in Figure~\ref{fig:4:kind_cong}.
 Note that these conversion relations correspond to $\beta$-conversion for types and kinds.
-Finally, erasure of terms (and only terms) is presented in Figure~\ref{fig:4:erasure}.
-Erasure is only meaningful for terms in CDLE unlike in $\ced$ where it is defined for all raw syntax.
+Finally, erasure of terms is presented in Figure~\ref{fig:4:erasure}.
+Erasure is only meaningful for terms in CDLE unlike in $\ced$ where it is defined for all syntax.
 
 The presentation in this work deviates from other descriptions of CDLE by adding a symmetry rule for equality (\c{c}).
 This rule is admissible using the rewrite rule ($\rho$), but it is convenient to have available for the model.
@@ -71,8 +71,8 @@ Otherwise, the presentation is identical to the one by Stump and Jenkins \cite{s
 
 A few useful facts about CDLE are needed before defining the model.
 First, some helpful terms are defined below.
-Note that an annotation rule ($\chi$) is added to some terms in order to guarantee that each definition always infers a type, as opposed to checks against a type.
-The $\cBool$ definition is a standard Church encoded boolean type, with its two associated values ($\ctt$ and $\cff$).
+Note that an annotation rule ($\chi$) is added to guarantee that each definition always infers a type.
+The $\cBool$ definition is a standard Church encoded boolean type, with its two associated values: $\ctt$ and $\cff$.
 An identity type, $\cId$, is defined as a desired output of the model for the equality of $\ced$.
 Indeed, CDLEs equality is very flexible in comparison to $\ced$.
 Not only is it untyped, but it allows for any well-scoped term to serve as the erasure (or object) of a reflexivity proof.
@@ -160,7 +160,7 @@ Moreover, carefully crafting terms with specific erasures is a trivial matter in
 Finally, each of these terms is shown to infer the desired type.
 Note that for syntax that is type-like, such as $\cId$ and $\cBool$, there is no type-checking rule, only an inference judgment.
 Moreover, the $\chi$ rule only works with term-like syntax.
-Thus, for these definitions more care is needed to infer the correct kind, but because the definitions are simple there is no real difficulty.
+Thus, for these definitions more care is needed to infer the correct kind.
 \begin{lemma}
     \label{lem:4:c1_stuff}
     \textcolor{white}{\_}
@@ -210,7 +210,7 @@ Thus, for these definitions more care is needed to infer the correct kind, but b
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-    Straightforward by applying a short sequence of $\oldced$ rules in each case.
+    Straightforward by applying a short sequence of CDLE rules in each case.
     These inferences are trivially formalized in the Cedille tool.
 \end{proof}
 
@@ -266,44 +266,119 @@ The only real difficulty is the bidirectional presentation which requires statin
     The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
 \end{proof}
 
-% \section{Counterexamples to Decidability of Type Checking in CDLE}
+\section{Counterexamples to Decidability of Type Checking in CDLE}
 
-% It is well-known that Cedille does not enjoy decidability of type checking.
-% However, it might not be clear exactly how this property fails.
-% Below is a series of formalized examples in Cedille that will loop when attempting to check using the Cedille tool.
-% Commentary to accompany the formalized Cedille code is also provided to highlight what causes the failure.
+It is well-known that Cedille does not enjoy decidability of type checking.
+However, it might not be clear exactly how this property fails.
+Below is a series of formalized examples that will loop when attempting to check using the Cedille tool.
+\begin{enumerate}
+    \item {
+        First, there is an obvious problem caused by equality and reflexivity witnesses being untyped $\lambda$-calculus terms.
+        Under this regime $\Omega = (\absu{\lambda}{x}{x\ x}) (\absu{\lambda}{x}{x\ x})$ is easily inserted.
+\begin{minted}{Lean}
+    bad : { (λ x. x x) (λ x. x x) ≃ λ x. x } = β.
 
-% \begin{enumerate}
-%     \item {
-%         Equality being untyped enables rewriting equations for \textit{any} predicate.
-%         In this example the equality \texttt{e1} should be an equality between \texttt{Id -> Id} typed proofs, but it is used with a predicate over \texttt{False} proofs.
-%         \verbatim{
-%             Id : ★ = ∀ X:★. X ➔ X.
-
-%             self : Id ➔ Id = λ u. u u.
-
-%             False : ★ = ∀ X:★. X.
-
-%             bad1 : ∀ P:False ➔ ★. Π f:False. P f
-%             = Λ P. λ f.
-%             {e1 : {f ≃ self} = f·{f ≃ self}} -
-%             {e2 : {f ≃ f f} = f·{f ≃ f f}} -
-%             ρ e2 - ρ e1 - (f·(P f)).
-%         }
-%     }
-
-% \end{enumerate}
-
+    omega : { λ x. x ≃ λ x. x } = β{(λ x. x x) (λ x. x x)}.
+    bad : { omega ≃ λ x. x } = β.
+\end{minted}
+        This is an unsurprising consequence of the design of the CDLE equality type and certainly the least interesting instance of non-termination.
+    }
+    \item {
+        To fix the previous case the equality could instead be \textit{annotated}.
+        Note, this does not mean that equality is typed, but only that the indices and reflexivity witnesses must infer a type.
+        With this change the rewrite rule ($\rho$) allows annotated substitutions.
+        As it turns out, these kinds of rewrites also enable non-termination.
+\begin{minted}{Lean}
+    Id : Π A:★. Π B:★. A ➔ B ➔ ★ = λ A:★. λ B:★. λ x:A. λ y:B. {x ≃ y}.
+    Unit : ★ = ∀ X:★. X ➔ X.
+    unit : Unit = Λ X. λ x. x.
+    self : Unit ➔ Unit = λ u. u u.
+    False : ★ = ∀ X:★. X.
+    bad : ∀ P:False ➔ ★. Π f:False. P f
+    = Λ P. λ f. {e1 = f·(Id·False·(Unit ➔ Unit) f self)}
+        - {e2 = f·(Id·False·False f (f·(False ➔ False) f))}
+        - ρ e2 - ρ e1 - (f·(P f)).
+\end{minted}
+        The equality described in the example should be typed at False, but an equality casting False to $\textnormal{Unit} \to \textnormal{Unit}$ is used to generate $\Omega$ in the resulting predicate.
+        Thus, when the tool attempts to check the convertibility of f with $\Omega$ the type checking algorithm loops.
+    }
+    \item {
+        Even when equality is typed the rewrite rule can cause non-termination.
+        For this example, it is necessary that there is some method to encode equality of types.
+        In the formalization below a simulated large elimination on booleans is used.
+        Note that the only way to construct this large elimination that is currently known is by using the $\varphi$ construct.
+        However, any extension or feature that enables discussing type equalities would unlock this example (e.g. universe hierarchies with an equality type at each level).
+\begin{minted}{Lean}
+    False : ★ = ∀ X:★. X.
+    Not : ★ ➔ ★ = λ A:★. A ➔ False.
+    True : ★ = Not·False.
+    self : True = λ f. f·(False ➔ False) f.
+    Bool : ★ = ∀ X:★. X ➔ X ➔ X.
+    tt : Bool = Λ X. λ x. λ y. x.
+    ff : Bool = Λ X. λ x. λ y. y.
+    Id : Π A:★. A ➔ A ➔ ★ = λ A:★. λ a:A. λ b:A. {b ≃ a}.
+    subst : ∀ A:★. ∀ a:A. ∀ b:A. ∀ P:A ➔ ★. P a ➔ Id·A a b ➾ P b
+    = Λ A. Λ a. Λ b. Λ P. λ p. Λ i. ρ i - p.
+    
+    elim : ★ ➔ ★ ➔ Bool ➔ ★
+    = λ A:★. λ B:★. λ x:Bool. ι _:{x ≃ tt} ➾ A. {x ≃ ff} ➾ B.
+    in1 : ∀ A:★. ∀ B:★. A ➔ elim·A·B tt
+    = Λ A. Λ B. λ a. [Λ e. a
+        , Λ e. {f:False = δ - e} - φ (f·{f ≃ a}) - (f·B) {a}].
+    
+    cast : ∀ A:★. ∀ B:★. ∀ a:Bool. ∀ b:Bool.
+        Id·Bool a b ➾ elim·A·B a ➔ elim·A·B b
+    = Λ A. Λ B. Λ a. Λ b. Λ e. λ p. subst·Bool -a -b ·(elim·A·B) p -e.
+    omega : Not·(∀ a:Bool. ∀ b:Bool. Id·Bool a b)
+    = λ x. (cast·True·False -tt -ff -(x -tt -ff) (in1 self)).2 -β.
+    Omega : Not·(∀ a:Bool. ∀ b:Bool. Id·Bool a b)
+    = λ x. self (omega x).
+    bad : {Omega ≃ λ x. x} = β.
+\end{minted}
+        This example is a direct adaptation of Abel's work \cite{abel2020_normalization}.
+        It depends on the elimination form of equality being irrelevant, an impredicative universe, and some method of discussing equality of types.
+        This is the first of three examples of irrelevance in equality eliminators causing non-termination.
+    }
+    \item {
+        The separation rule ($\delta$) is also irrelevant and can cause non-termination.
+        Constructing an $\Omega$ is easy as $\delta$ erases to an identity function, thus applying two self terms directly to a $\delta$ immediately yields $\Omega$.
+\begin{minted}{Lean}
+    False : ★ = ∀ X:★. X.
+    Unit : ★ = ∀ X:★. X ➔ X.
+    self : Unit ➔ Unit = λ u. u u.
+    Bool : ★ = ∀ X:★. X ➔ X ➔ X.
+    tt : Bool = Λ X. λ x. λ y. x.
+    ff : Bool = Λ X. λ x. λ y. y.
+    Id : Π A:★. A ➔ A ➔ ★ = λ A:★. λ x:A. λ y:A. {y ≃ x}.
+    omega : Id·Bool tt ff ➾ False
+    = Λ e. (δ - e)·((Unit ➔ Unit) ➔ (Unit ➔ Unit) ➔ False) self self.
+    bad : {omega ≃ λ x. x} = β.
+\end{minted}
+    }
+    \item {
+        Finally, the $\varphi$ construct is capable of giving a term a recursive type in an inconsistent context.
+        Constructing $\Omega$ is a trivial consequence.
+\begin{minted}{Lean}
+    False : ★ = ∀ X:★. X.
+    Unit : ★ = ∀ X:★. X ➔ X.
+    self : Unit ➔ Unit = λ u. u u.
+    b : False ➔ ι _:Unit ➔ Unit. Unit = λ f. [f·(Unit ➔ Unit), f·Unit].
+    e : Π f:False. {b f ≃ self} = λ f. f·{b f ≃ self}.
+    omega : False ➾ Unit = Λ f. self (φ (e f) - (b f).2 {self}).
+    bad : {omega ≃ λ x. x} = β.
+\end{minted}
+    }
+\end{enumerate}
 
 \section{Model}
 
 Figure~\ref{fig:4:model} describes the model of $\ced$ in CDLE.
-Note that this model is straightforward: abstractions to abstractions, applications to applications, pairs to pairs, etc.
-The complicated part is the equality type and its constructs, however all the necessary work to find suitable terms for these constructs was already completed above.
+This model is straightforward: abstractions to abstractions, applications to applications, pairs to pairs, etc.
+The complicated part is the equality type, however all the necessary work to find suitable terms for the rules of equality was already completed above.
 There is one hiccup involving the promotion ($\vartheta$) rule.
 In order to have a fully applied $\ctheta$ it must be the case that the annotation for $\vartheta$ is an intersection type.
 For proofs this will always be the case, but for arbitrary syntax it is not necessarily true.
-To work around this a catch-all case is also provided where the model only interprets the equality proof $e$.
+To work around this a catch-all case is defined where the model only interprets the equality proof $e$.
 This choice is largely arbitrary, but it is picked to make sure that one critical property is preserved: erasure.
 
 \input{figures/04/model.tex}
@@ -378,9 +453,9 @@ This choice is largely arbitrary, but it is picked to make sure that one critica
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
     \end{proofcase}
 
-    $\text{Case: }t = \varphi(f, e; A, T)$
+    $\text{Case: }t = \varphi(a, b, e)$
     \begin{proofcase}
-        Have $\sema{|\varphi(a, b, e; A, T)|} = \sema{|a|}$ and $|\sema{\varphi(a, b, e; A, T)}| = |\varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \}| = |\sema{a}|$.
+        Have $\sema{|\varphi(a, b, e)|} = \sema{|a|}$ and $|\sema{\varphi(a, b, e)}| = |\varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \}| = |\sema{a}|$.
         By the IH applied to $a\pterm$: $\sema{|a|} = |\sema{a}|$.
     \end{proofcase}
 
@@ -391,7 +466,7 @@ This choice is largely arbitrary, but it is picked to make sure that one critica
     \end{proofcase}
 \end{proof}
 
-To obtain soundness we first need to know that conversion is preserved for the terms, types, and kinds.
+To obtain soundness we first need to know that conversion is preserved.
 Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involving reduction can be precise.
 
 \begin{lemma}
@@ -439,7 +514,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         Thus, $(\absu{\lambda}{x}{\sema{b}})\ |\sema{a}| \betared [x := |\sema{a}|]\sema{b}$.
         Using Lemma~\ref{lem:4:sema_erasure} and Lemma~\ref{lem:4:sema_subst} gives $[x := |\sema{a}|]\sema{b} = \sema{[x := |a|]b}$.
         \\ \\
-        Suppose wlog that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
+        Suppose w.l.o.g. that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
         Note that $f\pterm$, applying the IH gives $|\sema{f}| \betared \sema{f^\prime}$.
         Now $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}| \betared \sema{f^\prime}\ |\sema{a}| = \sema{\app{f^\prime}{\omega}{|a|}}$.
         The final equality uses Lemma~\ref{lem:4:sema_erasure}.
@@ -472,7 +547,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
     By induction on $s$ and inversion on $s\ptype$.
     Note that only the case where $s$ is a redex is important as all other cases are in weak-head normal form.
     Thus, suppose $s = \app{f}{\tau}{a}$,  $f = \abs{\lambda_\tau}{x}{A}{b}$, and $\app{f}{\tau}{a} \betared_n [x := a]b$.
-    Suppose wlog that $a\pterm$.
+    Suppose w.l.o.g. that $a\pterm$.
     Now $\sema{\app{f}{\tau}{a}} = \sema{f}\ \sema{a} = (\abs{\lambda}{x}{\sema{A}}{\sema{b}})\ \sema{a} \betared [x := \sema{a}]\sema{b}$.
     Using Lemma~\ref{lem:4:sema_subst} gives $[x := \sema{a}]\sema{b} = \sema{[x := a]b}$.
 \end{proof}
@@ -709,7 +784,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$: $\sema{\Gamma} \vdash_{\oldced} \crefl \cdot \sema{A}\ \edash \sema{t} \infr \cId \cdot \sema{A}\ \sema{t}\ \sema{t}$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         Note by $\D{1}$ that $a, b\pterm$ and by classification $e\pterm$ with $A, P\ptype$.
         Applying the IH gives:
@@ -741,16 +816,15 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
     \begin{proofcase}
-        Note by soundness of classification that $a, b, e\pterm$ and $A, B\ptype$.
+        Note by soundness of classification that $a, b, e\pterm$.
         Applying the IH gives:
         \begin{enumerate}
-            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \abs{\iota}{x}{\sema{A}}{\sema{B}} \infr \star$
-            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
-            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
-            \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}.1$
+            \item[$\D{1}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{a} \chck \sema{A}$
+            \item[$\D{2}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
+            \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}\ \sema{b}.1$
         \end{enumerate}
         By the application and first projection rule and some maneuvering of type conversion: $\sema{\Gamma} \vdash_{\oldced} \text{\c{c}}\ \sema{e}.1 \chck \{ \sema{b} \cong \sema{a}\}$.
-        Note that $FV(\sema{a}) \subseteq dom(\Gamma)$ because otherwise $\D{2}$ is not a proof.
+        Note that $FV(\sema{a}) \subseteq dom(\Gamma)$ because otherwise $\D{1}$ is not a proof.
         Thus, the goal is obtained by the $\varphi$ rule of $\oldced$.
     \end{proofcase}
 

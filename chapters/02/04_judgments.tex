@@ -1,7 +1,6 @@
 \section{Inference Judgment}
 \label{sec:2:judgments}
 
-
 The inference judgment, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
 As stated previously, the erasure of a proof is an \textit{object}.
 Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ its object.
@@ -10,13 +9,16 @@ Judgments of the form $\Gamma \vdash t : A$ should be read $t$ infers $A$ in $\G
 
 $\AxiomRule$ The axiom rule is the same as with F$^\omega$.
 The constant $\star$ should be interpreted as a universe of types, and the constant $\kind$ as a universe of kinds.
-Thus, the axiom rule states that the universe of types \textit{is} a kind in any context.
+Thus, the axiom rule states that the universe of types is a kind in any context.
 
 $\VarRule$ The variable rule requires that a variable at a certain type is inside the context.
-Note that variables are annotated with a mode.
-Modes take three forms: free ($\omega$); erased ($0$); or type ($\tau$).
-The type mode is used for proofs that exist inside the type universe; the free mode for proofs that belong to some type; and the erased mode for proofs that belong to some type but whose bound variable is not computationally relevant in the associated object.
-Variables are annotated with modes primarily to enable reconstruction of the appropriate binders.
+Note that variables in contexts are annotated with a mode.
+Modes take three forms: free ($\omega$); erased ($0$); or type-level ($\tau$).
+The type-level mode is used for proofs that exist inside the type universe; the free mode for proofs that belong to some type; and the erased mode for proofs that belong to some type but whose bound variable is not computationally relevant in the associated object.
+Variables in context are annotated with modes primarily to enable reconstruction of the appropriate binders.
+A variable in a proof is annotated with a universe, either $\star$ or $\kind$.
+The purpose of this annotation is to trivially determine the universe a variable belongs to.
+This is necessary both for classification and the model described in Chapter~\ref{chap:3}.
 
 \input{figures/02/domain.tex}
 \input{figures/02/infer1.tex}
@@ -36,7 +38,7 @@ Note that this is exactly the requirement imposed by pseudo-objects.
 $\AppRule$ The application rule is not surprising, the only notable feature is that the mode of the function type and the application must match.
 
 $\IntersectionRule$ The intersection type formation rule is similar to the function type formation rule, but the terms are all restricted to be types.
-Thus, there are no intersections of kinds in the core Cedille2 system.
+Thus, there are no intersections of kinds in $\ced$.
 
 $\PairRule$ The pair formation rule is standard for formation of dependent pairs.
 A third type annotation argument is required in order to make the formula inferable from the proof.
@@ -48,39 +50,36 @@ Note that by Theorem~\ref{thm:2:beta_iff_conv} this condition is equivalent to $
 $\SecondRule$ The first and second projection rules are unsurprising.
 Both rules model projection from a pair as expected.
 
-$\EqualityRule$ The equality type formation rule requires that the type annotation is a type and that the left and right-hand sides infer that type.
+$\EqualityRule$ The equality type formation rule requires that equality is typed and that the left and right-hand sides infer that type.
 Note that a typed equality like this is standard from the perspective of modern type theory but significantly different from the \textit{untyped} equality of Cedille.
-Indeed, the equality rules are the area of significant deviation from the original Cedille design.
+Indeed, the equality rules all deviate from the original Cedille design.
 
 \input{figures/02/infer2.tex}
 
 $\ReflRule$ The reflexivity rule is the only value for equality types.
-It is the standard inductive formulation of the equality type.
-
-$\SubstRule$ The substitution rule is a dependent variation of the Leibniz's Law.
+It is the standard inductive formulation of an identity type.
+$$\SubstRule$$
+The substitution rule is a dependent variation of Leibniz's Law.
 It is also a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
-
-$\PromoteRule$ The promotion rule enables equational reasoning about intersections.
+$$\PromoteRule$$
+The promotion rule enables equational reasoning about intersections.
 Indeed, because intersections are not inductive it is difficult to reason about them without some auxiliary rule.
 It states that two elements of an intersection are equal if their first projections are equal.
-Note that this rule is about dependent intersections.
+Note that this rule is about dependent intersections, hence the focus on the first projection over the second projection.
 A non-dependent version involving the second projection is internally derivable in the system.
 
 $\CastRule$ The cast rule is a typed version of the original cast rule of Cedille.
 Note that this means this rule enables non-termination.
 In Chapter~\ref{chap:5} it is shown that this rule is the only source of non-termination and a precise condition for when it may be used in a terminating way is devised.
 The cast rule is critical to the spirit of Cedille.
-Thus, simply dropping it to obtain a strongly normalizing system is not really a sufficient choice as it throws too much away in its loss.
-An observant reader may notice that there are some redundant type annotations in the rule.
-These annotations are present merely to simplify models developed in Chapter~\ref{chap:3}.
-A more concise version of the system with fewer redundancies is developed in Chapter~\ref{chap:6}.
+Thus, simply dropping it to obtain a strongly normalizing system is not a satisfactory choice as it throws too much away in its wake.
 
 $\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct objects.
 
 \input{figures/02/infer3.tex}
 
-The first critical observation to be made is that the syntax participating in an inference judgment are pseudo-objects.
+The first observation to be made is that the syntax participating in an inference judgment are pseudo-objects.
 Thus, proofs and their types enjoy transitivity of conversion.
 Next three standard lemmas are proved about the type system: weakening, substitution, and a sort-hierarchy classification.
 
@@ -100,7 +99,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 \begin{proof}
     By induction.
     The \textsc{Ax}, \textsc{Pi}, \textsc{Int} and \textsc{Eq} rules are trivial.
-    Rules \textsc{Lam}, \textsc{Pair}, \textsc{Cast}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
+    Rules \textsc{Lam}, \textsc{Pair}, and \textsc{Conv} rules are immediate by applying Lemma~\ref{lem:2:infer_implies_pseobj} to a sub-derivation.
     The \textsc{Fst} and \textsc{App} rules are omitted because it is similar to the \textsc{Snd} rule.
     Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
 
@@ -116,18 +115,22 @@ Next three standard lemmas are proved about the type system: weakening, substitu
         Now by Lemma~\ref{lem:2:pseobj_subst}: $[x := t.1]B\pseobj$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth} $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$ \end{minipage}
     \begin{proofcase}
         By Lemma~\ref{lem:2:infer_implies_pseobj}: $P, e\pseobj$.
-        Applying the IH to $\D{1}$ gives $A, a, b\pseobj$.
+        Applying the IH to $\D{4}$ gives $A, a, b\pseobj$.
         Now building up the subexpressions using pseudo-object rules concludes the proof.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
-        Applying the IH to $\D{1}$ gives that $(x : A) \cap B\pseobj$.
-        Now, by Lemma~\ref{lem:2:infer_implies_pseobj}: $a, b\pseobj$.
+        By Lemma~\ref{lem:2:infer_implies_pseobj}: $(x : A) \cap B, a, b\pseobj$.
         Using the pseudo-object rule for equality concludes the case.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
@@ -174,22 +177,22 @@ Next three standard lemmas are proved about the type system: weakening, substitu
     By induction on $\Gamma, y : B, \Delta \vdash t : A$.
     The \textsc{Ax} rule is trivial and omitted.
     The rules \textsc{Lam} and \textsc{Int} are very similar to the \textsc{Pi} rule.
-    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{Prm}, \textsc{Cast} and \textsc{Sep} rules are proven by applying \textit{1.} to sub-derivations and using the associated rule.
+    The rules \textsc{Fst}, \textsc{Eq}, \textsc{Refl}, \textsc{Subst}, \textsc{Prm}, \textsc{Cast} and \textsc{Sep} rules are proven by applying the IH to sub-derivations and using the associated rule.
     Rule \textsc{Snd} is very similar to \textsc{App} and thus omitted.
     Likewise, \textsc{Conv} is very similar to \textsc{Pair} and thus omitted.
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $y \in \Gamma_1$.
+        Suppose w.l.o.g. that $y \in \Gamma_1$.
         Let $\Gamma_1 = \Delta_1; y : B; \Delta_2$.
-        Applying the IH to $\D{1}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
+        Applying the IH to $\D{2}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
         Note that $x \notin FV(\Delta_1; [y := b]\Delta_2; [y := b]\Gamma_2)$.
         Thus by the \textsc{Var} rule: $\Delta_1; [y := b]\Delta_2; x_m : [y := b]A; [y := b]\Gamma_2 \vdash x_K : [y := b]A$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to the sub-derivations gives:
+        Applying the IH to the sub-derivations gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]A : \pdom(m, K)$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]B : \pcodom(m)$
@@ -199,7 +202,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to $\D{1}$ and $\D{2}$ gives:
+        Applying the IH to $\D{1}$ and $\D{2}$ gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]f : (x : [y := b]A) \to_m [y := b]B$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]a : [y := b]A$
@@ -211,7 +214,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to the sub-derivations gives:
+        Applying the IH to the sub-derivations gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash (x : [y := b]A) \cap [y := b]B : \star$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta \vdash [y := b]t : [y := b]A$
@@ -229,7 +232,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 \end{lemma}
 \begin{proof}
     By induction.
-    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, \textsc{Cast}, and \textsc{Conv} rules are trivial.
+    The \textsc{Ax}, \textsc{Pi}, \textsc{Lam}, \textsc{Int}, \textsc{Pair}, \textsc{Eq}, and \textsc{Conv} rules are trivial.
     The \textsc{Fst} rule is omitted because it is similar to \textsc{Snd} rule.
     Likewise, the \textsc{Refl} rule is omitted because it is similar to the \textsc{Prm} rule.
 
@@ -252,7 +255,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
         Applying the substitution lemma gives $\Gamma \vdash [x := t.1]B : K$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         By the \textsc{Refl} rule: $\Gamma \vdash \prefl(a;A) : a =_A a$.
         Now by the \textsc{App} rule $\Gamma \vdash \apptwo{P}{\tau}{a}{\tau}{\prefl(a;A)} : \star$ and $\Gamma \vdash \apptwo{P}{\tau}{b}{\tau}{e} : \star$.
@@ -263,6 +266,11 @@ Next three standard lemmas are proved about the type system: weakening, substitu
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
         Immediate by applying the \textsc{Eq} rule.
+    \end{proofcase}
+
+    $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$
+    \begin{proofcase}
+        By the IH applied to $\D{2}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
@@ -277,8 +285,8 @@ To remove these considerations contexts should instead be well-formed:
 \begin{definition}
     A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ the variable $x \notin FV(\Gamma_1;\Gamma_2)$ and $\Gamma_1 \vdash A : K$ for some $K$
 \end{definition}
-It is not difficult to see that an inference judgment with a well-formed context is obtained from any general inference judgment.
-Moving forward it will be assumed that the context is well-formed because an equivalent proof is always obtainable under this assumption and the non-well-founded proofs will not add any value.
+It is not difficult to see that an inference judgment with a well-formed context is obtainable from an inference judgment with an ill-formed context.
+Moving forward it will be assumed that the context of an inference judgment is always well-formed.
 \begin{lemma}
     If $\Gamma \vdash t : A$ then $\exists\ \Delta$ such that $\Delta \vdash t : A$ and $\vdash \Delta$
 \end{lemma}

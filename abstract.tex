@@ -1,3 +1,20 @@
 \begin{abstract}
-    \lipsum[1-2]
+
+Cedille is a dependently typed programming language with a significant history of encodeable features.
+All of this originating from a small type theory that extends the Calculus of Constructions with just three new features: erased function spaces, dependent intersections, and untyped equality.
+However, the last extension, untyped equality, is a source of undecidability.
+Perhaps worse from the perspective of modern type theory research, the untyped nature of equality is responsible for refuting function extensionality.
+This work attempts to refine the system of Cedille by specifically modifying the equality type into a new system: $\ced$.
+A philosophy borrowed from proof theory is applied to the design of Cedille, where equality is modelled after a standard identity type.
+This philosophy and design result in a partial success: a notion of proof reduction is strongly normalizing and supports all expected properties.
+Moreover, the system $\ced$ is shown to be consistent by a syntactic translation into the Calculus of Dependent Lambda Eliminations, the core type theory of Cedille.
+
+Unfortunately, object reduction, a critical component of $\ced$ required for deciding conversion, is not strongly normalizing.
+Caused by the cast rule, casts are the last bastion of undecidability within the type theory.
+Thus, with the cast rule removed, the system $\ced$ is a proof theory in the spirit of Kreisel and Gentzen.
+The cast rule is, however, critical to the expressiveness of Cedille.
+Its benefits outweigh the costs.
+Thus, an external condition delineating when casts admit strong object normalization is described.
+Therefore, the full type theory $\ced$ is a proof theory relative to an oracle deciding this condition.
+
 \end{abstract}

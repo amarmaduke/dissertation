@@ -1,10 +1,10 @@
 \chapter{Theory Description and Basic Metatheory}
 \input{figures/02/typing_macros.tex}
 
-This chapter describes the syntax, reduction, and inference judgment of the core system for Cedille2.
-Near the conclusion, this chapter also proves basic metatheoretic properties such as a weakening lemma, substitution lemma, classification, and preservation.
-The presentation is a classical PTS-style with a single inference judgment.
-As it stands it is not obvious how this judgment admits an inference algorithm, but this situation will be remedied in Chapter~\ref{chap:6} with an explicit algorithm.
+This chapter describes the syntax, reduction, and inference judgment of the core system $\ced$.
+Basic metatheoretic properties such as preservation and classification are proven.
+Additionally, irrelevant casts and irrelevant views are constructed demonstrating that $\ced$ is capable of deriving existing encodings from Cedille.
+The presentation is a standard PTS-style with a single inference judgment.
 
 \input{chapters/02/01_syntax.tex}
 \input{chapters/02/02_confluence.tex}
@@ -12,3 +12,4 @@ As it stands it is not obvious how this judgment admits an inference algorithm, 
 \input{chapters/02/04_judgments.tex}
 \input{chapters/02/05_preservation.tex}
 \input{chapters/02/06_classification.tex}
+\input{chapters/02/07_derivations.tex}

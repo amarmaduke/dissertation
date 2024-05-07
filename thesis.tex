@@ -1,5 +1,6 @@
 \documentclass[letterpaper, 11pt]{uiowa-thesis}
 \usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -14,8 +15,22 @@
 \usepackage{latexsym}
 \usepackage{stmaryrd}
 \usepackage{tikz-cd}
+%\usepackage{unicode-math}
+\usepackage{newunicodechar}
+\usepackage[cache=false]{minted}
 \usetikzlibrary{nfold}
-%\usepackage{minted}
+
+\setlength\parfillskip{0pt plus .75\textwidth}
+\setlength\emergencystretch{1pt}
+
+\setminted{fontsize=\footnotesize}
+\setmonofont{Fira Code}
+
+\newfontfamily{\dejavusansfont}{DejaVu Sans}
+\newunicodechar{★}{{\dejavusansfont\char"2605}}
+\newunicodechar{➔}{{\dejavusansfont\char"2794}}
+\newunicodechar{➾}{{\dejavusansfont\char"27BE}}
+%\newunicodechar{➔}{$\to$}
 
 \newenvironment{proofcase}{\vspace{0.3cm}\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}\vspace{0.4cm}}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -31,9 +46,9 @@
 \addbibresource{biblio.bib}
 \nocite{*}
 
-\title{Cedille2: A proof theoretic redesign of the Calculus of Dependent Lambda Eliminations}
+\title{A Proof Theoretic Redesign of the Calculus of Dependent Lambda Eliminations}
 \author{Andrew Marmaduke}
-\date{May 2024}
+\date{August 2024}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -86,8 +101,6 @@
 \input{chapters/04.tex}
 \input{chapters/05.tex}
 \input{chapters/06.tex}
-\input{chapters/07.tex}
-\input{chapters/08.tex}
 
 %\appendix
 %\input{appendices/a.tex}

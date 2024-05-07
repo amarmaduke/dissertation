@@ -144,12 +144,11 @@
 
 \Rule{\CastRule}
     {
-        \der{\D{1}}{\Gamma \vdash (x:A) \cap B : \star} \\
-        \der{\D{2}}{\Gamma \vdash a : A} \\
-        \der{\D{3}}{\Gamma \vdash b : (x:A) \cap B} \\
-        \der{\D{4}}{\Gamma \vdash e : a =_A b.1}
+        \der{\D{1}}{\Gamma \vdash a : A} \\
+        \der{\D{2}}{\Gamma \vdash b : (x:A) \cap B} \\
+        \der{\D{3}}{\Gamma \vdash e : a =_A b.1}
     }
-    {\Gamma \vdash \varphi(a, b, e; A, (x:A) \cap B) : (x:A) \cap B}
+    {\Gamma \vdash \varphi(a, b, e) : (x:A) \cap B}
     {Cast}
 
 \Rule{\SeparationRule}

@@ -20,7 +20,7 @@ Nevertheless, a basic fact about substitution on syntax is provable.
 \end{lemma}
 \begin{proof}
     By induction on $t$.
-    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes those cases.
+    If $t$ is a binder or a constructor, then substitution unfolds and the IH applied to subterms concludes the case.
     Suppose $t$ is a variable, $z$.
     If $z = x$, then $z \neq y$ and $t = a$ on both sides because $y \notin FV(a)$.
     If $z = y$, then $z \neq x$ and $t = [x := a]b$ on both sides.
@@ -31,7 +31,7 @@ Computational meaning is added via reduction rules described in Figure~\ref{fig:
 The new reductions model projection of pairs (e.g. $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g. $\vartheta(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A)$) and an elimination form for equality.
 Note that conversion is different from a traditional PTS.
 Convertibility with respect to reduction is written: $t \betaconv s$.
-A detailed discussion of conversion is delayed until Section~\ref{sec:2:erasure}.
+A detailed discussion of conversion in $\ced$ is delayed until Section~\ref{sec:2:erasure}.
 
 Before more important facts about reduction can be discussed it is important to observe the interaction between reduction and substitution.
 First, note that multistep reduction (i.e. the reflexive-transitive closure of the reduction relation) is congruent with respect to syntax.
@@ -46,7 +46,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
     \label{lem:2:beta_par}
 \end{lemma}
 \begin{proof}
-    Pick any $i$ and apply the reductions to the associate subterm.
+    Pick any $i$ and apply the reductions to the associated subterm.
     A straightforward induction on $t_i \betastar t_i^\prime$ demonstrates that the reductions apply only to the associated subterm.
     Repeat until all $i$ reductions are applied.
 \end{proof}
@@ -57,11 +57,11 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{lemma}
 \begin{proof}
     By induction on $a \betared b$.
-    Second projection is the same as first projection case and omitted.
+    The second projection case is the same as the first projection case and omitted.
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
-        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{x}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
+        $[x := s](\app{(\abs{\lambda_m}{y}{A}{b})}{m}{t}) = \app{(\abs{\lambda_m}{y}{[x := s]A}{[x := s]b})}{m}{[x := s]t} \betared [y := [x := s]t][x := s]b = [x := s][y := t]b$ \\
         Note that the final equality holds by Lemma~\ref{lem:2:subst_commute}.
     \end{proofcase}
 
@@ -153,7 +153,7 @@ Second, substitution is shown to commute with multistep reduction through a seri
 \end{proof}
 
 Lemma~\ref{lem:2:betastar_subst} is the only fact about the interaction of substitution and reduction that is needed moving forward.
-A straightforward consequence is a similar lemma about substitution commuting with convertibility w.r.t. reduction.
+A straightforward consequence is a similar lemma about substitution commuting with reduction conversion.
 
 \begin{lemma}
     If $s \betaconv t$ and $a \betaconv b$ then $[x := s]a \betaconv [x := t]b$
@@ -164,7 +164,7 @@ A straightforward consequence is a similar lemma about substitution commuting wi
     Applying Lemma~\ref{lem:2:betastar_subst} twice yields $[x := s]a \betastar [x := z_1]z_2$ and $[x := t]b \betastar [x := z_1]z_2$.
 \end{proof}
 
-Transitivity, as before, is a consequence of confluence.
+Transitivity, as before with F$^\omega$, is a consequence of confluence.
 Confluence is not an obvious property to obtain and can also be an involved property to prove.
 For example, a natural variant for the $\vartheta$ reduction rule is $\vartheta(\text{refl}(t.1)) \betared \text{refl}(t)$, but this breaks confluence.
 To see why, consider $\vartheta(\text{refl}([x, y; T].1))$.

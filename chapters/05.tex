@@ -4,8 +4,8 @@
 Consistency guarantees that the logic and equational theory of $\ced$ is non-trivial.
 Proof normalization guarantees that, at least, inference for kinds and types is decidable.
 Neither of these properties are strong enough on their own to guarantee decidability of type checking.
-To obtain decidability of type checking it must be the case that objects are normalizing.
-Unfortunately, object normalization does not hold when the \textsc{Cast} rule is used, and it is not clear how the rule may be repaired to acquire object normalization.
+To obtain decidability it must be the case that objects are normalizing.
+Unfortunately, object normalization does not hold when the \textsc{Cast} rule is used, and it is not clear how to strike a balance between a rule that yields object normalization and simultaneously enables the same derivation power as Cedille.
 A proof is \textbf{strict} if it does not use the \textsc{Cast} rule in its derivation.
 While strict proofs do have normalizing objects the technique described below to prove this fact depends on both proof normalization and consistency.
 This is suggestive of how difficult a property object normalization is to show.
@@ -105,7 +105,7 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
         Now $b.2 \betastar_{\neq 0} t^\prime.2$ and $|t^\prime.2| = t$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         Have $|\psi(e, a, b; A, T)| = |e|$ and $|e| \betared t$.
         Applying the IH to $\D{4}$ yields $\exists\ t^\prime$ such that $e \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
@@ -155,15 +155,15 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
 
 Strong normalization of strict objects leads to an interesting observation.
 Recall the definition of conversion: $a \equiv b$ if and only if $\exists\ u, v$ such that $a \betastar u$, $b \betastar v$ and $|u| \betaconv |v|$.
-An observant reader may wonder why reduction is allowed after two candidates objects, $|u|$ and $|v|$ are obtained.
+An observant reader may wonder why reduction is allowed after two candidate objects, $|u|$ and $|v|$ are obtained.
 In other words, why not merely compare for equality: $|u| = |v|$.
 The answer is because $\varphi$ may generate $\beta$-redexes after erasure, and it turns out that it is the only syntax form for which this is possible.
-Thus, if $\varphi$ was removed from the system then conversion \textit{could} be defined using equality of objects instead of reduction convertibility of objects.
+Thus, if $\varphi$ was removed from the system then conversion \textit{could} be defined using equality of objects instead of conversion reduction of objects.
 The $\varphi$ form is unique amongst all the other syntax.
 
 Another question that the reader may have is why not represent the reduction of $\varphi$ in the proof system.
-The answer is that there is no obvious way to make the reduction well-typed, thus preservation would be lost.
-Indeed, the proof witness of a $\varphi(a, b, e; A, (x : A) \cap B)$ form, $b$, is allowed to be as complicated as required to produce the subtype $(x : A) \cap B$.
+The answer is that there is no obvious way to make the reduction well-typed, thus several properties of proof reduction would be lost.
+Indeed, the proof witness of a $\varphi(a, b, e)$ form, $b$, is allowed to be as complicated as required to produce the subtype $(x : A) \cap B$.
 However, the object, $|a|$, is typed at the super-type $A$.
 To make it possible to type this term in the proof system some notion of subtyping would have to be added directly into the rules.
 It is not immediately clear how to make this move without producing a radically different system.
@@ -173,14 +173,14 @@ Indeed, it may be fruitful to view the proof-object distinction as being fundame
 \section{Observational Equivalence of Objects}
 
 Unfortunately, proofs involving the $\varphi$ form do not have normalizing objects.
-While it is not clear how to augment the proof system to enforce normalization it is possible to describe an external condition on proofs that would guarantee object normalization for any arbitrary proof.
-The idea is to observe that each $\varphi(a, b, e; A, (x : A) \cap B)$ form has some associated proof witness ($b$) and some object witness ($a$).
+While it is not clear how to augment the proof system to enforce normalization it is possible to describe an external condition on proofs that would guarantee object normalization.
+The idea is to observe that each $\varphi(a, b, e)$ form has some associated proof witness ($b$) and some object witness ($a$).
 Evidence ($e$) is also provided that these two witnesses are equal at type $A$.
 If $e$ reduces to a value, then that implies $|a| \betaconv |b|$, but if this holds than whatever usage of $\varphi$ should be normalizing.
 However, the evidence produced in a proof need not ever reduce to a value, yet it will still be discarded by the erasure of $\varphi$.
 
 Observational (or contextual) equivalence of objects gives a strong enough claim to transfer the normalization property from one object to another.
-Objects being the concept of interest means that contexts need to be well-typed because an object is only the erasure of a proof.
+Objects being the concept of interest means that contexts need to be well-typed because an object is the erasure of a proof.
 To make contexts the inductive structure of syntax is reused with a unique fresh free variable, labelled $h$, that represents a hole.
 The variable is unique meaning it occurs only once in the given syntax, but it can be trivially duplicated by an abstraction.
 Context structure could be defined inductively, but this methodology allows reuse of erasure and substitution.
@@ -189,7 +189,7 @@ Context structure could be defined inductively, but this methodology allows reus
 \end{definition}
 
 Observational equivalence is then defined to be logical equivalence of divergence of the associated objects substituted for $h$ in the given context.
-There are several possible ways to defined observational equivalence including the choice of what counts as an observation.
+There are several possible ways to define observational equivalence including the choice of what counts as an observation.
 For the purposes of this chapter divergence is the only observation of interest.
 Note that it is easy to see that observational equivalence forms an equivalence relation relative to the parameters $\Gamma$ and $A$.
 
@@ -229,7 +229,7 @@ Note that it is easy to see that observational equivalence forms an equivalence 
 \end{proof}
 
 \begin{definition}
-    A proof is $\varphi$-\textbf{safe} iff for every usage of $\varphi$ with $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) : (x : A) \cap B$ then $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) \approx_{(x : A) \cap B} b$
+    A proof is $\varphi$-\textbf{safe} iff for every usage of $\varphi$ with $\Gamma \vdash \varphi(a, b, e) : (x : A) \cap B$ then $\Gamma \vdash \varphi(a, b, e) \approx_{(x : A) \cap B} b$
 \end{definition}
 
 \begin{theorem}
@@ -244,11 +244,11 @@ Note that it is easy to see that observational equivalence forms an equivalence 
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $f = \varphi(a^\prime, b, e; A^\prime, T).2$ and thus $\app{|f|}{\omega}{|a|} = \app{|a^\prime|}{\omega}{|a|}$.
+        Suppose wlog that $f = \varphi(a^\prime, b, e).2$ and thus $\app{|f|}{\omega}{|a|} = \app{|a^\prime|}{\omega}{|a|}$.
         By the IH both $|a^\prime|$ and $|a|$ are strongly normalizing.
-        Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e; A^\prime, T) \approx_T b$.
-        Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e; A^\prime, T).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
-        Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]\gamma$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]\gamma$ is normalizing.
+        Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e) \approx_{(x : A) \cap B} b$.
+        Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
+        Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]|\gamma|$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]|\gamma|$ is normalizing.
         However, $\app{b.2}{\omega}{a}$ has a smaller nesting level of $\varphi$ expressions, thus $\app{|b|}{\omega}{|a|}$ is strongly normalizing.
     \end{proofcase}
 \end{proof}
@@ -256,18 +256,18 @@ Note that it is easy to see that observational equivalence forms an equivalence 
 Characterizing when $\varphi$ does not introduce diverging objects is useful because it enables, at the bare minimum, an external validation of each usage.
 It is not clear how this requirement may be internalized in the system.
 First, a logical relation capturing observational equivalence would likely need to be developed, but because this relation needs to capture equivalence of objects it is not obvious how to adapt existing approaches.
-Moreover, that relation would have to be bolted on an as auxiliary proof system in order to prove $\varphi$-safety.
+Moreover, the logical relation would have to be bolted on as an auxiliary proof system in order to prove $\varphi$-safety.
 At least, the evidence required to use a \textsc{Cast} rule is a sanity check.
-Indeed, if this evidence is ``morally'' true then contextual equivalence will hold by the Leibniz Law.
+Indeed, if this evidence is ``morally true'' then contextual equivalence will hold by Leibniz's Law.
 
 \begin{conjecture}
-    $\Gamma \vdash \varphi(a, b, e; A, (x : A) \cap B) \approx_{(x : A) \cap B} b$ iff $\Gamma \vdash a \approx_{A} b.1$
+    $\Gamma \vdash \varphi(a, b, e) \approx_{(x : A) \cap B} b$ iff $\Gamma \vdash a \approx_{A} b.1$
 \end{conjecture}
 
-Note that while the evidence for $\varphi(a, b, e; A, (x : A) \cap B)$ has the type $e : a =_A b.1$ it is easy to use this evidence to construct a proof $e^\prime : \varphi(a, b, e; A, (x : A) \cap B) =_{(x : A) \cap B} b$.
-Just eliminate $e$ using $\psi$ and the objects will match.
+Note that while the evidence for $\varphi(a, b, e)$ has the type $e : a =_A b.1$ it is easy to use this evidence to construct a proof $e^\prime : \varphi(a, b, e) =_{(x : A) \cap B} b$.
+Eliminate $e$ using $\psi$ and the objects will match.
 Going the opposite direction is just as simple, as $b$ may be substituted with the left-hand side and the objects will again be identical.
-However, it is not clear that a first projection expressed via observational equivalence is logically equivalent to $\varphi$-safety.
+However, it is not clear that a first projection expressed via observational equivalence implies $\varphi$-safety.
 The primary obstacle is determining if the erasure of every $\gamma : ((x : A) \cap B, \Gamma) \to (\varepsilon, \pUnit)$ context can be computed via a first projection operation on contexts to obtain $\gamma.1 : (A, \Gamma) \to (\varepsilon, \pUnit)$ with the same erasure.
 Demonstrating this conjecture holds would be the first important step to defining a logical relation for contextual equivalence, because it would mean that $\varphi$ terms could be removed entirely from the definition.
 
@@ -277,8 +277,7 @@ It does not take much effort to produce an example of divergence using $\varphi$
 Note, however, that all examples require a context where $\pFalse$ is derivable.
 The first example uses $\varphi$ to give self a recursive type: $\pself : \pUnit$ and $\pself : \pUnit \to_\omega \pUnit$ simultaneously.
 Divergence is a trivial consequence.
-In this example, the False premise is completely erased.
-This is not really a problem as a proof assistant needs to reduce under binders anyway and the erased argument blocks logical issues regardless.
+In this example, the False premise is erased, but note that conversion requires reduction under binders regardless.
 \begin{align*}
     \pFalse &= (X : \star) \to_0 X_\square \\
     \pself &= \abs{\lambda_\omega}{x}{\pUnit}{
@@ -305,14 +304,14 @@ This is not really a problem as a proof assistant needs to reduce under binders 
     } \\
     |bad| &= \app{|\pself|}{\omega}{|\pself|}
 \end{align*}
-What one can learn from the above example is that the hypothetical evidence is problematic for using $\varphi$.
+What one can learn from the above example is that hypothetical evidence is problematic for using $\varphi$.
 Restricting the context is one idea to make all usages $\varphi$-safe.
 Unfortunately, the restriction that $FV(|e|)$ is empty is too strong, it prevents all interesting usages because $b.1 \betastar a$ in all cases as a result.
-Instead, the reader might imagine that the context is \textit{partially} restricted.
+Instead, the context could be \textit{partially} restricted.
 For example, suppose $b : (a : A) \to (x : A) \cap B$ and $e : (a : A) \to a_\star =_A (\app{b}{\omega}{a}).1$ with $FV(|e|)$ empty.
 With this setup, $e$ depends only on the single input and expresses only the fact that $b$ is extensionally an identity function.
 The object witness term $a$ can then be dropped and the object for the $\varphi$ term would be: $|\varphi(b, e)| = \abs{\lambda_\omega}{x}{\diamond}{x}$.
-Unfortunately, this idea fails as enough of the context may be uncurried into the type of $A$ to construct a divergent term.
+This idea fails as enough of the context may be uncurried into the type of $A$ to construct a divergent term.
 \begin{align*}
     A &= (\pUnit \to_\omega \pUnit) \times \pFalse \\
     T &= (A \to_\omega \pUnit \to_\omega \pUnit) \to_\omega (\pUnit \to_\omega \pUnit) \to_\omega \pUnit \\
@@ -337,20 +336,20 @@ Unfortunately, this idea fails as enough of the context may be uncurried into th
     } \\
     |bad| &= \abs{\lambda_\omega}{f}{\diamond}{\app{|\pself|}{\omega}{|\pself|}}
 \end{align*}
-This counterexample requires a relevant abstraction, but this could probably be avoided by a more sophisticated formulation.
-Again, it also does not really matter as proof assistants reduce under binders anyway.
-This example demonstrates that finding a balance between usability and restriction of the context is very difficult, if not simply impossible.
+This counterexample requires a relevant abstraction, but this could likely be avoided by a more sophisticated formulation.
+Finding a balance between usability and restriction of the context is difficult, if not simply impossible without radical alterations.
 
 Another option is to remove $\varphi$ altogether from the system.
 It is a significant source of complexity because it demands reduction after erasure in the definition of conversion and is the \textit{only} source of divergence in $\ced$.
-To contrast, $\oldced$ has the following sources of divergence:
+To contrast, CDLE has the following sources of divergence:
 \begin{enumerate}
-    \item terms on the left-hand and right-hand side of an equality are untyped-$\lambda$-calculus syntax;
-    \item the Kleene Trick allows for untyped-$\lambda$-calculus syntax as witnesses of trivial equalities;
-    \item the rewrite rule, $\rho$, is erased and thus enables non-termination by Abel and Coquand \cite{abel2020};
+    \item indices and witnesses of trivial equalities are untyped $\lambda$-calculus terms;
+    \item the rewrite rule, $\rho$, effectively allows casts because rewrites are not typed;
+    \item the rewrite rule, $\rho$, is erased enabling non-termination when equality of types is expressible;
+    \item the separation rule, $\delta$, is erased enabling non-termination in an inconsistent context;
     \item the $\varphi$ rule, for the same reason as $\ced$.
 \end{enumerate}
-The first three sources are eliminated by the design of $\ced$, yet the last remains.
+The initial four sources are eliminated by the design of $\ced$, yet the last remains.
 Ultimately, the \textsc{Cast} rule is too important to not only the spirit of Cedille but its capability.
 Losing $\varphi$, as far as the current research shows, would prevent almost all existing encodings.
-The cost to be paid would be too much.
+The benefits outweigh the consequences.

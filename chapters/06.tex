@@ -1,9 +1,32 @@
-\chapter{Cedille2: System Implementation}
-\label{chap:6}
+\chapter{Conclusion}
 
+The design of Cedille followed an extrinsic (or curry-style) philosophy that placed programs as primary with types as annotations.
+Under this philosophy it is only natural to consider an untyped equality because it is closer to ones semantic understanding.
+However, these decisions led to equality being a source of undecidability for type checking.
+In this work an alternative road is taken where $\ced$ is designed around a hybrid philosophy of intrinsic and extrinsic.
+Proofs are considered primary and the design itself follows proof theoretic principles, but universal (dependent) quantification is with respect to objects.
+An object is the erasure of a proof, and objects do not exist without proofs.
+This distinction allowed for a description of proof reduction and, separately, object reduction.
+Moreover, many metatheoretic properties are shown relative to proof reduction and conversion including: syntactic proof preservation and strong proof normalization.
+Additionally, in the absence of the \textsc{Cast} rule, object reduction is normalizing.
 
-\section{Normalization by Evaluation}
+A failure of the proof theoretic discipline and victory of the extrinsic philosophy is the $\varphi$ construct.
+The \textsc{Cast} rule does prevent many desirable properties such as decidability of type checking.
+However, it does not prevent logical consistency and the apparent strength it adds to the theory is substantial.
+It is not clear how to derive any of the interesting encodings published in existing literature without the \textsc{Cast} rule.
+Yet, the \textsc{Cast} rule is the only source of non-termination for object reduction in the system $\ced$.
 
-\section{Syntax-directed Bidirectional Type System}
+It is not clear how to systematically correct $\varphi$ without destroying all of its benefits.
+However, there is a question if the $\varphi$ construct is necessary for efficient inductive data.
+Without the \textsc{Cast} rule it is possible to derive inductive Church encodings that are \textit{not} efficient because computing an out (e.g. a predecessor of a natural number) is proportional to the size of the data (e.g. linear time for natural numbers).
+Knowing which encodings do not depend on $\varphi$ would be useful to delineate the relative power between the system with and without $\varphi$.
 
-\section{Design Choices}
+Independent of the $\varphi$ rule there is an open question of whether function extensionality is an admissible axiom in $\ced$.
+With a typed equality the separation rule of $\ced$ may only act on typed terms, unlike in Cedille where equality is untyped.
+Therefore, separation in $\ced$ is only capable of differentiating functions by applying test inputs in the domain of a function.
+While this is convincing intuition showing that this axiom is consistent requires an extensional model which cannot exist for Cedille.
+
+The type theory $\ced$ represents a step forward to a proof theoretic version of Cedille.
+With the \textsc{Cast} rule removed the system \textit{is} a proof theory according to the philosophy of Kreisel and Gentzen.
+The full system, by contrast, is a proof theory relative to an oracle deciding $\varphi$-safety.
+Nevertheless, $\ced$ has narrowed the gap between Cedille and existing research in modern type theory, with the hope of making its unique ideas more palatable to a wider audience.

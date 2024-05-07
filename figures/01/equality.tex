@@ -1,0 +1,45 @@
+
+\Rule{\LofEq}
+    {
+        \der{\D{1}}{\Gamma \vdash A : \star}
+        \\ \der{\D{2}}{\Gamma \vdash x : A}
+        \\ \der{\D{2}}{\Gamma \vdash y : A}
+    }
+    {\Gamma \vdash x =_A y : \star}
+    {}
+
+\Rule{\LofRefl}
+    {
+        \der{\D{1}}{\Gamma \vdash A : \star}
+        \\ \der{\D{2}}{\Gamma \vdash x : A}
+    }
+    {\Gamma \vdash \prefl(x; A) : x =_A x}
+    {}
+
+\Rule{\LofJ}
+    {
+        \der{\D{1}}{\Gamma \vdash A : \star}
+        \\ \der{\D{2}}{\Gamma \vdash x : A}
+        \\ \der{\D{3}}{\Gamma \vdash y : A}
+        \\ \der{\D{4}}{\Gamma \vdash e : x =_A y}
+        \\ \der{\D{5}}{\Gamma \vdash P : (x:A) \to (y:A) \to (e: x =_A y) \to \star}
+        \\ \der{\D{6}}{\Gamma \vdash w : (i:A) \to P\ i\ i\ \prefl(i;A)}
+    }
+    {\Gamma \vdash J(x, y, e, w; A, P) : P\ x\ y\ e}
+    {}
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        $$\LofEq$$
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        $$\LofRefl$$
+    \end{minipage}%
+    $$\LofJ$$
+    \caption{
+        Typing rules for the Martin-L\"{o}f intensional propositional equality type.
+    }
+    \label{fig:lof_eq}
+\end{figure}
+
