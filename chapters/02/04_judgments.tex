@@ -58,12 +58,12 @@ Indeed, the equality rules all deviate from the original Cedille design.
 
 $\ReflRule$ The reflexivity rule is the only value for equality types.
 It is the standard inductive formulation of an identity type.
-
-$\SubstRule$ The substitution rule is a dependent variation of Leibniz's Law.
+$$\SubstRule$$
+The substitution rule is a dependent variation of Leibniz's Law.
 It is also a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
-
-$\PromoteRule$ The promotion rule enables equational reasoning about intersections.
+$$\PromoteRule$$
+The promotion rule enables equational reasoning about intersections.
 Indeed, because intersections are not inductive it is difficult to reason about them without some auxiliary rule.
 It states that two elements of an intersection are equal if their first projections are equal.
 Note that this rule is about dependent intersections, hence the focus on the first projection over the second projection.
@@ -115,17 +115,16 @@ Next three standard lemmas are proved about the type system: weakening, substitu
         Now by Lemma~\ref{lem:2:pseobj_subst}: $[x := t.1]B\pseobj$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth} $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$ \end{minipage}
     \begin{proofcase}
         By Lemma~\ref{lem:2:infer_implies_pseobj}: $P, e\pseobj$.
-        Applying the IH to $\D{1}$ gives $A, a, b\pseobj$.
+        Applying the IH to $\D{4}$ gives $A, a, b\pseobj$.
         Now building up the subexpressions using pseudo-object rules concludes the proof.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
-        Applying the IH to $\D{1}$ gives that $(x : A) \cap B\pseobj$.
-        Now, by Lemma~\ref{lem:2:infer_implies_pseobj}: $a, b\pseobj$.
+        By Lemma~\ref{lem:2:infer_implies_pseobj}: $(x : A) \cap B, a, b\pseobj$.
         Using the pseudo-object rule for equality concludes the case.
     \end{proofcase}
 
@@ -184,16 +183,16 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $y \in \Gamma_1$.
+        Suppose w.l.o.g. that $y \in \Gamma_1$.
         Let $\Gamma_1 = \Delta_1; y : B; \Delta_2$.
-        Applying the IH to $\D{1}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
+        Applying the IH to $\D{2}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
         Note that $x \notin FV(\Delta_1; [y := b]\Delta_2; [y := b]\Gamma_2)$.
         Thus by the \textsc{Var} rule: $\Delta_1; [y := b]\Delta_2; x_m : [y := b]A; [y := b]\Gamma_2 \vdash x_K : [y := b]A$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to the sub-derivations gives:
+        Applying the IH to the sub-derivations gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]A : \pdom(m, K)$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]B : \pcodom(m)$
@@ -203,7 +202,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to $\D{1}$ and $\D{2}$ gives:
+        Applying the IH to $\D{1}$ and $\D{2}$ gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash [y := b]f : (x : [y := b]A) \to_m [y := b]B$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta, x_m : [y := b]A \vdash [y := b]a : [y := b]A$
@@ -215,7 +214,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \PairRule[*] \end{array}$
     \begin{proofcase}
-        Applying \textit{1.} to the sub-derivations gives:
+        Applying the IH to the sub-derivations gives:
         \begin{enumerate}
             \item[$\D{1}$.] $\Gamma, [y := b]\Delta \vdash (x : [y := b]A) \cap [y := b]B : \star$
             \item[$\D{2}$.] $\Gamma, [y := b]\Delta \vdash [y := b]t : [y := b]A$
@@ -256,7 +255,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
         Applying the substitution lemma gives $\Gamma \vdash [x := t.1]B : K$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         By the \textsc{Refl} rule: $\Gamma \vdash \prefl(a;A) : a =_A a$.
         Now by the \textsc{App} rule $\Gamma \vdash \apptwo{P}{\tau}{a}{\tau}{\prefl(a;A)} : \star$ and $\Gamma \vdash \apptwo{P}{\tau}{b}{\tau}{e} : \star$.

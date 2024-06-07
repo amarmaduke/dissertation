@@ -47,7 +47,7 @@ Confluence for multistep reduction is an immediate consequence of confluence for
     \begin{proofcase}
         By the IH applied to $\D{1}$: $t_i \parred t_i^\prime$.
         Note that there is only one subderivation.
-        For all $j \neq i$ $t_j \parred t_j$ by Lemma~\ref{lem:a:par_refl}.
+        For all $j \neq i$: $t_j \parred t_j$ by Lemma~\ref{lem:a:par_refl}.
         Using the \textsc{ParCtor} rule concludes the case.
     \end{proofcase}
 
@@ -201,7 +201,7 @@ Confluence for multistep reduction is an immediate consequence of confluence for
     $\text{Case: }\begin{array}{c} \ParConstructorReduction[*] \end{array}$
     \begin{proofcase}
         By the IH applied to $\D{i}$: $t_i^\prime \parred \parp{t_i}$ for all $i$.
-        Proceed by cases of $\parp{\mathfrak{c}(\kappa, t_1, \ldots t_{\mathfrak{a}(\kappa)})}$.
+        Proceed by cases of $\mathfrak{c}(\kappa, t_1, \ldots t_{\mathfrak{a}(\kappa)})$.
         The second projection case is omitted because it is the same as the first projection case.
 
         $\text{Case: }\begin{array}{c} \parp{\app{(\abs{\lambda_m}{x}{t_1}{t_2})}{m}{t_3}} = [x := \parp{t_3}]\parp{t_2} \end{array}$
@@ -301,7 +301,7 @@ Confluence for multistep reduction is an immediate consequence of confluence for
 \end{lemma}
 \begin{proof}
     By Lemma~\ref{lem:a:beta_implies_par} applied twice: $s \parstar t_1$ and $s \parstar t_2$.
-    Now by parallel confluence (Lemma~\ref{lem:a:par_confluence}) $\exists\ t$ such that $t_1 \parstar t$ and $t_2 \parstar t$.
+    Now by parallel confluence: $\exists\ t$ such that $t_1 \parstar t$ and $t_2 \parstar t$.
     Finally, two applications of Lemma~\ref{lem:a:par_implies_beta} conclude the proof.
 \end{proof}
 

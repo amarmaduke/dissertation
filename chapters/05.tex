@@ -105,7 +105,7 @@ Of course, $\varphi$ could also generate a $\beta$-redex after erasure, but this
         Now $b.2 \betastar_{\neq 0} t^\prime.2$ and $|t^\prime.2| = t$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         Have $|\psi(e, a, b; A, T)| = |e|$ and $|e| \betared t$.
         Applying the IH to $\D{4}$ yields $\exists\ t^\prime$ such that $e \betastar_{\neq 0} t^\prime$ and $|t^\prime| = t$.
@@ -248,7 +248,7 @@ Note that it is easy to see that observational equivalence forms an equivalence 
         By the IH both $|a^\prime|$ and $|a|$ are strongly normalizing.
         Note that $t$ is $\varphi$-safe thus $\Gamma \vdash \varphi(a^\prime, b, e) \approx_{(x : A) \cap B} b$.
         Thus, it must be the case that $\Gamma \vdash \app{\varphi(a^\prime, b, e).2}{\omega}{a} \approx_{[x := a]B} \app{b.2}{\omega}{a}$.
-        Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]\gamma$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]\gamma$ is normalizing.
+        Hence, for context $\gamma$ with hole $h$: $[h := \app{|a^\prime|}{\omega}{|a|}]|\gamma|$ is normalizing if and only if $[h := \app{|b|}{\omega}{|a|}]|\gamma|$ is normalizing.
         However, $\app{b.2}{\omega}{a}$ has a smaller nesting level of $\varphi$ expressions, thus $\app{|b|}{\omega}{|a|}$ is strongly normalizing.
     \end{proofcase}
 \end{proof}

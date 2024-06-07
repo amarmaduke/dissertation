@@ -30,7 +30,7 @@ The goal is to find three semantic functions: one for kinds ($V(-)$); one for ty
 In order for this to work, term dependencies must all be dropped in function types.
 Moreover, kinds are squished, such that $V(\kind) = V(\star) = \star$.
 Thus, the judgment $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$ must form an F$^\omega$ type.
-The kind and type semantics is allowed to throw away terms and reductions because it only serves the purpose to maintain a well-typed output.
+The kind and type semantics is allowed to discard reductions because it only serves the purpose of maintaining a well-typed output.
 Instead, it is the term semantics that must take care to preserve all possible reductions such that strong normalization is a consequence of the model.
 
 For dependent intersections, the type semantics is the obvious one: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
@@ -70,7 +70,7 @@ Consider the following examples to garner intuition for the semantic model:
     \item {
         Given $\Gamma \vdash_{\ced} t : T$ where $\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square$, $t = [(\app{f_\star}{\omega}{a_\star}).1, (\app{f_\star}{\omega}{a_\star}).2; (x : A_\square) \cap B_\square]$, and $T = (x : A_\square) \cap B_\square$ then
         \begin{align*}
-            &\sema{\Gamma = A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square} =\\
+            &\sema{A : \star;\ B : \star;\ a : A_\square;\ f : A_\square \to_\omega (x : A_\square) \cap B_\square} =\\
             &\quad 0 : \star;\ \bot : (X : \star) \to X;\ A : \star;\ w_A : 0;\ B : \star;\ w_B : 0; \\
             &\quad a : A;\ f : A \to A \times B
         \end{align*}
@@ -174,11 +174,11 @@ A standard substitution lemma is proven after.
 
 \begin{lemma}
     \label{lem:3:var_not_in_sema_when_kind}
-    Suppose $\Gamma \vdash t : A$, $x_m : B \in \Gamma$, and $B$ type, then $x \notin FV(\sema{t})$
+    Suppose $\Gamma \vdash_{\ced} t : A$, $x_m : B \in \Gamma$, and $B$ type, then $x \notin FV(\sema{t})$
     where $A = \kind$ or $\Gamma \vdash_{\ced} A : \kind$
 \end{lemma}
 \begin{proof}
-    Note that the restrictions on $A$ makes sure that $\sema{-}$ is well-defined.
+    The restrictions on $A$ makes sure that $\sema{-}$ is well-defined.
     The definition of $\sema{-}$ intentionally throws away any dependence on terms.
     Thus, if $x$ is a term, because $B$ is a type, the only places where $x$ may appear in $t$ have all been thrown away.
     Therefore, $x \notin FV(\sema{t})$.
@@ -187,7 +187,7 @@ A standard substitution lemma is proven after.
 \begin{theorem}[Soundness of $\sema{-}$]
     \label{lem:3:soundness_of_sema}
     If $\Gamma \vdash_{\ced} t : A$ then $\sema{\Gamma} \vdash_\omega \sema{t} : V(A)$
-    where $A = \kind$ or $\Gamma \vdash A : \kind$
+    where $A = \kind$ or $\Gamma \vdash_{\ced} A : \kind$
 \end{theorem}
 \begin{proof}
     By induction on $\Gamma \vdash_{\ced} t : A$.
@@ -255,7 +255,7 @@ A standard substitution lemma is proven after.
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Note that it cannot be the case that $[x := a]B = \kind$ by inversion on $\D{1}$, thus $\Gamma \vdash [x := a]B : \kind$ which force $m = \tau$.
+        It cannot be the case that $[x := a]B = \kind$ by inversion on $\D{1}$, thus $\Gamma \vdash [x := a]B : \kind$ which force $m = \tau$.
         Furthermore, by $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
         Applying the IH to $\D{1}$ thus gives $\sema{\Gamma} \vdash_\omega \sema{f} : V((x : A) \to_\tau B)$.
         \\ \\
@@ -422,7 +422,7 @@ Luckily, erasure is locally homomorphic on type-like structure and the type sema
     $\text{Case: } t = (x : A) \to_m B$
     \begin{proofcase}
         Have $|(x : A) \to_m B| = (x : |A|) \to_m |B|$.
-        Suppose wlog that $A$ is a kind.
+        Suppose w.l.o.g. that $A$ is a kind.
         Then $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By Lemma~\ref{lem:3:vsema_erase} and the IH $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} = (x : V(A)) \to \sema{A} \to \sema{B}$.
         Likewise, $\sema{(x : A) \to_m B} = (x : V(A)) \to \sema{A} \to \sema{B}$.
@@ -487,7 +487,7 @@ The type semantics is slightly more complicated, but the same intuition holds: i
     \begin{proofcase}
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $*$, $\kind$, $\bullet_\tau$, or eq.
         However, the cases $*$ and $\kind$ are impossible because they do not reduce.
-        Suppose $|s| = \app{|f|}{\tau}{|a|}$ and assume wlog that $|a| \betared a^\prime$.
+        Suppose $|s| = \app{|f|}{\tau}{|a|}$ and assume w.l.o.g. that $|a| \betared a^\prime$.
         If $a$ is a term then $\sema{\app{|f|}{\tau}{|a|}} = \sema{|f|} = \sema{\app{|f|}{\tau}{|a^\prime|}}$ and $\sema{|f|} = \sema{f}$ by Lemma~\ref{lem:3:sema_erase}.
         Suppose $a$ is a type.
         Then, by the IH $\sema{a} \betared \sema{a^\prime}$ or $\sema{a} = \sema{a^\prime}$.
@@ -504,10 +504,10 @@ The type semantics is slightly more complicated, but the same intuition holds: i
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
         The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
         Have $|s| = (x : |A|) \to_m |B|$ and note that $|A| \betared A^\prime$.
-        Suppose wlog that $A$ kind.
+        Suppose w.l.o.g. that $A$ kind.
         Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By the IH: $\sema{A} \betared \sema{A^\prime}$ or $\sema{A} = \sema{A^\prime}$.
-        Suppose wlog that $\sema{A} \betared \sema{A^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$ by Lemma~\ref{lem:3:vsema_erase_red_step}.
+        Suppose w.l.o.g. that $\sema{A} \betared \sema{A^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$ by Lemma~\ref{lem:3:vsema_erase_red_step}.
         Now $\sema{(x : A^\prime) \to_m |B|} = (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$.
     \end{proofcase}
 
@@ -516,10 +516,10 @@ The type semantics is slightly more complicated, but the same intuition holds: i
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
         The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
         Have $|s| = (x : |A|) \to_m |B|$ and note that $|B| \betared B^\prime$.
-        Suppose wlog that $A$ kind.
+        Suppose w.l.o.g. that $A$ kind.
         Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By the IH: $\sema{B} \betared \sema{B^\prime}$ or $\sema{B} = \sema{B^\prime}$.
-        Suppose wlog that $\sema{B} \betared \sema{B^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
+        Suppose w.l.o.g. that $\sema{B} \betared \sema{B^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
         Now $\sema{(x : |A|) \to_m B^\prime} = (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
     \end{proofcase}
 \end{proof}
@@ -641,7 +641,7 @@ Finally, soundness of the term semantics is proven by a straightforward inductio
         Thus, applying Lemma~\ref{lem:3:fomega_eta} twice concludes the case.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
         Note that by classification and $\D{1}$ it is that case that $A$ type.
         Applying the IH to subderivations:
@@ -741,7 +741,7 @@ Note that some reduction steps are technical, especially $\vartheta$, but are no
 
     $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $B$ is a kind.
+        Suppose w.l.o.g. that $B$ is a kind.
         Then $[[x := b](y : A) \cap B] = [(y : [x := b]A) \cap [x := b]B] = c^{0 \to 0 \to 0}[[x := b]A] ([y := c^{\sema{[x := b]A}}][[x := b]B])$.
         Now by the IH, Lemma~\ref{lem:3:sema_subst}, and the fact that $w_x \notin FV(\sema{A})$ the right-hand side is equal to $c^{0 \to 0 \to 0}[x := \sema{b}][w_x := [b]][A] ([y := c^{[x := \sema{b}][w_x := [b]]\sema{A}}][x := \sema{b}][w_x := [b]][B])$.
         Consider $[x := \sema{b}][w_x := [b]][(y : A) \cap B] = [x := \sema{b}][w_x := [b]]c^{0 \to 0 \to 0}[A] ([y := c^{\sema{A}}][B])$.
@@ -809,15 +809,19 @@ Note that some reduction steps are technical, especially $\vartheta$, but are no
     
     $\text{Case: }\begin{array}{c} \vartheta(\text{refl}(t; A), a, b; T) \betared \text{refl}(a; T) \end{array}$
     \begin{proofcase}
-        Have $[\vartheta(\text{refl}(t; A), a, b; T)] = (\abs{\lambda}{y_1}{\sema{T}}{
+        Have:
+        \begin{align*}
+            [\vartheta(\text{refl}(t; A), a, b; T)] &= \\
+            (\abs{\lambda}{y_1}{\sema{T}}{
                 \abs{\lambda}{y_2}{0} {
                     \abs{\lambda}{y_3}{\sema{T}}{
-                        ((\abs{\lambda}{y_1}{0}{
+                        &((\abs{\lambda}{y_1}{0}{
                             \abs{\lambda}{y_2}{\sema{A}}{\fpid}
                         })\ [A]\ [t])
                     }
                 }
-            })\ [b]\ [T]\ [a]$.
+            })\ [b]\ [T]\ [a]
+        \end{align*}
         Note that all $y_i$ are fresh and thus not in the free variables of any subexpressions.
         Performing two $\beta$-reductions on the interior (the result of $[\text{refl}(t_1;A)]$) and the outermost $\beta$-reduction yields:
             $(\abs{\lambda}{y_2}{0} {

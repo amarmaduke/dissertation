@@ -19,9 +19,7 @@ Yet, the \textsc{Cast} rule is the only source of non-termination for object red
 It is not clear how to systematically correct $\varphi$ without destroying all of its benefits.
 However, there is a question if the $\varphi$ construct is necessary for efficient inductive data.
 Without the \textsc{Cast} rule it is possible to derive inductive Church encodings that are \textit{not} efficient because computing an out (e.g. a predecessor of a natural number) is proportional to the size of the data (e.g. linear time for natural numbers).
-One potential fix is using Scott encodings instead which have been shown to be inductive in Cedille \cite{jenkins2021monotone}.
-Moreover, it seems unlikely that all ink has dried on the topic of impredicative encodings, especially in Cedille.
-Knowing which encodings do not depend on it would be useful to delineate the relative power between the system with and without $\varphi$.
+Knowing which encodings do not depend on $\varphi$ would be useful to delineate the relative power between the system with and without $\varphi$.
 
 Independent of the $\varphi$ rule there is an open question of whether function extensionality is an admissible axiom in $\ced$.
 With a typed equality the separation rule of $\ced$ may only act on typed terms, unlike in Cedille where equality is untyped.

@@ -80,8 +80,8 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
 
     $\text{Case: }b \text{ variable}$
     \begin{proofcase}
-        Suppose $b = x$, then $|[x := t]x| = |t|$ and $[x := |t|]|x| = |t|$.
-        Suppose $b = y$, then $|[x := t]y| = y$ and $[x := |t|]|y| = y$.
+        Suppose $b = x_K$, then $|[x := t]x_K| = |t|$ and $[x := |t|]|x_K| = |t|$.
+        Suppose $b = y_K$ where $x \neq y$, then $|[x := t]y_K| = y_K$ and $[x := |t|]|y_K| = y_K$.
         Thus, both sides are equal.
     \end{proofcase}
 \end{proof}
@@ -138,8 +138,8 @@ The critical property about pseudo-objects is that reduction preserves the equiv
             Note that $\abs{\lambda_m}{x}{A}{b}\pseobj$.
             If $m = 0$ then $x \notin FV(b)$ and $|[x := t]b| = |b|$.
             Thus, $|\app{(\abs{\lambda_0}{x}{A}{b})}{0}{t}| = |\abs{\lambda_0}{x}{A}{b}| = |b|$.
-            If $m = \omega$, then $|\app{(\abs{\lambda_\omega}{x}{A}{b})}{\omega}{t}| = \app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|}$.
-            By definition of reduction $\app{(\absu{\lambda_\omega}{x}{b})}{\omega}{|t|} \betaconv [x := |t|]|b|$.
+            If $m = \omega$, then $|\app{(\abs{\lambda_\omega}{x}{A}{b})}{\omega}{t}| = \app{(\abs{\lambda_\omega}{x}{\diamond}{|b|})}{\omega}{|t|}$.
+            By definition of reduction $\app{(\abs{\lambda_\omega}{x}{\diamond}{|b|})}{\omega}{|t|} \betaconv [x := |t|]|b|$.
             Finally, by Lemma~\ref{lem:2:erase_subst} the goal is obtained.
             The case of $m = \tau$ is almost exactly the same.
         \end{proofcase}
@@ -218,8 +218,8 @@ With this intuition, the purpose of pseudo-objects is merely to filter syntactic
 
     $\text{Case: }\begin{array}{c} s\text{ variable} \end{array}$
     \begin{proofcase}
-        If $s = x$ then $[x := t]x = t$, and $t\pseobj$.
-        Otherwise, $s = y$ with $y$ a variable and $y\pseobj$.
+        If $s = x_K$ then $[x := t]x_K = t$, and $t\pseobj$.
+        Otherwise, $s = y_K$ with $y$ a variable and $y_K\pseobj$.
     \end{proofcase}
 \end{proof}
 
@@ -371,7 +371,7 @@ Indeed, arbitrarily expensive sequences of reductions could potentially be erase
     Thus, $s \equiv t$.
     Case $(\Leftarrow)$:
     Suppose $s \equiv t$, then $\exists\ z_1, z_2$ such that $s \betastar z_1$, $t \betastar z_2$, and $|z_1| \betaconv |z_2|$.
-    By two applications of Lemma~\ref{lem:2:pseobj_red_b} $|s| \betaconv |t|$.
+    By two applications of Lemma~\ref{lem:2:pseobj_red_b}: $|s| \betaconv |t|$.
 \end{proof}
 
 \begin{corollary}
@@ -385,8 +385,8 @@ Finally, a useful lemma about the interaction of substitution with conversion is
     \label{lem:2:conv_subst}
 \end{lemma}
 \begin{proof}
-    By Lemma~\ref{thm:2:beta_iff_conv} $|s| \betaconv |t|$ and $|a| \betaconv |b|$.
-    Then, by Lemma~\ref{lem:2:betaconv_erased_subst} $|[x := s]a| \betaconv |[x := t]b|$.
+    By Lemma~\ref{thm:2:beta_iff_conv}: $|s| \betaconv |t|$ and $|a| \betaconv |b|$.
+    Then, by Lemma~\ref{lem:2:betaconv_erased_subst}: $|[x := s]a| \betaconv |[x := t]b|$.
     Finally, by Lemma~\ref{thm:2:beta_iff_conv} again, $[x := s]a \equiv [x := t]b$.
 \end{proof}
 

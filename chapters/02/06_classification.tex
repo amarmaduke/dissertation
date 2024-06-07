@@ -31,7 +31,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 \begin{proof}
     The definition is structural except application cases.
     In particular, application cases require evaluating $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ for some subexpressions $a$ and $t$.
-    Note that computing $\mathcal{C}(-)$ on subxpressions is of course terminating, but moreover $\ptrunc{-}$ is a constant function returning a constant syntactic form.
+    Note that computing $\mathcal{C}(-)$ on subxpressions is terminating, and $\ptrunc{-}$ is a constant function.
     Thus, a measure of size can be constructed such that the size of $\ptrunc{\mathcal{C}(a)}$ is always zero for any $a$.
     Substitution of syntactic forms of zero size do not change the size of the resulting term, therefore $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ is a terminating invocation.
 \end{proof}
@@ -84,7 +84,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
-        Suppose wlog that $m = \tau$, then $(\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t})\ptype$.
+        Suppose w.l.o.g. that $m = \tau$, then $(\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t})\ptype$.
         Note that $t\ptype$ or $t\pterm$ by unraveling the previous definition.
         Now $[x := \ptrunc{\mathcal{C}(t)}]b\ptype$.
         By Lemma~\ref{lem:2:classify_subst} and the above observation: $[x := t]b\ptype$.
@@ -141,14 +141,14 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $m = \tau$, now by the IH applied to $\D{1}$: $A\pkind$ or $A\ptype$.
+        Suppose w.l.o.g. that $m = \tau$, now by the IH applied to $\D{1}$: $A\pkind$ or $A\ptype$.
         Applying the IH to $\D{2}$ gives $B\pkind$.
         Thus, $(x : A) \to_\tau B\pkind$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $m = \tau$.
+        Suppose w.l.o.g. that $m = \tau$.
         Applying the IH to $\D{1}$ gives $A\pkind$ or $A\ptype$.
         Note by $\D{2}$ that $\Gamma, x_\tau : A \vdash B : \kind$.
         Thus, applying the IH to $\D{2}$ yields $t\ptype$.
@@ -157,15 +157,15 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Suppose wlog that $m = \tau$.
-        By classification and inversion with $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
+        Suppose w.l.o.g. that $m = \tau$.
+        By Lemma~\ref{lem:2:classification} and inversion with $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
         Deconstructing this judgment yields $\Gamma \vdash A : K$.
         Applying the IH to $\D{2}$ gives $a\ptype$ or $a\pterm$.
         Applying the IH to $\D{1}$ yields $f\ptype$.
         If $f$ is not an abstraction then the proof is done, thus suppose $f = \abs{\lambda}{x}{A}{t}$.
         Have $A\pkind$ or $A\ptype$, but note that $\Gamma \vdash A : K$ thus the classification of $a$ and $A$ must agree.
         Moreover, $t\pterm$.
-        Suppose wlog that $a\ptype$ then $\ptrunc{\mathcal{C}(a)} = x_\square$.
+        Suppose w.l.o.g. that $a\ptype$ then $\ptrunc{\mathcal{C}(a)} = x_\square$.
         However, this means that $\Gamma \vdash A : \kind$ and that $\Gamma, x_\tau : A \vdash t : B$.
         Thus, the occurrences of $x$ in $t$ must be annotated as $x_\square$ otherwise the \textsc{Var} rule for $x$ would fail.
         Hence, $[x := x_\square]t = t$.
@@ -187,7 +187,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
     \begin{proofcase}
-        By classification and inversion on $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
+        By Lemma~\ref{lem:2:classification} and inversion on $\D{1}$: $\Gamma \vdash (x : A) \cap B : \star$.
         Using the IH on $\D{1}$ gives $t\pterm$.
         Hence, $t.2\pterm$.
     \end{proofcase}
@@ -204,9 +204,9 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
         Hence, $\prefl(t; A)\pterm$.
     \end{proofcase}
 
-    $\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$
+    \begin{minipage}{.8\textwidth}$\text{Case: }\begin{array}{c} \SubstRule[*] \end{array}$\end{minipage}
     \begin{proofcase}
-        Classification and inversion on $\D{4}$ gives $\Gamma \vdash a =_A b : \star$.
+        Lemma~\ref{lem:2:classification} and inversion on $\D{4}$ gives $\Gamma \vdash a =_A b : \star$.
         Likewise, $\Gamma \vdash (y : A) \to_\tau (p : a =_A y_\star) \to_\tau \star : \kind$.
         Applying the IH to all subderivations yields $A, P\ptype$ and $a, b, e\pterm$.
         Hence, $\psi(e, a, b; A, P)\pterm$.
@@ -214,7 +214,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \PromoteRule[*] \end{array}$
     \begin{proofcase}
-        By classification, inversion and the IH used with $\D{4}$: $e\pterm$.
+        By Lemma~\ref{lem:2:classification}, inversion and the IH used with $\D{4}$: $e\pterm$.
         The IH applied to $\D{1}$, $\D{2}$ and $\D{3}$ yields $a, b\pterm$ and $(x : A) \cap B\ptype$.
     \end{proofcase}
 
@@ -228,14 +228,14 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \SeparationRule[*] \end{array}$
     \begin{proofcase}
-        Classification, inversion, and the IH applied to $\D{1}$ gives $e\pterm$.
+        Lemma~\ref{lem:2:classification}, inversion, and the IH applied to $\D{1}$ gives $e\pterm$.
         Hence, $\delta(e)\pterm$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
     \begin{proofcase}
-        Classification, inversion, $\D{1}$ and $\D{3}$ yield $\Gamma \vdash B : K$.
-        Suppose wlog that $K = \star$.
+        Lemma~\ref{lem:2:classification}, inversion, $\D{1}$ and $\D{3}$ yield $\Gamma \vdash B : K$.
+        Suppose w.l.o.g. that $K = \star$.
         Applying the IH to $\D{2}$ gives $t\pterm$.
     \end{proofcase}
 \end{proof}

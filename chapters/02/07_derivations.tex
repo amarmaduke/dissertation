@@ -6,7 +6,7 @@ Cedille has several important encodings and derivations in the existing literatu
     \item generic zero-cost program and proof reuse \cite{diehl2018_generic_reuse};
     \item quotients by idempotent functions \cite{marmaduke2020quotients};
     \item zero-cost constructor subtyping \cite{marmaduke2020_constructor_subtyping};
-    \item recursive representations of data \cite{jenkins2021monotone_recursive_types};
+    \item recursive representations of data \cite{jenkins2021monotone};
     \item simulated large eliminations \cite{jenkins2021_large_elim};
     \item and inductive-inductive data \cite{marmaduke2023_indind}.
 \end{enumerate}
@@ -120,12 +120,12 @@ However, the resulting interface is exactly the same, and the erasures agree wit
                 \end{aligned}
             $
         }
-        \item $\pelimView : (A:\star) \to_0 (b:\pTop) \to_\omega \apptwo{\pView}{\tau}{A_\square}{\tau}{b_\star} \to_0 A$
+        \item $\pelimView : (A:\star) \to_0 (b:\pTop) \to_\omega \apptwo{\pView}{\tau}{A_\square}{\tau}{b_\star} \to_0 A_\square$
     \end{enumerate}
 \end{theorem}
 \begin{proof}
     Immediate by applying the only valid judgment rules to the associated syntactic form.
 \end{proof}
 Views are not as ubiquitous as casts, but they are critical for course-of-values Mendler induction and recursive representations of data.
-Indeed, the elaboration work of Jenkins heavily depends on views \cite{jenkins2023elaborating}.
+Indeed, the elaboration work of Jenkins depends on views \cite{jenkins2023elaborating}.
 With both irrelevant casts and irrelevant views derivable internally in $\ced$ it is possible to reconstruct almost all existing encodings published in the literature.

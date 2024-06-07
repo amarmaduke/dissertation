@@ -39,7 +39,6 @@ However, the design of Cedille sacrificed certain properties such as the decidab
 Decidability of type checking was stressed by Kreisel to Scott as necessary to reduce proof checking to type checking because a proof does not, under Kreisel's philosophy, diverge \cite{scott1970}.
 This puts into contention if Cedille corresponds to a logic at all.
 The primary objective of this work is to improve this state of affairs.
-However, completing this journey requires a deeper introduction into the type theories of the $\lambda$-cube.
 
 \section{System \texorpdfstring{F$^\omega$}{F Omega}}
 
@@ -125,7 +124,7 @@ It is easy to show that any reflexive-transitive closure is itself transitive.
     $\text{Case: }\begin{array}{c} \MultiStep[*] \end{array}$
     \begin{proofcase}
         Let $z = t^\prime$, then we have $a\ R\ z$ and $z\ R^*\ b$.
-        By the inductive hypothesis (IH) we have $z\ R^*\ c$ and by the transitive rule we have $a\ R^*\ c$ as desired.
+        By the inductive hypothesis (IH), $z\ R^*\ c$, and by the transitive rule, $a\ R^*\ c$, as desired.
     \end{proofcase}
 \end{proof}
 
@@ -148,8 +147,8 @@ In fact, proving transitivity of conversion is often a significant effort, requi
     If $a \betaconv b$ and $b \betaconv c$ then $a \betaconv c$
 \end{theorem}
 \begin{proof}
-    By premises we know $\exists u, v$ such that $a \betastar u$, $b \betastar u$, $b \betastar v$, and $c \betastar v$.
-    By confluence, $\exists z$ such that $u \betastar z$ and $v \betastar z$.
+    By premises $\exists\ u, v$ such that $a \betastar u$, $b \betastar u$, $b \betastar v$, and $c \betastar v$.
+    By confluence, $\exists\ z$ such that $u \betastar z$ and $v \betastar z$.
     By transitivity of multistep reduction, $a \betastar z$ and $c \betastar z$.
     Therefore, $a \betaconv c$.
 \end{proof}
@@ -203,7 +202,7 @@ Thus, standard metatheoretical results such as preservation and strong normaliza
 \end{lemma}
 \begin{proof}
     See Theorem~\ref{lem:2:preservation} for an example proof of preservation.
-    The proof for F$^\omega$ is very similar.
+    The proof for F$^\omega$ is similar.
 \end{proof}
 
 \begin{theorem}[Strong Normalization of F$^\omega$]
@@ -235,7 +234,7 @@ $$\bot = (X : \star) \to X$$
 Negation is defined as implying false:
 $$\neg A = A \to \bot$$
 These definitions are called \textit{Church encodings} and originate from Church's initial encodings of data in the $\lambda$-calculus \cite{church1932,church1933}.
-Note that if there existed a term such that $\vdash t \chck \bot$ then trivially for \textit{any} type $T$: $\vdash t\ T \chck T$.
+If there exists a term such that $\vdash t \chck \bot$ then trivially for \textit{any} type $T$: $\vdash t\ T \chck T$.
 Thus, $\bot$ is both the constant false and the proposition representing the principle of explosion from logic.
 Moreover, this allows a concise statement of the consistency of F$^\omega$.
 
@@ -246,9 +245,9 @@ Moreover, this allows a concise statement of the consistency of F$^\omega$.
     Suppose $\vdash t \chck \bot$.
     Let $n$ be the value of $t$ after it is normalized.
     By preservation $\vdash n \chck \bot$.
-    Deconstructing the checking judgment we know that $\vdash n \infr T$ and $T \betaconv \bot$, but $\bot$ is a value and values like $n$ infer types that are also values.
-    Thus, $T = \bot$ and we know that $\vdash n \infr \bot$.
-    By inversion on the typing rules $n = \abs{\lambda}{X}{\star}{b}$, and we have $X : \star \vdash b \infr X$.
+    Deconstructing the checking judgment gives $\vdash n \infr T$ and $T \betaconv \bot$, but $\bot$ is a value and values like $n$ infer types that are also values.
+    Thus, $T = \bot$ and $\vdash n \infr \bot$.
+    By inversion on the typing rules $n = \abs{\lambda}{X}{\star}{b}$, and thus $X : \star \vdash b \infr X$.
     The term $b$ can only be $\star$, $\kind$, or $X$, but none of these options infer type $X$.
     Therefore, there does not exist a term $b$, nor a term $n$, nor a term $t$.
 \end{proof}
@@ -315,8 +314,6 @@ Thus, a brief introduction and history of equality in type theories is beneficia
 
 \section{Equality}
 
-\input{figures/01/equality.tex}
-
 While Leibniz's Law may be stated in CC using a Church encoding it does not enable strong reasoning principles.
 The standard definition of equality used to extend systems like CC is Martin-L\"{o}f's identity type, depicted in Figure~\ref{fig:lof_eq}.
 This formulation comes with an inductive eliminator: the $J$ rule.
@@ -335,6 +332,8 @@ However, a proof of UIP remained elusive.
 In 1995 Hofmann answered this equation negatively: UIP is independent of Martin-L\"{o}f's identity type.
 Hofmann accomplished this by modelling identity types in two separate ways: as equivalence relations defined inductively on type structure and as groupoids.
 His models solved a long-standing open question about the nature of the identity type \cite{hofmann1995, hofmann1996}.
+
+\input{figures/01/equality.tex}
 
 Propositional extensionality and quotients are two additional notions dependent on equality that add more mathematically intuitive reasoning principles.
 Propositional extensionality states that logical equivalence of propositions is logically equivalent to equality of propositions.
@@ -423,7 +422,7 @@ Indeed, Voevodsky's early proposals contain two separate propositional equalitie
 Voevodksy's idea was explored further in Two-Level Type Theory (2LTT).
 The core idea behind 2LTT is to have two universes of types, an ``inner'' universe satisfying UA, and an ``outer'' universe satisfying UIP.
 This setup can be viewed as an internalization of the ``inner'' theories metatheory as the ``outer'' theory.
-The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2017}.
+The two theories communicate via the dependent function and dependent pair types which agree between both ``inner'' and ``outer'' systems \cite{annenkov2023}.
 Capriotti expanded upon the foundational aspects of 2LTT showing a conservativity result with respect to HoTT confirming that including the ``outer'' theory does not break any internal results constructed in the ``inner'' theory \cite{capriotti2017}.
 Angiuli adapted 2LTT to incorporate a strict equality and justify a computational semantics in the same spirit as the one used for Nuprl \cite{angiuli2019}.
 
@@ -445,7 +444,7 @@ The redesign described herein treads this balance to obtain a better metatheory 
 \textbf{Chapter 2}\quad defines the core theory ($\ced$), including its syntax, and typing rules.
 Erasure from Cedille is rephrased as a projection from proofs to objects.
 Basic metatheoretical results are proven including: confluence, preservation, and classification.
-Important derivations including irrelevance casts and irrelevant views are presented, demonstrating the critical components used to construct almost all existing encodings is possible.
+Important derivations of irrelevant casts and irrelevant views are presented, demonstrating the critical components used to construct almost all existing encodings are possible.
 \\ \\
 \textbf{Chapter 3}\quad models $\ced$ in F$^\omega$ obtaining a strong normalization result for proof reduction.
 This model is a straightforward extension of a similar model for CC.
@@ -458,7 +457,7 @@ Additionally, a collection of counterexamples to normalization in CDLE is presen
 \\ \\
 \textbf{Chapter 5}\quad proves object normalization for proofs that do not use the \textsc{Cast} rule.
 Unfortunately, the full theory does not enjoy object normalization.
-Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule can not cause non-termination.
+Nevertheless, a condition is formulated that indicates when the usage of a \textsc{Cast} rule does not cause non-termination.
 Thus, the full system of $\ced$ has decidable type checking \textit{relative} to an oracle that decides this condition.
 \\ \\
 \textbf{Chapter 6}\quad concludes with comments on future work.
