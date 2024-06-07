@@ -127,7 +127,7 @@
 
 \Rule{\CedPhiInferRule}
     {
-        \der{\D{1}}{e \chck \{ a \simeq b \}}
+        \der{\D{1}}{\Gamma \vdash e \chck \{ a \simeq b \}}
         \\ \der{\D{2}}{\Gamma \vdash a \infr A}
         \\ \der{\D{3}}{FV(b) \subseteq dom(\Gamma)}
     }
@@ -136,7 +136,7 @@
 
 \Rule{\CedPhiCheckRule}
     {
-        \der{\D{1}}{e \chck \{ a \simeq b \}}
+        \der{\D{1}}{\Gamma \vdash e \chck \{ a \simeq b \}}
         \\ \der{\D{2}}{\Gamma \vdash a \chck A}
         \\ \der{\D{3}}{FV(b) \subseteq dom(\Gamma)}
     }
