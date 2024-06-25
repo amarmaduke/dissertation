@@ -441,10 +441,9 @@ Thus, the following lemmas hold only for the domain of definition, but this is s
 
     $\text{Case: }t = \vartheta(e, a, b; T)$
     \begin{proofcase}
-        Have $\sema{|\vartheta(e, a, b; T)|} = \sema{|e|}$.
-        Suppose $T = (x : A) \cap B$ then $|\sema{\vartheta(e, a, b; (x : A) \cap B)}| = |\ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e}| = |\sema{e}|$.
-        Otherwise, $|\sema{\vartheta(e, a, b; T)}| = |\sema{e}|$.
+        Have $|\sema{\vartheta(e, a, b; (x : A) \cap B)}| = |\ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e}| = |\sema{e}|$.
         By the IH applied to $e\pterm$: $\sema{|e|} = |\sema{e}|$.
+        Now $\sema{|\vartheta(e, a, b; (x : A) \cap B)|} = \sema{|e|}$ and the case is concluded.
     \end{proofcase}
 
     $\text{Case: }t = \psi(e, a, b; A, P)$
