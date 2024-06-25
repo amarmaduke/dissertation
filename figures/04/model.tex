@@ -37,8 +37,7 @@
     \begin{align*}
         \sema{a =_A b} &= \cId \cdot \sema{A}\ \sema{a}\ \sema{b} \\
         \sema{\text{refl}(t; A)} &= \crefl \cdot \sema{A}\ \edash \sema{t} \\
-        \sema{\vartheta(e, a, b; (x : A) \cap B)} &= \ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \\
-        \sema{\vartheta(e, a, b; T)} &= \sema{e} \\
+        \sema{\vartheta(e, a, b; (x : A) \cap B)} &= \ctheta \cdot \sema{A} \cdot (\abs{\lambda}{x}{\sema{A}}{\sema{B}})\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \\
         \sema{\psi(e, a, b; A, P)} &= \csubst  \cdot \sema{A}\ \edash \sema{a}\ \edash \sema{b} \cdot \sema{P}\ \sema{e} \\
         \sema{\varphi(a, b, e)} &= \varphi\ \text{\c{c}}\ \sema{e}.1 - \sema{b}\ \{ \sema{a} \} \\
         \sema{\delta(e)} &= \cdelta\ \sema{e}

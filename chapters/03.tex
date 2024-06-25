@@ -5,7 +5,7 @@
 There are several techniques for showing strong normalization of a PTS, including saturated sets \cite{geuvers1994_sn_satset}, model theory \cite{terlouw1995_sn}, realizability \cite{ong1993}, etc.
 Geuvers and Nederhof describe a technique that models CC inside F$^\omega$ where term dependencies are all erased at the type level \cite{geuvers1991_sn_tof}.
 In this chapter the technique of Geuvers and Nederhof will be adapted to show strong normalization of proof reduction.
-Proof normalization ends up being a rather weak property, because it does not entail consistency.
+Proof normalization is a weak property, because it does not entail consistency.
 
 \section{Model Description}
 
@@ -30,10 +30,10 @@ The goal is to find three semantic functions: one for kinds ($V(-)$); one for ty
 In order for this to work, term dependencies must all be dropped in function types.
 Moreover, kinds are squished, such that $V(\kind) = V(\star) = \star$.
 Thus, the judgment $\sema{\Gamma} \vdash_\omega \sema{(x : A) \to_m B} : V(\pcodom(m))$ must form an F$^\omega$ type.
-The kind and type semantics is allowed to discard reductions because it only serves the purpose of maintaining a well-typed output.
-Instead, it is the term semantics that must take care to preserve all possible reductions such that strong normalization is a consequence of the model.
+The kind and type semantics are allowed to discard reductions because both only serves the purpose of maintaining a well-typed output.
+Instead, the term semantics must take care to preserve all possible reductions such that strong proof normalization is a consequence of the model.
 
-For dependent intersections, the type semantics is the obvious one: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
+For dependent intersections, the type semantics is: $\sema{(x : A) \cap B} = \sema{A} \times \sema{B}$.
 Note that because $A$ is a type, it must be the case that $x \notin FV(\sema{B})$ otherwise the resulting type is not well-formed in F$^\omega$.
 This is true already for function types, thus this extension needs no special treatment.
 For equality the situation is special, the approach taken is to interpret all equalities as the type of the identity function: $\sema{a =_A b} = \fpId$.
@@ -88,7 +88,6 @@ Thus, extra layers of abstraction are added when interpreting function arguments
 
 With the model defined the next step is to prove it is sound.
 The process begins by showing the interpretation of kinds ($V(-)$) is sound.
-This is not particularly difficult as the kind interpretation is quite simple.
 After, lemmas about substitution and conversion follow without difficulty.
 
 \begin{theorem}[Soundness of $V$]
@@ -106,7 +105,7 @@ After, lemmas about substitution and conversion follow without difficulty.
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        By $\D{2}$: $\Gamma \vdash \kind : K$ which is impossible.
+        By $\D{1}$: $\Gamma \vdash \kind : K$ which is impossible.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
@@ -201,7 +200,7 @@ A standard substitution lemma is proven after.
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Note that $A \neq \kind$ by $\D{2}$, thus $K = \kind$.
+        Note that $A \neq \kind$ by $\D{1}$, thus $K = \kind$.
         By computation $\sema{x_\square} = x$.
         Moreover, $A\pkind$ thus $x : V(A) \in \sema{\Gamma}$.
         Thus, $\sema{\Gamma} \vdash_\omega x : V(A)$
@@ -295,7 +294,6 @@ A standard substitution lemma is proven after.
         Now by classification and $\D{3}$: $\Gamma \vdash B : \kind$.
         Applying the IH to $\D{2}$ gives $\sema{\Gamma} \vdash_\omega \sema{t} : V(B)$.
         Using Lemma~\ref{lem:3:conv_of_v} with $\D{3}$ gives $V(A) = V(B)$.
-        Thus, the \textsc{Conv} rule concludes the case.
     \end{proofcase}
 \end{proof}
 
@@ -376,7 +374,7 @@ A standard substitution lemma is proven after.
 \end{proof}
 
 Finally, soundness of the term semantics must be shown.
-This is not as simple as the original argument for CC modelled in F$^\omega$ because conversion is relative to erasure.
+This is not like the original argument for CC modelled in F$^\omega$ because conversion is relative to erasure.
 Luckily, erasure is locally homomorphic on type-like structure and the type semantics drops all term dependencies.
 
 \begin{lemma}
@@ -422,7 +420,7 @@ Luckily, erasure is locally homomorphic on type-like structure and the type sema
     $\text{Case: } t = (x : A) \to_m B$
     \begin{proofcase}
         Have $|(x : A) \to_m B| = (x : |A|) \to_m |B|$.
-        Suppose w.l.o.g. that $A$ is a kind.
+        Suppose w.l.o.g., that $A$ is a kind.
         Then $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By Lemma~\ref{lem:3:vsema_erase} and the IH $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} = (x : V(A)) \to \sema{A} \to \sema{B}$.
         Likewise, $\sema{(x : A) \to_m B} = (x : V(A)) \to \sema{A} \to \sema{B}$.
@@ -430,7 +428,7 @@ Luckily, erasure is locally homomorphic on type-like structure and the type sema
 \end{proof}
 
 The above lemmas demonstrate that if reduction happens in the erased term it should somehow be mirrored in reduction for the well-typed terms.
-For kinds this turns out to be simple equality, as any possible dependence involving reduction are always dropped the structure of $V(t)$ for any $t$ is rigid.
+For kinds this turns out to be equality, as any possible dependence involving reduction are always dropped the structure of $V(t)$ for any $t$ is rigid.
 The type semantics is slightly more complicated, but the same intuition holds: if a reduction were to occur in a term dependency then the result of the type semantics is equal, otherwise the reduction is exactly mirrored in the model.
 
 \begin{lemma}
@@ -487,7 +485,7 @@ The type semantics is slightly more complicated, but the same intuition holds: i
     \begin{proofcase}
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $*$, $\kind$, $\bullet_\tau$, or eq.
         However, the cases $*$ and $\kind$ are impossible because they do not reduce.
-        Suppose $|s| = \app{|f|}{\tau}{|a|}$ and assume w.l.o.g. that $|a| \betared a^\prime$.
+        Suppose $|s| = \app{|f|}{\tau}{|a|}$ and assume w.l.o.g., that $|a| \betared a^\prime$.
         If $a$ is a term then $\sema{\app{|f|}{\tau}{|a|}} = \sema{|f|} = \sema{\app{|f|}{\tau}{|a^\prime|}}$ and $\sema{|f|} = \sema{f}$ by Lemma~\ref{lem:3:sema_erase}.
         Suppose $a$ is a type.
         Then, by the IH $\sema{a} \betared \sema{a^\prime}$ or $\sema{a} = \sema{a^\prime}$.
@@ -504,10 +502,10 @@ The type semantics is slightly more complicated, but the same intuition holds: i
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
         The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
         Have $|s| = (x : |A|) \to_m |B|$ and note that $|A| \betared A^\prime$.
-        Suppose w.l.o.g. that $A$ kind.
+        Suppose w.l.o.g., that $A$ kind.
         Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By the IH: $\sema{A} \betared \sema{A^\prime}$ or $\sema{A} = \sema{A^\prime}$.
-        Suppose w.l.o.g. that $\sema{A} \betared \sema{A^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$ by Lemma~\ref{lem:3:vsema_erase_red_step}.
+        Suppose w.l.o.g., that $\sema{A} \betared \sema{A^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$ by Lemma~\ref{lem:3:vsema_erase_red_step}.
         Now $\sema{(x : A^\prime) \to_m |B|} = (x : V(A^\prime)) \to \sema{A^\prime} \to \sema{|B|}$.
     \end{proofcase}
 
@@ -516,10 +514,10 @@ The type semantics is slightly more complicated, but the same intuition holds: i
         By inversion on $\Gamma \vdash \sema{s} : T$ it must be the case that $\kappa$ is $\Pi_m$, $\lambda_\tau$, or $\cap$.
         The $\cap$ and $\lambda_\tau$ cases are similar to the $\Pi_m$ case and thus omitted.
         Have $|s| = (x : |A|) \to_m |B|$ and note that $|B| \betared B^\prime$.
-        Suppose w.l.o.g. that $A$ kind.
+        Suppose w.l.o.g., that $A$ kind.
         Now $\sema{(x : |A|) \to_m |B|} = (x : V(|A|)) \to \sema{|A|} \to \sema{|B|}$.
         By the IH: $\sema{B} \betared \sema{B^\prime}$ or $\sema{B} = \sema{B^\prime}$.
-        Suppose w.l.o.g. that $\sema{B} \betared \sema{B^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
+        Suppose w.l.o.g., that $\sema{B} \betared \sema{B^\prime}$, then $(x : V(|A|)) \to \sema{|A|} \to \sema{|B|} \betared (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
         Now $\sema{(x : |A|) \to_m B^\prime} = (x : V(|A|)) \to \sema{|A|} \to \sema{B^\prime}$.
     \end{proofcase}
 \end{proof}
@@ -536,7 +534,7 @@ The type semantics is slightly more complicated, but the same intuition holds: i
     If $\sema{s} \betared \sema{z}$ then by preservation $\Gamma \vdash \sema{z} : T$.
     Note that $|z| = z$ by Lemma~\ref{lem:2:erasure_idempotent} and because reduction does not introduce new syntactic forms.
     Applying the IH to $|z| \betastar t$ gives $\sema{z} \betastar \sema{t}$, thus $\sema{s} \betastar \sema{t}$.
-    If $\sema{s} = \sema{z}$ then obviously $\Gamma \vdash \sema{z} : T$ and the same argument as above works.
+    If $\sema{s} = \sema{z}$ then $\Gamma \vdash \sema{z} : T$ and the same argument as above works.
 \end{proof}
 
 With the reduction lemmas the required lemma about conversion is provable.
@@ -741,7 +739,7 @@ Note that some reduction steps are technical, especially $\vartheta$, but are no
 
     $\text{Case: }\begin{array}{c} \IntersectionRule[*] \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $B$ is a kind.
+        Suppose w.l.o.g., that $B$ is a kind.
         Then $[[x := b](y : A) \cap B] = [(y : [x := b]A) \cap [x := b]B] = c^{0 \to 0 \to 0}[[x := b]A] ([y := c^{\sema{[x := b]A}}][[x := b]B])$.
         Now by the IH, Lemma~\ref{lem:3:sema_subst}, and the fact that $w_x \notin FV(\sema{A})$ the right-hand side is equal to $c^{0 \to 0 \to 0}[x := \sema{b}][w_x := [b]][A] ([y := c^{[x := \sema{b}][w_x := [b]]\sema{A}}][x := \sema{b}][w_x := [b]][B])$.
         Consider $[x := \sema{b}][w_x := [b]][(y : A) \cap B] = [x := \sema{b}][w_x := [b]]c^{0 \to 0 \to 0}[A] ([y := c^{\sema{A}}][B])$.
@@ -756,7 +754,7 @@ Note that some reduction steps are technical, especially $\vartheta$, but are no
 \begin{proof}
     By induction on $s \betared t$.
     The first projection case is very similar to the second projection case.
-    Note by a simple observation that $[-]$ replicates every subexpression on the left-hand side with a matching invocation of $[-]$ on the right-hand side.
+    Note that $[-]$ replicates every subexpression on the left-hand side with a matching invocation of $[-]$ on the right-hand side.
     Thus, if there is a reduction inside a subexpression it will always be tracked in the corresponding $[-]$ invocation via the inductive hypothesis.
     For this reason the structural reduction cases are omitted.
 
@@ -768,7 +766,7 @@ Note that some reduction steps are technical, especially $\vartheta$, but are no
         The variable $y$ is fresh thus after one $\beta$-reduction $(\abs{\lambda}{x}{V(A)}{\abs{\lambda}{w_x}{\sema{A}}{[b]}})\ \sema{t}\ [t]$.
         Now applying two more $\beta$-reductions yields $[x := \sema{t}][w_x := [t]][b]$.
         Note that $[[x := t]b] = [x := \sema{t}][w_x := [t]][b]$ by Lemma~\ref{lem:3:subst}.
-        Thus, $[s] \betastar_{=3} [t]$, i.e. $[s]$ reduces to $[t]$ in three steps.
+        Thus, $[s] \betastar_{=3} [t]$, i.e., $[s]$ reduces to $[t]$ in three steps.
         \\ \\
         Suppose $A$ is a type and note that makes $t$ a term.
         Then $[\app{(\abs{\lambda_m}{x}{A}{b})}{m}{t}] = (\abs{\lambda}{y}{0}{\abs{\lambda}{w_x}{\sema{A}}{[b]}}) \ [A]\ [t]$.

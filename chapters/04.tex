@@ -25,8 +25,8 @@ While there may be other philosophical objections, Mendler-style encodings have 
 The $\varphi$ construct, an idea borrowed from the direct computation rule of Nuprl \cite{allen2000}, enabled several encodings including efficient Mendler encodings.
 A non-exhaustive list of the successes of CDLE include: quotient subtypes \cite{marmaduke2020quotients}; coinductive data \cite{jenkins2020efficient}; zero-cost constructor subtypes \cite{marmaduke2020_constructor_subtyping}; monotonic recursive types \cite{jenkins2021monotone}; simulated large eliminations \cite{jenkins2021_large_elim}; and inductive-inductive data \cite{marmaduke2023_indind}.
 
-CDLE commits to impredicative (i.e. parametric in the sense of $F^\omega$) quantification.
-With that in mind the well-studied reader may not be surprised at the power and versatility of CDLE.
+CDLE commits to impredicative (i.e., parametric in the sense of $F^\omega$) quantification.
+Impredicativity is known to yield a powerful and versatile system.
 However, taming impredicative quantification without losing logical consistency is a difficult task.
 Indeed, this is why several proof assistants have discarded impredicative quantification or relegated it to a universe of propositions.
 A core philosophy behind both CDLE and $\ced$ is to try a different path and embrace impredicative quantification.
@@ -243,8 +243,8 @@ The only real difficulty is the bidirectional presentation which requires statin
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-    Note that \textit{1.} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms.
-    For \textit{2.} through \textit{4.} mutual recursion and pattern match on $A$ is sufficient.
+    Note that \textit{1} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms.
+    For \textit{2} through \textit{4} mutual recursion and pattern match on $A$ is sufficient.
 \end{proof}
 
 \begin{lemma}
@@ -258,11 +258,11 @@ The only real difficulty is the bidirectional presentation which requires statin
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-    Note that \textit{1.} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms and reduction is confluent.
+    Note that \textit{1} holds because $|a|$ and $|b|$ are untyped $\lambda$-calculus terms and reduction is confluent.
     The remainder are proved by mutual recursion.
-    Note that in \textit{3.} the types $A, B$, and $C$ are reduced using call-name to a weak-head normal form.
+    Note that in \textit{3} the types $A, B$, and $C$ are reduced using call-name to a weak-head normal form.
     In particular, this reduction strategy is deterministic, thus $B \betastar_n B^\prime$ for a unique $B^\prime$.
-    This combined with using \textit{2.} is sufficient for the \textit{3.} case.
+    This combined with using \textit{2} is sufficient for the \textit{3} case.
     The other two cases follow by pattern matching on $B$, inversion on the respective conversions, and applying the IH.
 \end{proof}
 
@@ -273,7 +273,7 @@ However, it might not be clear exactly how this property fails.
 Below is a series of formalized examples that will loop when attempting to check using the Cedille tool.
 \begin{enumerate}
     \item {
-        First, there is an obvious problem caused by equality and reflexivity witnesses being untyped $\lambda$-calculus terms.
+        First, there is a problem caused by equality and reflexivity witnesses being untyped $\lambda$-calculus terms.
         Under this regime $\Omega = (\absu{\lambda}{x}{x\ x}) (\absu{\lambda}{x}{x\ x})$ is easily inserted.
 \begin{minted}{Lean}
     bad : { (λ x. x x) (λ x. x x) ≃ λ x. x } = β.
@@ -307,7 +307,7 @@ Below is a series of formalized examples that will loop when attempting to check
         For this example, it is necessary that there is some method to encode equality of types.
         In the formalization below a simulated large elimination on booleans is used.
         Note that the only way to construct this large elimination that is currently known is by using the $\varphi$ construct.
-        However, any extension or feature that enables discussing type equalities would unlock this example (e.g. universe hierarchies with an equality type at each level).
+        However, any extension or feature that enables discussing type equalities would unlock this example (e.g., universe hierarchies with an equality type at each level).
 \begin{minted}{Lean}
     False : ★ = ∀ X:★. X.
     Not : ★ ➔ ★ = λ A:★. A ➔ False.
@@ -378,14 +378,14 @@ The complicated part is the equality type, however all the necessary work to fin
 There is one hiccup involving the promotion ($\vartheta$) rule.
 In order to have a fully applied $\ctheta$ it must be the case that the annotation for $\vartheta$ is an intersection type.
 For proofs this will always be the case, but for arbitrary syntax it is not necessarily true.
-To work around this a catch-all case is defined where the model only interprets the equality proof $e$.
-This choice is largely arbitrary, but it is picked to make sure that one critical property is preserved: erasure.
+To work around this it should be understood that the semantics is a partial function.
+Thus, the following lemmas hold only for the domain of definition, but this is sufficient for soundness.
 
 \input{figures/04/model.tex}
 
 \begin{lemma}
     \label{lem:4:sema_erasure}
-    If $t\pterm$ then $\sema{|t|} = |\sema{t}|$
+    If $t\pterm$ then $\sema{|t|} = |\sema{t}|$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By induction on $t$ and inversion on $t\pterm$.
@@ -471,7 +471,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
 \begin{lemma}
     \label{lem:4:sema_subst}
-    $\sema{[x := b]t} = [x := \sema{b}]\sema{t}$
+    $\sema{[x := b]t} = [x := \sema{b}]\sema{t}$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     Straightforward by induction on $t$, substitution is structural with the only exception being variables, but $\sema{x_K} = x$.
@@ -479,7 +479,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
 \begin{lemma}
     \label{lem:4:sema_term_step}
-    If $t\pterm$ and $|t| \betared t^\prime$ then $|\sema{t}| \betared \sema{t^\prime}$
+    If $t\pterm$ and $|t| \betared t^\prime$ then $|\sema{t}| \betared \sema{t^\prime}$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By induction on $t$ and inversion on $t\pterm$.
@@ -514,7 +514,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         Thus, $(\absu{\lambda}{x}{\sema{b}})\ |\sema{a}| \betared [x := |\sema{a}|]\sema{b}$.
         Using Lemma~\ref{lem:4:sema_erasure} and Lemma~\ref{lem:4:sema_subst} gives $[x := |\sema{a}|]\sema{b} = \sema{[x := |a|]b}$.
         \\ \\
-        Suppose w.l.o.g. that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
+        Suppose w.l.o.g., that $|f| \betared f^\prime$ (the case of $|a| \betared a^\prime$ is very similar).
         Note that $f\pterm$, applying the IH gives $|\sema{f}| \betared \sema{f^\prime}$.
         Now $|\sema{\app{f}{\omega}{a}}| = |\sema{f}|\ |\sema{a}| \betared \sema{f^\prime}\ |\sema{a}| = \sema{\app{f^\prime}{\omega}{|a|}}$.
         The final equality uses Lemma~\ref{lem:4:sema_erasure}.
@@ -523,7 +523,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
 \begin{lemma}
     \label{lem:4:sema_term_multistep}
-    If $t\pterm$ and $|t| \betastar t^\prime$ then $|\sema{t}| \betastar \sema{t^\prime}$
+    If $t\pterm$ and $|t| \betastar t^\prime$ then $|\sema{t}| \betastar \sema{t^\prime}$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By induction on $|t| \betastar t^\prime$ using Lemma~\ref{lem:4:sema_term_step}, Lemma~\ref{lem:2:classify_preservation}, and Lemma~\ref{lem:2:classify_erase}.
@@ -531,7 +531,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
 \begin{lemma}
     \label{lem:4:sema_term_conv}
-    If $a, b\pterm$ and $|a| \betaconv |b|$ then $|\sema{a}| \betaconv |\sema{b}|$
+    If $a, b\pterm$ and $|a| \betaconv |b|$ then $|\sema{a}| \betaconv |\sema{b}|$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     Deconstructing $|a| \betaconv |b|$ gives $|a| \betastar z$ and $|b| \betastar z$.
@@ -541,20 +541,20 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 
 \begin{lemma}
     \label{lem:4:sema_type_step}
-    If $s\ptype$ and $s \betared_n t$ then $\sema{s} \betared_n \sema{t}$
+    If $s\ptype$ and $s \betared_n t$ then $\sema{s} \betared_n \sema{t}$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By induction on $s$ and inversion on $s\ptype$.
     Note that only the case where $s$ is a redex is important as all other cases are in weak-head normal form.
     Thus, suppose $s = \app{f}{\tau}{a}$,  $f = \abs{\lambda_\tau}{x}{A}{b}$, and $\app{f}{\tau}{a} \betared_n [x := a]b$.
-    Suppose w.l.o.g. that $a\pterm$.
+    Suppose w.l.o.g., that $a\pterm$.
     Now $\sema{\app{f}{\tau}{a}} = \sema{f}\ \sema{a} = (\abs{\lambda}{x}{\sema{A}}{\sema{b}})\ \sema{a} \betared [x := \sema{a}]\sema{b}$.
     Using Lemma~\ref{lem:4:sema_subst} gives $[x := \sema{a}]\sema{b} = \sema{[x := a]b}$.
 \end{proof}
 
 \begin{lemma}
     \label{lem:4:sema_type_multistep}
-    If $s\ptype$ and $s \betastar_n t$ then $\sema{s} \betastar_n \sema{t}$
+    If $s\ptype$ and $s \betastar_n t$ then $\sema{s} \betastar_n \sema{t}$ when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By induction on $s \betastar_n t$ using Lemma~\ref{lem:4:sema_type_step} and Lemma~\ref{lem:2:classify_preservation}.
@@ -568,6 +568,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
         \item If $A, B\ptype$ and $A \equiv B$ then $\sema{A} \cong \sema{B}$
         \item If $A, B\pkind$ and $A \equiv B$ then $\sema{A} \cong \sema{B}$
     \end{enumerate}
+    when $\sema{-}$ defined
 \end{lemma}
 \begin{proof}
     By mutual recursion.
@@ -575,18 +576,18 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
     \noindent \textbf{1.}
     By induction on $A$ and inversion on $A$ being a value and $A \equiv B$ (hence $B$ must match $A$).
     Conversion in $\oldced$ is structural over weak-head normal forms and in this case $A$ and $B$ must be weak-head normal.
-    Thus, a combination of \textit{1.}, \textit{2.}, \textit{3.}, and Lemma~\ref{lem:4:sema_term_conv} on subexpressions in each case is sufficient.
+    Thus, a combination of \textit{1}, \textit{2}, \textit{3}, and Lemma~\ref{lem:4:sema_term_conv} on subexpressions in each case is sufficient.
 
     \noindent \textbf{2.}
     By Theorem~\ref{lem:3:proof_normalization}, $\exists\ A^\prime, B^\prime$ such that $A \betastar A^\prime$, $B \betastar B^\prime$ and $A^\prime, B^\prime$ are values.
     Lemma~\ref{lem:2:classify_preservation} gives that $A^\prime, B^\prime\ptype$.
     Lemma~\ref{lem:2:conv_red_f} gives that $A^\prime \equiv B^\prime$.
-    Thus, applying \textit{1.} concludes.
+    Thus, applying \textit{1} concludes.
 
     \noindent \textbf{3.}
     By induction on $A$ and inversion on $A \equiv B$.
     Again, conversion of kinds is structural in $\oldced$.
-    Thus, a combination of \textit{2.} and \textit{3.} on subexpressions in each case is sufficient.
+    Thus, a combination of \textit{2} and \textit{3} on subexpressions in each case is sufficient.
 \end{proof}
 
 \begin{theorem}[Soundness of $\sema{-}$]
@@ -601,6 +602,7 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
 \begin{proof}
     By induction on $\Gamma \vdash_{\ced} t : A$.
     Note that each case is mutually exclusive by classification.
+    Moreover, $\sema{-}$ is always defined because the \textsc{Promote} rule requires that the annotation is a dependent intersection.
 
     $\text{Case: }\begin{array}{c} \AxiomRule[*] \end{array}$
     \begin{proofcase}
@@ -809,9 +811,9 @@ Luckily, because $\ced$ terms are closely matched with CDLE terms lemmas involvi
             \item[$\D{3}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{b} \chck \abs{\iota}{x}{\sema{A}}{\sema{B}}$
             \item[$\D{4}$.] $\sema{\Gamma} \vdash_{\oldced} \sema{e} \chck \cId \cdot \sema{A}\ \sema{a}.1\ \sema{b}.1$
         \end{enumerate}
-        Note that $\sema{\Gamma}, x : \sema{A} \vdash_{\oldced} \sema{B} \infr \star$ which means $\sema{\Gamma} \vdash_{\oldced} \sema{B} \infr A \to \star$.
+        Note that $\sema{\Gamma} \vdash_{\oldced} \abs{\lambda}{x}{\sema{A}}{\sema{B}} \infr \sema{A} \to \star$.
         By Lemma~\ref{lem:4:c1_stuff}, Lemma~\ref{lem:4:c1_weakening}, and the application rule for $\oldced$:
-            $\sema{\Gamma} \vdash_{\oldced} \ctheta \cdot \sema{A} \cdot \sema{B}\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
+            $\sema{\Gamma} \vdash_{\oldced} \ctheta \cdot \sema{A} \cdot (\abs{\lambda}{x}{\sema{A}}{\sema{B}})\ \edash \sema{a}\ \edash \sema{b}\ \sema{e} \infr \cId \cdot (\abs{\iota}{x}{\sema{A}}{\sema{B}})\ \sema{a}\ \sema{b}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \CastRule[*] \end{array}$

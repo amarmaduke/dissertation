@@ -8,11 +8,10 @@ See Figure~\ref{fig:syntax} for a complete description.
 The intended meaning of the syntax is as follows:
 \begin{enumerate}
     \item tags $\lambda_m$, $\Pi_m$ and $\bullet_m$ (application) represent the function fragment of syntax parameterized by three separates \textit{modes}, $\omega$ (free), $0$ (erased), and $\tau$ (type-level);
-    \item tags $\cap$, pair, proj$_1$, and proj$_2$ represent dependent intersections (i.e. dependent pairs);
-    \item tags eq, refl, $\psi$ (substitution), $\vartheta$ (promotion), $\delta$ (separation), and $\varphi$ (cast) represent equality.
+    \item tags $\cap$, pair, proj$_1$, and proj$_2$ represent dependent intersections (i.e., dependent pairs);
+    \item tags eq (equality formation), refl (introduction), $\psi$ (elimination) represent the standard rules of equality
+    \item tags $\vartheta$ (promotion to equality about intersections), $\delta$ (axiom stating that at least two proofs exist), and $\varphi$ (cast primitive) represent new equality eliminations.
 \end{enumerate}
-At the moment raw syntax has no essential meaning beyond its intended one.
-Nevertheless, a basic fact about substitution on syntax is provable.
 
 \begin{lemma}
     If $x \neq y$ and $y \notin FV(a)$ then \begin{tightcenter} $[x := a][y := b]t = [y := [x := a]b][x := a]t$ \end{tightcenter}
@@ -28,13 +27,13 @@ Nevertheless, a basic fact about substitution on syntax is provable.
 \end{proof}
 
 Computational meaning is added via reduction rules described in Figure~\ref{fig:reduction}.
-The new reductions model projection of pairs (e.g. $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g. $\vartheta(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A)$) and an elimination form for equality.
+The new reductions model projection of pairs (e.g., $[t_1, t_2, t_3].1 \betared t_1$), promotion of equalities (e.g., $\vartheta(\text{refl}(z; Z), a, b; A) \betared \text{refl}(a; A)$) and an elimination form for equality.
 Note that conversion is different from a traditional PTS.
 Convertibility with respect to reduction is written: $t \betaconv s$.
 A detailed discussion of conversion in $\ced$ is delayed until Section~\ref{sec:2:erasure}.
 
 Before more important facts about reduction can be discussed it is important to observe the interaction between reduction and substitution.
-First, note that multistep reduction (i.e. the reflexive-transitive closure of the reduction relation) is congruent with respect to syntax.
+First, note that multistep reduction (i.e., the reflexive-transitive closure of the reduction relation) is congruent with respect to syntax (Lemma~\ref{lem:2:beta_par}).
 Second, substitution is shown to commute with multistep reduction through a series of lemmas.
 
 \begin{lemma}

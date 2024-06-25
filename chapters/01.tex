@@ -12,14 +12,14 @@ When incorporating features the designer must balance complexity against capabil
 
 Modern type theory arguably began with Martin-L\"{o}f in the 1970s and 1980s when he introduced a dependent type theory with the philosophical aspirations of being an alternative foundation of mathematics \cite{lof1975,lof1984}.
 Soon after in 1985, the Calculus of Constructions (CC) was introduced by Coquand \cite{coquand1985,coquand1986}.
-Inductive data (e.g. natural numbers, lists, trees) was shown by Guevers to be impossible to derive in CC \cite{geuvers2001_noind}.
+Inductive data (e.g., natural numbers, lists, trees) was shown by Guevers to be impossible to derive in CC \cite{geuvers2001_noind}.
 Nevertheless, inductive data was added as an extension by Pfenning \cite{pfenning1989} and the Calculus of Inductive Constructions (CIC) became the basis for the proof assistant Coq \cite{paulin-mohring1993}.
 
 In the early 1990s Barendregt introduced a generalization to Pure Type Systems (PTS) and studied CC under his now famous $\lambda$-cube \cite{barendregt1990_cube,barendregt1991_pts}.
 The $\lambda$-cube demonstrated how CC could be deconstructed into four essential sorts of functions.
 At its base was the Simply Typed Lambda Calculus (STLC) a type theory introduced in the 1940s by Church to correct logical consistency issues in his (untyped) $\lambda$-calculus \cite{church1940_stlc}.
 The STLC has only basic functions found in all programming languages.
-System F, a type theory introduced by Girard \cite{girard1972,girard1989} and independently by Reynolds \cite{reynolds1974_systemf}, is obtained from STLC by adding quantification over types (i.e. polymorphic functions).
+System F, a type theory introduced by Girard \cite{girard1972,girard1989} and independently by Reynolds \cite{reynolds1974_systemf}, is obtained from STLC by adding quantification over types (i.e., polymorphic functions).
 Adding a copy of STLC at the type-layer, functions from types to types, yields System F$^\omega$.
 Finally, the addition of quantification over terms, or functions from terms to types, completes CC.
 While this is not the only path through the $\lambda$-cube to arrive at CC it is the most well-known and the most immediately relevant.
@@ -97,7 +97,7 @@ The reduction relation (or step relation) models function application anywhere i
 This relation is antisymmetric.
 There is a \textit{source} term $s$ and a \textit{target} term $t$, $s \betared t$, where $t$ is the result of one function evaluation in $s$.
 Alternatively, $s \betared t$ is read as $s$ \textit{steps} to $t$.
-Note that if there is no $\lambda$-term applied to an argument (i.e. no function ready to be evaluated) for a given term $t$ then that term cannot be the source term in the reduction relation.
+Note that if there is no $\lambda$-term applied to an argument (i.e., no function ready to be evaluated) for a given term $t$, then that term cannot be the source term in the reduction relation.
 A term that cannot be a source is called a \textit{value}.
 If there exists some sequence of terms related by reduction that end with a value, then all source terms in the sequence are \textit{normalizing}.
 If \textit{all} possible sequences of related terms end with a value for a particular source term $s$, then $s$ is \textit{strongly normalizing}.
@@ -108,7 +108,7 @@ Restricting the set of terms to a normalizing subset is critical to achieve deci
 For any relation $-R-$, the reflexive-transitive closure ($-R^*-$) is inductively defined with two rules as shown in Figure~\ref{fig:multi}.
 In the case of the step relation the reflexive-transitive closure, $s \betastar t$, is called the \textit{multistep relation}.
 Additionally, when $s \betastar t$ then $s$ \textit{multisteps} to $t$.
-It is easy to show that any reflexive-transitive closure is itself transitive.
+Below it is shown that any reflexive-transitive closure is itself transitive.
 
 \begin{lemma}
     Let $R$ be a relation on a set $A$ and let $a, b, c \in A$. If $a\ R^*\ b$ and $b\ R^*\ c$ then $a\ R^*\ c$
@@ -193,7 +193,7 @@ For example, let $f = \abs{\lambda}{X}{\star}{\text{id}\ X}$ where id is the ide
 The inferred type of $f$ is then $(X : \star) \to X \to X$.
 Let $a = \mathbb{N}$ (any type constant), then $f\ \mathbb{N} \infr [X := \mathbb{N}](X \to X)$ or $f\ \mathbb{N} \infr \mathbb{N} \to \mathbb{N}$.
 
-While this presentation of F$^\omega$ is not standard Lennon-Bertrand demonstrated that it is equivalent to the standard formulation \cite{lennon2021}.
+While this presentation of F$^\omega$ is not standard, Lennon-Bertrand demonstrated that it is equivalent to the standard formulation \cite{lennon2021}.
 In fact, Lennon-Bertrand showed that a similar formulation is logically equivalent for the stronger CIC.
 Thus, standard metatheoretical results such as preservation and strong normalization still hold.
 
@@ -266,7 +266,7 @@ where now both $K_1$ and $K_2$ are metavariables representing either $\star$ or 
 No other rules, syntax, or reductions need to be changed.
 Replacing \textsc{Pi1} and \textsc{Pi2} with this new \textsc{Pi} rule is enough to obtain a complete and faithful definition of CC.
 
-With this merger types are allowed to depend on terms.
+This modification allows types to depend on terms.
 From a logical point of view, this is a quantification over terms in formula.
 Hence, CC is a predicate logic instead of a propositional one according to the Curry-Howard correspondence.
 Yet, there is a question about what exactly quantification over terms means.
@@ -295,7 +295,7 @@ Moreover, visual renditions of \textit{Elements}, initiated by Byrne, challenge 
 The study of proof as a mathematical object dates first to Frege \cite{frege1879} followed soon after by Peano's formalism of arithmetic \cite{peano1889} and Whitehead and Russell's \textit{Principia Mathematica} \cite{whitehead}.
 For the kinds of logics discussed by the Curry-Howard correspondence, structural proof theories, the originator is Gentzen \cite{gentzen1935_i,gentzen1935_ii}.
 Gentzen's natural deduction describes proofs as finite trees labelled by rules.
-Note that this is, of course, a very brief history of mathematical proof.
+This is a very brief history of mathematical proof.
 
 All of these formulations may be acceptable notions of proof, but the purpose of proof from an epistemological perspective is to provide justification.
 It is unsatisfactory to have a claimed proof and be unable to check that it is constructed only by the rules of the proof theory.
@@ -341,7 +341,7 @@ This principle is stated relative to some universe of propositions, \textsc{Prop
 $$(P\ Q : \textsc{Prop}) \to (P \leftrightarrow Q) \leftrightarrow (P =_\textsc{Prop} Q)$$
 In extensions of CC this universe is $\star$, but in systems like Cedille there is no single universe of propositions.
 Quotient types ($A/\!\!\sim$) are constructed from a carrier type $A$ and an equivalence relation $\sim$ such that equality for elements of the quotient respects $\sim$.
-The simplest example quotient is the set of rational numbers which is the quotient of fractions (i.e. pairs of integers) and the equivalence relation $((n_1, d_1)\ (n_2, d_2) : \mathbb{Z \times Z}) \to n_1d_2 =_{\mathbb{Z}} n_2d_1$.
+The standard example quotient is the set of rational numbers which is the quotient of fractions (i.e., pairs of integers) and the equivalence relation $((n_1, d_1)\ (n_2, d_2) : \mathbb{Z \times Z}) \to n_1d_2 =_{\mathbb{Z}} n_2d_1$.
 Other algebraic objects are also constructed from quotients in Set Theory such as: groups, fields, modules, etc.
 Indeed, the Lean mathlib library heavily relies on quotients \cite{mathlib}.
 
@@ -352,9 +352,9 @@ Of course, the axiom of choice allows selection of a unique representative from 
 If a type theory supports an impredicative universe of types such as Cedille, then adding quotients like multisets of unorderable elements causes inconsistency \cite{chicli2002}.
 
 Extensional Type Theory (ETT) enjoys all the aforementioned reasoning principles.
-The distinguishing feature is the addition of the equality reflection rule, allowing promotion of propositional equalities to definitional (i.e. automatic) equalities.
+The distinguishing feature is the addition of the equality reflection rule, allowing promotion of propositional equalities to definitional equalities.
 However, propositional equality is almost always undecidable, and thus definitional equality becomes undecidable as a consequence.
-It is difficult to pin an exact year when equality reflection is first introduced, but some of Martin-L\"{o}f's early systems are extensional type theories and likewise some of the earliest proof assistant implementations were extensional type theories (e.g. Nuprl) \cite{constable1986}.
+It is difficult to pin an exact year when equality reflection is first introduced, but some of Martin-L\"{o}f's early systems are extensional type theories and likewise some of the earliest proof assistant implementations were extensional type theories (e.g., Nuprl) \cite{constable1986}.
 In 2016 Andrej Bauer proposed a method for designing equality reflection around effect handlers.
 Thus, the undecidability of equality reflection is solved by a provided handler which resolves the proof obligation \cite{bauer2016}.
 Rewriting can be added to type theory in a multitude of different ways to achieve ad hoc equality reflection.
@@ -367,8 +367,8 @@ Observational Type Theory (OTT) was introduced in 2007 by Altenkirch and McBride
 The core idea behind OTT is to define propositional equality by recursion on type constructors.
 This recursive definition grants greater flexibility in how equality is treated for individual type formers.
 Thus, equality of function types may be defined to be exactly function extensionality \cite{altenkirch2007}.
-In 2022, Pujet et al. introduced an improvement that resolved limitations in the original formulation of OTT.
-The authors note that a critical difference from prior attempts at OTT is that propositions satisfy definitional proof-irrelevance preventing proof obligations muddying goals of judgments.
+In 2022, Pujet et al., introduced an improvement that resolved limitations in the original formulation of OTT.
+The authors note that a critical difference from prior attempts at OTT is that propositions satisfy definitional proof-irrelevance preventing the need for auxiliary proofs that two propositions are equal.
 Moreover, many desirable properties are proven including: propositional extensionality, UIP, strong normalization, consistency, decidability of type checking, and quotients provided the equivalence relation is proof-irrelevant \cite{pujet2022}.
 
 Setoid Type Theory (SeTT) is an alternative path taken by Altenkirch after work on the original OTT.
@@ -392,11 +392,11 @@ Moreover, Bezem demonstrated that Voevodsky's simplicial sets model is \textit{n
 Later, Bezem devised a model using constructive metatheory with cubical sets initiating the possibility for a type theory that derives UA \cite{bezem2014}.
 
 Cubical Type Theory (CTT) provided a computational interpretation of UA by introducing a fundamental interval pretype.
-Cohen et al. devised a variation of CTT that they claim simplified semantic justifications using a De Morgan algebra for the interval \cite{cohen2016}.
+Cohen et al., devised a variation of CTT that they claim simplified semantic justifications using a De Morgan algebra for the interval \cite{cohen2016}.
 Indeed, the advent of cubical sets as a model of UA introduced not one CTT, but several variants.
-In 2018, Pitts et al. investigated a minimal set of axioms for modeling CTTs \cite{pitts2018}.
-Two years later Cavallo et al. observed that the minimal set could be further simplified while still achieving the goals of Pitts \cite{cavallo2020}.
-The work of Cavallo et al. arguably presents the essence of CTT:
+In 2018, Pitts et al., investigated a minimal set of axioms for modeling CTTs \cite{pitts2018}.
+Two years later Cavallo et al., observed that the minimal set could be further simplified while still achieving the goals of Pitts \cite{cavallo2020}.
+The work of Cavallo et al., arguably presents the essence of CTT:
 \begin{enumerate}
     \item {
         the interval must be connected, which prevents a discretization and maintains an internal continuity for smooth deformations;
@@ -433,11 +433,10 @@ Thus, there is little hope of modifying Cedille to obtain extensional reasoning 
 
 \section{Thesis}
 
-Cedille is a powerful type theory capable of deriving inductive data with relatively modest extension and modification to CC.
-However, this capability comes at the cost of a poorly behaved metatheory.
-A redesign of Cedille that focuses on maintaining a proof-theoretic view could improve this state of affairs and shorten the gap between Cedille and existing type systems.
-However, an improvement must balance capability and complexity, maintaining the power of the current Cedille.
-The redesign described herein treads this balance to obtain a better metatheory with minimal sacrifice of existing encodings.
+Cedille is a powerful theory capable of deriving inductive data with relatively modest extension and modification to CC.
+Yet, working with Cedille has raised the question of if an untyped equality is necessary for obtaining the same or similar results.
+Moreover, an untyped equality is an active hindrance to reasoning properties that are desirable in other systems, such as function extensionality.
+This work addresses the questions: can Cedille's equality type be redesigned from a traditional typed perspective without sacrificing its capability as a core system; and what metatheoretic results are obtained as a consequence?
 
 \section{Contributions}
 

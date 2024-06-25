@@ -11,15 +11,6 @@ This function is crafted to preserve classification after both reduction and era
 Note that because the function is defined on raw syntax it is possible that there is no valid level.
 In these cases the syntax is given the classification \textit{undefined}.
 
-\begin{definition}
-    \textcolor{white}{\_}
-    \begin{enumerate}
-        \item $t\pterm$ iff $\mathcal{C}(t) =\!\!\pterm$
-        \item $t\ptype$ iff $\mathcal{C}(t) =\!\!\ptype$
-        \item $t\pkind$ iff $\mathcal{C}(t) =\!\!\pkind$
-    \end{enumerate}
-\end{definition}
-
 The condition $[x := \ptrunc{\mathcal{C}(a)}]t\ptype$ and others like it in the definition of $\mathcal{C}(-)$ are necessary.
 Take for example $\abs{\lambda_\tau}{x}{\star}{x_\star}$.
 This is not well-typed and hence not a proof, but it also should not be a kind, type, or term because it will prevent preservation of classification during reduction.
@@ -31,7 +22,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 \begin{proof}
     The definition is structural except application cases.
     In particular, application cases require evaluating $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ for some subexpressions $a$ and $t$.
-    Note that computing $\mathcal{C}(-)$ on subxpressions is terminating, and $\ptrunc{-}$ is a constant function.
+    Note that computing $\mathcal{C}(-)$ on subexpressions is terminating, and $\ptrunc{-}$ is a constant function.
     Thus, a measure of size can be constructed such that the size of $\ptrunc{\mathcal{C}(a)}$ is always zero for any $a$.
     Substitution of syntactic forms of zero size do not change the size of the resulting term, therefore $\mathcal{C}([x := \ptrunc{\mathcal{C}(a)}]t)$ is a terminating invocation.
 \end{proof}
@@ -42,7 +33,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 \end{lemma}
 \begin{proof}
     By induction on $t$.
-    Type-like syntax is homomorphic and thus the equation holds by the IH.
+    Type-like syntax is homomorphic, and thus the equation holds by the IH.
     Term-like syntax eliminates most of the extra structure leaving behind only another term-like syntax.
     A few cases are presented to illuminate both situations.
 
@@ -84,7 +75,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \app{(\abs{\lambda_m}{x}{A}{b})}{m}{t} \betared [x := t]b \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $m = \tau$, then $(\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t})\ptype$.
+        Suppose w.l.o.g., that $m = \tau$, then $(\app{(\abs{\lambda_\tau}{x}{A}{b})}{\tau}{t})\ptype$.
         Note that $t\ptype$ or $t\pterm$ by unraveling the previous definition.
         Now $[x := \ptrunc{\mathcal{C}(t)}]b\ptype$.
         By Lemma~\ref{lem:2:classify_subst} and the above observation: $[x := t]b\ptype$.
@@ -141,14 +132,14 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $m = \tau$, now by the IH applied to $\D{1}$: $A\pkind$ or $A\ptype$.
+        Suppose w.l.o.g., that $m = \tau$, now by the IH applied to $\D{1}$: $A\pkind$ or $A\ptype$.
         Applying the IH to $\D{2}$ gives $B\pkind$.
         Thus, $(x : A) \to_\tau B\pkind$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \LambdaRule[*] \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $m = \tau$.
+        Suppose w.l.o.g., that $m = \tau$.
         Applying the IH to $\D{1}$ gives $A\pkind$ or $A\ptype$.
         Note by $\D{2}$ that $\Gamma, x_\tau : A \vdash B : \kind$.
         Thus, applying the IH to $\D{2}$ yields $t\ptype$.
@@ -157,7 +148,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $m = \tau$.
+        Suppose w.l.o.g., that $m = \tau$.
         By Lemma~\ref{lem:2:classification} and inversion with $\D{1}$: $\Gamma \vdash (x : A) \to_\tau B : \kind$.
         Deconstructing this judgment yields $\Gamma \vdash A : K$.
         Applying the IH to $\D{2}$ gives $a\ptype$ or $a\pterm$.
@@ -165,7 +156,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
         If $f$ is not an abstraction then the proof is done, thus suppose $f = \abs{\lambda}{x}{A}{t}$.
         Have $A\pkind$ or $A\ptype$, but note that $\Gamma \vdash A : K$ thus the classification of $a$ and $A$ must agree.
         Moreover, $t\pterm$.
-        Suppose w.l.o.g. that $a\ptype$ then $\ptrunc{\mathcal{C}(a)} = x_\square$.
+        Suppose w.l.o.g., that $a\ptype$ then $\ptrunc{\mathcal{C}(a)} = x_\square$.
         However, this means that $\Gamma \vdash A : \kind$ and that $\Gamma, x_\tau : A \vdash t : B$.
         Thus, the occurrences of $x$ in $t$ must be annotated as $x_\square$ otherwise the \textsc{Var} rule for $x$ would fail.
         Hence, $[x := x_\square]t = t$.
@@ -235,7 +226,7 @@ If $a\pterm$ then the application will correctly produce a term, but if $a\ptype
     $\text{Case: }\begin{array}{c} \ConvRule[*] \end{array}$
     \begin{proofcase}
         Lemma~\ref{lem:2:classification}, inversion, $\D{1}$ and $\D{3}$ yield $\Gamma \vdash B : K$.
-        Suppose w.l.o.g. that $K = \star$.
+        Suppose w.l.o.g., that $K = \star$.
         Applying the IH to $\D{2}$ gives $t\pterm$.
     \end{proofcase}
 \end{proof}

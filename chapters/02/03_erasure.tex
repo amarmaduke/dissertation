@@ -3,9 +3,9 @@
 
 Cedille has a notion of erasure of syntax that transforms a subset of syntax into the untyped $\lambda$-calculus.
 This concept is generalized in $\ced$ to operate on general syntax.
-It still called erasure mostly as a holdover, but erasure no longer actually erases all type annotations.
+While this is still called erasure, the concept no longer actually erases all type annotations.
 Instead, erasure should be thought of as computing the raw syntactic forms of objects.
-In Section~\ref{sec:2:judgments} the notion of proof will be defined.
+In Section~\ref{sec:2:judgments}, the notion of proof will be defined.
 An object is the erasure of a proof.
 Erasure is defined in Figure~\ref{fig:2:erasure}.
 With erasure the desired conversion relation is also definable.
@@ -20,7 +20,7 @@ This definition enables equating objects in a dependent quantification instead o
 
 Note that the only purpose of the syntactic constructor $\diamond$ is to be a placeholder for erased type annotations of $\lambda_\omega$ syntactic forms.
 However, for $\lambda_\tau$ variants, the annotation is \textit{not} erased.
-This is partly why calling this transformation \textit{erasure} is a slight lie, because it does not always erase.
+This is an example of where erasure no longer discards all type information.
 Regardless, it is faithful to the interpretation from Cedille when focused on non-type-like syntax.
 Indeed, any form that is not type-like does reduce to the untyped $\lambda$-calculus.
 For type-like syntax, erasure is instead locally homomorphic.
@@ -51,7 +51,7 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
             &|[x := t]\abs{\lambda_0}{y}{A}{b^\prime}| = |\abs{\lambda_0}{y}{[x := t]A}{[x := t]b^\prime}| \\
             &= |[x := t]b^\prime| = [x := |t|]|b^\prime| = [x := |t|]|\abs{\lambda_0}{y}{A}{b^\prime}|
         \end{align*}
-        For the remaining tags, assume w.l.o.g. $\kappa = \cap$.
+        For the remaining tags, assume w.l.o.g., $\kappa = \cap$.
         Then $b = (y : A) \cap B$, and by the IH $|[x := t]A| = [x := |t|]|A|$ and $|[x := t]B| = [x := |t|]|B|$.
         Thus,
         \begin{align*}
@@ -71,7 +71,7 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
         \\ \\
         If $\kappa \in \{ \text{refl} \}$ then the equality is trivial.
         \\ \\
-        If $\kappa \in \{ \bullet_\omega, \bullet_\tau, \text{eq} \}$ then w.l.o.g. assume $\kappa = \text{eq}$.
+        If $\kappa \in \{ \bullet_\omega, \bullet_\tau, \text{eq} \}$ then w.l.o.g., assume $\kappa = \text{eq}$.
         Now $|[x := t](a =_A b)| = |[x := t]a| =_{|[x := t]A|} |[x := t]b|$.
         By the IH this becomes $[x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
         On the right-hand side, $[x := |t|]|a =_A b| = [x := |t|]|a| =_{[x := |t|]|A|} [x := |t|]|b|$.
@@ -98,7 +98,7 @@ Additionally, as a consequence an extension of Lemma~\ref{lem:2:betaconv_subst} 
 
 Beyond these lemmas more structure needs to be imposed on raw syntax to obtain better behavior with erasure.
 In particular, the pair case and the $\lambda_0$ case are problematic.
-Indeed, for pairs there is an assumption that the first and second component are convertible.
+For pairs there is an assumption that the first and second component are convertible.
 This restriction is what transforms pairs into something more, an element of an intersection.
 Likewise, the $\lambda_0$ binder is meant to signify that the bound variable does not appear free in the erasure of the body.
 Imposing these restrictions on syntax retains the spirit of what it means to be an object.
@@ -192,10 +192,9 @@ The critical property about pseudo-objects is that reduction preserves the equiv
     By Lemma~\ref{lem:2:erase_pseobj_red} $|s| \betaconv |t|$ and by Theorem~\ref{lem:2:beta_conv_equivalence} $|t| \betaconv |b|$.
 \end{proof}
 
-Of course, pseudo-objects also preserve substitution.
-There is nothing inherently tricky about pseudo-objects in this respect.
-It may be easier for the reader to observe that the pseudo-object predicate imposes a quotient on raw syntax.
-With this intuition, the purpose of pseudo-objects is merely to filter syntactic forms that break the intended meaning of conversion.
+Pseudo-objects also preserve substitution.
+Note that the pseudo-object predicate imposes a quotient on raw syntax.
+With this intuition, the purpose of pseudo-objects is to filter syntactic forms that break the intended meaning of conversion.
 
 \begin{lemma}
     \label{lem:2:pseobj_subst}
@@ -232,7 +231,7 @@ With this intuition, the purpose of pseudo-objects is merely to filter syntactic
 
     $\text{Case: }\begin{array}{c} \BinderPseObj[*] \end{array}$
     \begin{proofcase}
-        By cases on $s \betared t$. Suppose w.l.o.g. that $t_2 \betared t_2^\prime$.
+        By cases on $s \betared t$. Suppose w.l.o.g., that $t_2 \betared t_2^\prime$.
         Observe that $t_2\pseobj$ because it is a subterm of $s$.
         Then by the IH $t_2^\prime\pseobj$.
         Thus, $\mathfrak{b}(\kappa, x : t_1, t_2^\prime) \pseobj$.
@@ -240,7 +239,7 @@ With this intuition, the purpose of pseudo-objects is merely to filter syntactic
 
     $\text{Case: }\begin{array}{c} \LambdaPseObj[*] \end{array}$
     \begin{proofcase}
-        By cases on $s \betared t$. Suppose w.l.o.g that $t \betared t^\prime$.
+        By cases on $s \betared t$. Suppose w.l.o.g., that $t \betared t^\prime$.
         Note that if $x \notin FV(|t|)$ then $x \notin FV(|t^\prime|)$, reduction only reduces the amount of free variables.
         Observe that $t \pseobj$.
         Then by the IH $t^\prime\pseobj$.
@@ -279,7 +278,7 @@ With this intuition, the purpose of pseudo-objects is merely to filter syntactic
     $\text{Case: }\begin{array}{c} \PairPseObj[*] \end{array}$
     \begin{proofcase}
         By cases on $s \betared t$.
-        Suppose w.l.o.g. $t_1 \betared t_1^\prime$.
+        Suppose w.l.o.g., $t_1 \betared t_1^\prime$.
         Note that $t_1\pseobj$ because it is a subterm of $s$.
         By the IH $t_1^\prime\pseobj$.
         By Lemma~\ref{lem:2:pseobj_red_f_step} $|t_1^\prime| \betaconv |t_2|$.
@@ -335,7 +334,7 @@ With this intuition, the purpose of pseudo-objects is merely to filter syntactic
 \end{proof}
 
 Unlike with convertibility of reduction, obtaining transitivity of conversion requires the additional assumption that the inner syntax is a pseudo-object.
-Indeed, the incorporation of erasure into the definition requires this extra structure, because otherwise reductions on pairs would not agree.
+The incorporation of erasure into the definition requires this extra structure, because otherwise reductions on pairs would not agree.
 For example, pick $a = [x, y; T].1$, $b = [x, y; T]$, and $c = [y, x; T].2$.
 Notice that $|a| = |b|$ but $|b| \neq |c|$, however, $c \betastar x$.
 There is an inconsistency because $b$ is not a pseudo-object, it is not the case that $|x| \betaconv |y|$.
@@ -354,9 +353,9 @@ There is an inconsistency because $b$ is not a pseudo-object, it is not the case
 \end{proof}
 
 Knowing that $|s| \betaconv |t|$ if and only if $s \equiv t$ is critical for maintaining the spirit of Cedille.
-While $\ced$ is its own system the purpose is to refine the design of Cedille without losing its essential features.
-A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e. erased terms) not with annotated terms.
-Having Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check reduction conversion of objects.
+The purpose of the system $\ced$ is to refine the design of Cedille without losing its essential features.
+A critical feature of Cedille is that convertibility is done with the untyped $\lambda$-calculus (i.e., erased terms) not with annotated terms.
+Theorem~\ref{thm:2:beta_iff_conv} means that whenever conversion is checked between terms it is safe to instead check reduction conversion of objects.
 Not only does this maintain the spirit of Cedille, but it also enables optimizations in type checking.
 Indeed, arbitrarily expensive sequences of reductions could potentially be erased when checking $|s| \betaconv |t|$ instead of $s \equiv t$.
 
@@ -378,7 +377,7 @@ Indeed, arbitrarily expensive sequences of reductions could potentially be erase
     For $s\pseobj$ and $t\pseobj$ the relation $s \equiv t$ is an equivalence.
 \end{corollary}
 
-Finally, a useful lemma about the interaction of substitution with conversion is obtained from the effort of pseudo-objects.
+Finally, a useful lemma about the interaction of substitution with conversion.
 
 \begin{lemma}
     If $s, t, a, b\pseobj$, $s \equiv t$, and $a \equiv b$ then $[x := s]a \equiv [x := t]b$

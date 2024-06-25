@@ -11,14 +11,15 @@ Cedille has several important encodings and derivations in the existing literatu
     \item and inductive-inductive data \cite{marmaduke2023_indind}.
 \end{enumerate}
 The unfamiliar may fear that the devil is in the details for all of these encodings, but the reality is that most of the complexity boils down to two important core ideas: irrelevant casts and irrelevant views.
-A caveat of \textit{most} is required because some encodings make essential use of the Kleene Trick (i.e. the idea that any untyped $\lambda$-calculus term may serve as the erasure for a trivial equality in Cedille).
+A caveat of \textit{most} is required because some encodings make essential use of the Kleene Trick (i.e., the idea that any untyped $\lambda$-calculus term may serve as the erasure for a trivial equality in Cedille).
 In particular, quotients by idempotent functions is not possible in its existing form without the Kleene Trick.
 Indeed, this encoding was partly invented as an excuse to use the Kleene Trick in an essential way in the first place.
+The Kleene Trick will not be derivable or admissible in $\ced$.
 Nevertheless, the other two important core ideas are derivable in $\ced$.
 
 To begin, the notion of casts is definable in \textit{almost} the same fashion.
 There are some differences because equality is now typed, but the usage of an erased function space avoids potential issues.
-Moreover, irrelevance of casts is a simple consequence of $\varphi$.
+Moreover, irrelevance of casts is a consequence of $\varphi$.
 \begin{align*}
     \pCast &= \abs{\lambda_\tau}{A}{\star}{
         \abs{\lambda_\tau}{B}{\star}{
@@ -39,10 +40,10 @@ Moreover, irrelevance of casts is a simple consequence of $\varphi$.
         }
     }
 \end{align*}
-The proofs for the associated derivations are obvious by following the term structure and applying the only valid rule.
+The proofs for the associated derivations are immediate by following the term structure and applying the only valid rule.
 Irrelevance of casts are necessary for essentially all the previously listed derivations in Cedille.
 This component is incredibly important, and it is mostly a direct consequence of $\varphi$.
-There is no known way, currently, to subvert the use of irrelevant casts to obtain generic efficient inductive data.
+There is no known way, currently, to obtain efficient generic inductive data without irrelevant casts.
 However, inductive Church encodings do \textit{not} require irrelevance of casts and are possible to encode in both $\ced$ and Cedille without $\varphi$.
 \begin{theorem}
     \label{lem:2:cast_derivations}

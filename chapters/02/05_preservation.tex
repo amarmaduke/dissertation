@@ -1,6 +1,6 @@
 \section{Preservation}
 
-Preservation states that the status of a term (i.e. both its classification and status as a well-founded proof) do not change with respect to reduction.
+Preservation states that the status of a term (i.e., both its classification and status as a well-founded proof) do not change with respect to reduction.
 Note that Cedille only enjoys a semantic version of preservation and not a syntactic version presented below.
 While this may not matter from the perspective of the semantics it does indicate that syntax is better behaved in $\ced$.
 The proof follows by induction on the typing derivation and case analysis on the associated reduction.
@@ -187,7 +187,7 @@ The proof follows by induction on the typing derivation and case analysis on the
         Applying \textit{1} to $\D{3}$ gives $\Gamma \vdash b^\prime : (x : A) \cap B$.
         The \textsc{Prm} rule concludes.
         \\ \\
-        Suppose w.l.o.g. that $B \betared B^\prime$, the case when $A \betared A^\prime$ is similar.
+        Suppose w.l.o.g., that $B \betared B^\prime$, the case when $A \betared A^\prime$ is similar.
         Then $(x : A) \cap B \equiv (x : A) \cap B^\prime$ and the \textsc{Conv} rule yields $\Gamma \vdash a : (x : A) \cap B^\prime$ and $\Gamma \vdash b : (x : A) \cap B^\prime$.
         Applying \textit{1} to $\D{1}$ yields $\Gamma \vdash (x : A) \cap B^\prime : \star$.
         The \textsc{Prm} rule concludes.
@@ -225,17 +225,16 @@ The proof follows by induction on the typing derivation and case analysis on the
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
         Suppose $\Gamma_1 \betared \Gamma_1^\prime$.
-        Reduction does not produce free variables, thus $x \notin FV(\Gamma^\prime_1;\Gamma_2)$.
-        Applying \textit{1} to $\D{2}$ yields $\Gamma^\prime_1 \vdash A : K$.
+        Applying \textit{1} to $\D{1}$ yields $\Gamma^\prime_1 \vdash A : K$.
         The \textsc{Var} rule concludes.
         \\ \\
         Suppose $\Gamma_2 \betared \Gamma_2^\prime$.
-        As before $x \notin FV(\Gamma_1;\Gamma_2^\prime)$.
         The \textsc{Var} rule concludes.
         \\ \\
         Suppose $A \betared A^\prime$.
-        Applying \textit{1} to $\D{2}$ gives $\Gamma_1 \vdash A^\prime : K$.
-        The \textsc{Var} rule concludes.
+        Applying \textit{1} to $\D{1}$ gives $\Gamma_1 \vdash A^\prime : K$.
+        The \textsc{Var} rule yields $\Gamma_1; x_m : A^\prime; \Gamma_2 \vdash x_K : A^\prime$ and note that $A \equiv A^\prime$.
+        The \textsc{Conv} rule concludes.
     \end{proofcase}
 
     \noindent \textbf{3.} Pattern-matching on $\Gamma$.
@@ -243,7 +242,7 @@ The proof follows by induction on the typing derivation and case analysis on the
     Thus, let $\Gamma = \Delta; x_m : A$.
     \\ \\
     Suppose $\Delta; x_m : A \betared \Delta^\prime; x_m : A$.
-    Then by \textit{3} applied to $\Delta$: $\vdash \Delta^\prime$.
+    Then by \textit{3} applied to $\Delta$ yields $\vdash \Delta^\prime$.
     Now, because $\vdash \Delta; x_m : A$ it is the case that $\Delta \vdash A : K$.
     Using \textit{2} gives $\Delta^\prime \vdash A : K$.
     Therefore, $\vdash \Delta^\prime; x_m : A$.

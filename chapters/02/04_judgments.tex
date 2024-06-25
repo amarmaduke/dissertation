@@ -4,7 +4,7 @@
 The inference judgment, presented in Figure~\ref{fig:2:typ1}; Figure~\ref{fig:2:typ2}; and Figure~\ref{fig:2:typ3}, delineate what syntax are \textit{proofs}.
 As stated previously, the erasure of a proof is an \textit{object}.
 Thus, for $\Gamma \vdash t : A$, $t$ is a proof and $|t|$ its object.
-The judgment follows a standard PTS style, but the rules are carefully chosen so that an inference algorithm is possible.
+The judgment follows a standard PTS style, but the rules are chosen so that an inference algorithm is possible.
 Judgments of the form $\Gamma \vdash t : A$ should be read $t$ infers $A$ in $\Gamma$.
 
 $\AxiomRule$ The axiom rule is the same as with F$^\omega$.
@@ -60,7 +60,7 @@ $\ReflRule$ The reflexivity rule is the only value for equality types.
 It is the standard inductive formulation of an identity type.
 $$\SubstRule$$
 The substitution rule is a dependent variation of Leibniz's Law.
-It is also a variation of Martin-L\"{o}f's J rule introduced by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
+It is also a variation of Martin-L\"{o}f's J rule, as shown by Pfenning and Paulin-Mohring \cite{pfenning1990_subst}.
 Notice that the only critical difference between this rule and a standard variation of Leibniz's Law is that the predicate may depend on the equality proof as well.
 $$\PromoteRule$$
 The promotion rule enables equational reasoning about intersections.
@@ -73,9 +73,9 @@ $\CastRule$ The cast rule is a typed version of the original cast rule of Cedill
 Note that this means this rule enables non-termination.
 In Chapter~\ref{chap:5} it is shown that this rule is the only source of non-termination and a precise condition for when it may be used in a terminating way is devised.
 The cast rule is critical to the spirit of Cedille.
-Thus, simply dropping it to obtain a strongly normalizing system is not a satisfactory choice as it throws too much away in its wake.
+Thus, dropping it to obtain a strongly normalizing system is not a satisfactory choice.
 
-$\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e. that there are at least two distinct objects.
+$\SeparationRule$ The separation rule states only that the equational theory is not degenerate, i.e., that there are at least two distinct objects.
 
 \input{figures/02/infer3.tex}
 
@@ -105,7 +105,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        By Lemma~\ref{lem:2:infer_implies_pseobj} applied to $\D{2}$: $A\pseobj$.
+        By Lemma~\ref{lem:2:infer_implies_pseobj} applied to $\D{1}$: $A\pseobj$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \SecondRule[*] \end{array}$
@@ -155,10 +155,10 @@ Next three standard lemmas are proved about the type system: weakening, substitu
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
         Note that $y$ is fresh thus $x \neq y$.
-        If $y$ is placed after $x$ then the case is trivial because $\Gamma_2$ is only constrained to carry fresh variables.
+        If $y$ is placed after $x$ then the case is trivial because $\Gamma_2$ unconstrained.
         Thus, suppose $y$ is placed before $x$.
         Let $\Gamma_1 = \Delta_1; \Delta_2$.
-        Applying the IH to $\D{2}$ gives $\Delta_1; y_m : B; \Delta_2 \vdash A : K$.
+        Applying the IH to $\D{1}$ gives $\Delta_1; y_m : B; \Delta_2 \vdash A : K$.
         The \textsc{Var} rule concludes.
     \end{proofcase}
 
@@ -183,11 +183,10 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Suppose w.l.o.g. that $y \in \Gamma_1$.
+        Suppose w.l.o.g., that $y \in \Gamma_1$.
         Let $\Gamma_1 = \Delta_1; y : B; \Delta_2$.
-        Applying the IH to $\D{2}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
-        Note that $x \notin FV(\Delta_1; [y := b]\Delta_2; [y := b]\Gamma_2)$.
-        Thus by the \textsc{Var} rule: $\Delta_1; [y := b]\Delta_2; x_m : [y := b]A; [y := b]\Gamma_2 \vdash x_K : [y := b]A$.
+        Applying the IH to $\D{1}$ gives $\Delta_1; [y := b]\Delta_2 \vdash [y := b]A : K$.
+        Thus, by the \textsc{Var} rule: $\Delta_1; [y := b]\Delta_2; x_m : [y := b]A; [y := b]\Gamma_2 \vdash x_K : [y := b]A$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \PiRule[*] \end{array}$
@@ -238,7 +237,7 @@ Next three standard lemmas are proved about the type system: weakening, substitu
 
     $\text{Case: }\begin{array}{c} \VarRule[*] \end{array}$
     \begin{proofcase}
-        Immediate by $\D{2}$ and weakening.
+        Immediate by $\D{1}$.
     \end{proofcase}
 
     $\text{Case: }\begin{array}{c} \AppRule[*] \end{array}$
@@ -283,9 +282,9 @@ The context of a judgment is, for the moment, unrestrained.
 Indeed, a variable may bind a type represented by arbitrary syntax and as long as that variable is never used in the body of the term there is no issue.
 To remove these considerations contexts should instead be well-formed:
 \begin{definition}
-    A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ the variable $x \notin FV(\Gamma_1;\Gamma_2)$ and $\Gamma_1 \vdash A : K$ for some $K$
+    A context $\Gamma$ is \textbf{well-formed} (written $\vdash \Gamma$) iff for every possible splitting $\Gamma = \Gamma_1, x : A, \Gamma_2$ then $\Gamma_1 \vdash A : K$ for some $K$
 \end{definition}
-It is not difficult to see that an inference judgment with a well-formed context is obtainable from an inference judgment with an ill-formed context.
+Note that an inference judgment with a well-formed context is obtainable from an inference judgment with an ill-formed context as shown below.
 Moving forward it will be assumed that the context of an inference judgment is always well-formed.
 \begin{lemma}
     If $\Gamma \vdash t : A$ then $\exists\ \Delta$ such that $\Delta \vdash t : A$ and $\vdash \Delta$
